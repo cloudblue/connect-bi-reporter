@@ -1,0 +1,42 @@
+version: '3'
+volumes:
+  node_modules:
+
+services:
+  connect_bi_reporter_dev:
+    container_name: connect_bi_reporter_dev
+    build:
+      context: .
+    working_dir: /extension
+    command: cextrun -d --no-rich-logging
+    volumes: 
+      - .:/extension
+      - node_modules:/extension/node_modules
+    env_file:
+      - .connect_bi_reporter_dev.env
+
+  connect_bi_reporter_bash:
+    container_name: connect_bi_reporter_bash
+    build:
+      context: .
+    working_dir: /extension
+    command: /bin/bash
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/extension
+      - node_modules:/extension/node_modules
+    env_file:
+      - .connect_bi_reporter_dev.env
+
+  connect_bi_reporter_test:
+    container_name: connect_bi_reporter_test
+    build:
+      context: .
+    working_dir: /extension
+    command: extension-test
+    volumes:
+      - .:/extension
+      - node_modules:/extension/node_modules
+    env_file:
+      - .connect_bi_reporter_dev.env
