@@ -7,11 +7,13 @@ import pytest
 
 from contextlib import contextmanager
 
+from pytest_factoryboy import register
 from sqlalchemy import event
 from connect.client import AsyncConnectClient, ConnectClient
 from connect.eaas.core.inject.models import Context
 
 from .database import Session
+from .factories import CredentialFactory
 from connect_bi_reporter.db import (
     create_db,
     get_db,
@@ -123,3 +125,6 @@ def api_client(test_client_factory, dbsession):
         get_db: lambda: dbsession,
     }
     yield client
+
+
+register(CredentialFactory)
