@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from sqlalchemy.orm import relationship
 import sqlalchemy as db
 
 from connect_bi_reporter.db import Model
@@ -18,3 +19,5 @@ class Credential(Model):
     created_by = db.Column(db.String(20))
     updated_at = db.Column(db.DateTime(), onupdate=datetime.utcnow, default=datetime.utcnow)
     updated_by = db.Column(db.String(20))
+
+    feed = relationship('Feed', back_populates='credential', lazy='dynamic')
