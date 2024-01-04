@@ -3,16 +3,11 @@
 # Copyright (c) 2024, Ingram Micro
 # All rights reserved.
 #
-from connect.eaas.core.decorators import (
-    event,
-    schedulable,
-    variables,
-)
+from connect.eaas.core.decorators import event, variables
 from connect.eaas.core.extension import EventsApplicationBase
-from connect.eaas.core.responses import (
-    BackgroundResponse,
-    ScheduledExecutionResponse,
-)
+from connect.eaas.core.responses import BackgroundResponse
+
+from connect_bi_reporter.uploads.tasks import UploadTaskApplicationMixin
 
 
 @variables([
@@ -27,7 +22,10 @@ from connect.eaas.core.responses import (
         'secure': True,
     },
 ])
-class ConnectBiReporterEventsApplication(EventsApplicationBase):
+class ConnectBiReporterEventsApplication(
+    EventsApplicationBase,
+    UploadTaskApplicationMixin,
+):
     @event(
         'installation_status_change',
         statuses=[
@@ -37,10 +35,3 @@ class ConnectBiReporterEventsApplication(EventsApplicationBase):
     def handle_installation_status_change(self, request):
         self.logger.info(f"Obtained request with id {request['id']}")
         return BackgroundResponse.done()
-
-    @schedulable('Schedulable method', 'It can be used to test DevOps scheduler.')
-    def execute_scheduled_processing(self, schedule):
-        self.logger.info(
-            f"Received event for schedule  {schedule['id']}",
-        )
-        return ScheduledExecutionResponse.done()
