@@ -8,3 +8,7 @@ def get_reporting_schedules(client, filters):
 
 def get_reporting_reports(client, filters):
     pass
+
+
+def download_report(client, report_id):
+    return client.ns('reporting').collection('reports')[report_id]('download').get()
