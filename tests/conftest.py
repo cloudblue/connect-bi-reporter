@@ -40,6 +40,15 @@ def async_connect_client():
 
 
 @pytest.fixture
+def connect_auth_header():
+    """Connect-Auth header for the user fixture ('SU-295-689-628', 'Neri')"""
+    return (
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1Ijp7Im9pZCI6IlNVLTI5NS02ODktN"
+        "jI4IiwibmFtZSI6Ik5lcmkifX0.U_T6vuXnD293hcWNTJZ9QBViteNv8JXUL2gM0BezQ-k"
+    )
+
+
+@pytest.fixture
 def logger(mocker):
     return mocker.MagicMock()
 
@@ -125,6 +134,55 @@ def api_client(test_client_factory, dbsession):
         get_db: lambda: dbsession,
     }
     yield client
+
+
+@pytest.fixture
+def installation():
+    return {
+        "id": "EIN-8436-7221-8308",
+        "environment": {
+            "id": "ENV-2244-9935-01",
+            "type": "development",
+            "icon": "googleExtensionBaseline",
+            "extension": {
+                "id": "SRVC-2244-9935",
+                "name": "BI Reporter ext",
+                "owner": {
+                    "id": "PA-000-000",
+                    "name": "Provider account 00",
+                    "icon": "/media/PA-000-000/media/icon.png",
+                    "role": "distributor",
+                },
+                "icon": "https://portal.cnct.info/files/media/public/eaas_icons/"
+                "SRVC-2244-9935/5f5def84784825c0a74b.png",
+                "extension_id": "EXT-426-640",
+            },
+            "hostname": "srvc-2244-9935-dev",
+            "domain": "ext.cnct.info",
+            "git": {},
+            "runtime": "local",
+        },
+        "owner": {
+            "id": "PA-000-000",
+            "name": "Provider account 00",
+            "icon": "/media/PA-000-000/media/icon.png",
+            "role": "distributor",
+        },
+        "settings": {},
+        "events": {
+            "installed": {
+                "at": "2023-06-27T11:22:01+00:00",
+                "by": {
+                    "id": "UR-000-000-000",
+                    "name": "Jhon Doe",
+                },
+            },
+            "updated": {
+                "at": "2023-06-27T11:22:01+00:00",
+            },
+        },
+        "status": "installed",
+    }
 
 
 @pytest.fixture
