@@ -13,7 +13,7 @@ from connect.client import AsyncConnectClient, ConnectClient
 from connect.eaas.core.inject.models import Context
 
 from .database import Session
-from .factories import CredentialFactory
+from .factories import CredentialFactory, FeedFactory
 from connect_bi_reporter.db import (
     create_db,
     get_db,
@@ -127,4 +127,94 @@ def api_client(test_client_factory, dbsession):
     yield client
 
 
+@pytest.fixture
+def report_schedule():
+    return {
+        "id": "RS-2796-9021",
+        "name": "Report schedule for feed",
+        "description": "Some",
+        "events": {
+            "created": {
+                "at": "2024-01-04T17:21:55+00:00",
+                "by": {
+                    "id": "UR-065-000-003",
+                    "name": "JPaul",
+                },
+            },
+            "updated": {
+                "at": "2024-01-04T17:21:55+00:00",
+                "by": {
+                    "id": "UR-065-000-003",
+                    "name": "JPaul",
+                },
+            },
+            "next_execution": {
+                "at": "2024-01-05T05:00:00+00:00",
+            },
+        },
+        "template": {
+            "id": "RT-7657-8947-0004",
+            "name": "Billing requests report",
+            "type": "system",
+            "revision": 0,
+            "local_id": "billing_requests",
+            "repository": {
+                "id": "RR-7657-8947",
+                "name": "Connect Reports",
+            },
+            "status": "enabled",
+        },
+        "trigger": {
+            "frequency": "daily",
+            "time": "05:00:00+00:00",
+        },
+        "parameters": [
+            {
+                "id": "date",
+                "name": "Report period",
+                "type": "date_range",
+                "schedule": {
+                    "to": {
+                        "exact": "2024-01-04T00:00:00+00:00",
+                    },
+                    "from": "now",
+                },
+            },
+            {
+                "id": "product",
+                "name": "Product list",
+                "type": "product",
+                "value": {
+                    "all": False,
+                    "choices": [
+                        "PRD-000-065-001",
+                    ],
+                },
+            },
+            {
+                "id": "mkp",
+                "name": "Marketplaces",
+                "type": "marketplace",
+                "value": {
+                    "all": False,
+                    "choices": [
+                        "MP-06521",
+                    ],
+                },
+            },
+        ],
+        "status": "enabled",
+        "renderer": "csv",
+        "owner": {
+            "id": "PA-000-000",
+            "name": "Provider account for JPaul Platinum",
+        },
+        "stats": {
+            "total_executions": 0,
+            "average_execution_time": 0,
+        },
+    }
+
+
 register(CredentialFactory)
+register(FeedFactory)
