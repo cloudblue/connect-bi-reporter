@@ -31,3 +31,4 @@ class Feed(Model):
     updated_by = db.Column(db.String(20))
 
     credential = relationship('Credential', back_populates='feed')
+    upload = relationship('Upload', back_populates='feed', lazy='dynamic')
