@@ -15,3 +15,19 @@ class FeedSchema(FeedCreateSchema):
     owner: ReferenceSchema
     status: str
     events: Events
+
+
+def map_to_feed_schema(feed):
+    return FeedSchema(
+        id=feed.id,
+        file_name=feed.file_name,
+        description=feed.description,
+        schedule={'id': feed.schedule_id},
+        credential={'id': feed.credential_id},
+        owner={'id': feed.account_id},
+        status=feed.status,
+        events={
+            'created': {'at': feed.created_at, 'by': {'id': feed.created_by}},
+            'updated': {'at': feed.updated_at, 'by': {'id': feed.updated_by}},
+        },
+    )

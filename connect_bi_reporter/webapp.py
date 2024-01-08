@@ -7,12 +7,14 @@ from connect.eaas.core.decorators import router, web_app
 from connect.eaas.core.extension import WebApplicationBase
 
 from connect_bi_reporter.credentials.api.views import CredentialsWebAppMixin
+from connect_bi_reporter.feeds.api.views import FeedsWebAppMixin
 from connect_bi_reporter.db import create_db
 
 
 @web_app(router)
 class ConnectBiReporterWebApplication(
     CredentialsWebAppMixin,
+    FeedsWebAppMixin,
     WebApplicationBase,
 ):
 
