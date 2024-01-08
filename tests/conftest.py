@@ -13,7 +13,7 @@ from connect.client import AsyncConnectClient, ConnectClient
 from connect.eaas.core.inject.models import Context
 
 from .database import Session
-from .factories import CredentialFactory, FeedFactory
+from .factories import CredentialFactory, FeedFactory, UploadFactory
 from connect_bi_reporter.db import (
     create_db,
     get_db,
@@ -218,3 +218,4 @@ def report_schedule():
 
 register(CredentialFactory)
 register(FeedFactory)
+register(UploadFactory)
