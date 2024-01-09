@@ -5,6 +5,10 @@ from connect_bi_reporter.credentials.models import Credential
 from connect_bi_reporter.utils import get_object_or_404
 
 
+def get_credentials(db, installation: Dict[str, Any]):
+    return db.query(Credential).filter_by(account_id=installation['owner']['id']).all()
+
+
 def create_credentials(db, data: CredentialCreateSchema, account_id: str, user: str):
 
     credential = Credential(
