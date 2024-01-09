@@ -1,11 +1,12 @@
 from typing import Any, Dict, Union
 
 from connect.client import ClientError
+from fastapi import status
 
 
 class Error:
 
-    STATUS_CODE = 400
+    STATUS_CODE = status.HTTP_400_BAD_REQUEST
 
     def __init__(self, message, error_code):
         self.message = message
@@ -55,7 +56,7 @@ class ExtensionErrorBase(metaclass=ExtensionErrorMeta):
     ```
     # Define a custom error class
     class MyError(ExtensionErrorBase)
-        PREFIX = "BIR"
+        PREFIX = "CBIR"
         ERRORS = {
             1: "Some error",
             2: "Some {template} error.",
@@ -64,8 +65,18 @@ class ExtensionErrorBase(metaclass=ExtensionErrorMeta):
         }
 
     # raise the error
-    raise MyError.BIR_001()
-    raise MyError.BIR_002(format_kwargs={"template": "foo"})
-    raise MyError.BIR_003(status_code=404)
+    raise MyError.CBIR_001()
+    raise MyError.CBIR_002(format_kwargs={"template": "foo"})
+    raise MyError.CBIR_003(status_code=404)
     ```
     '''
+
+
+class Http404(ClientError):
+
+    def __init__(self, obj_id, **kwargs):
+        message = "Object `{obj_id}` not found.".format(obj_id=obj_id)
+        status_code = status.HTTP_404_NOT_FOUND
+        error_code = 'CBIR_000'
+        errors = [message]
+        super().__init__(message, status_code, error_code, errors, **kwargs)
