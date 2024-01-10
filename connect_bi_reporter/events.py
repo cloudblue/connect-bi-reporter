@@ -8,6 +8,7 @@ from connect.eaas.core.extension import EventsApplicationBase
 from connect.eaas.core.responses import BackgroundResponse
 
 from connect_bi_reporter.uploads.tasks import UploadTaskApplicationMixin
+from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_task
 
 
 @variables([
@@ -33,5 +34,21 @@ class ConnectBiReporterEventsApplication(
         ],
     )
     def handle_installation_status_change(self, request):
-        self.logger.info(f"Obtained request with id {request['id']}")
+        account = f"{request['owner']['name']} ({request['owner']['id']})"
+        if request['status'] == 'installed':
+            self.logger.info(
+                f"This extension has been installed by {account}: "
+                f"id={request['id']}, environment={request['environment']['id']}",
+            )
+            return genererate_default_recurring_schedule_task(
+                self.installation_client,
+                self.context,
+                self.logger,
+                BackgroundResponse,
+            )
+        else:
+            self.logger.info(
+                f'This extension has been removed by {account}: '
+                f'id={request["id"]}, environment={request["environment"]["id"]}',
+            )
         return BackgroundResponse.done()
