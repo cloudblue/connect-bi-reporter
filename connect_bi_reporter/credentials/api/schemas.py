@@ -26,3 +26,15 @@ def map_to_credential_get_schema(credential):
             'updated': {'at': credential.updated_at, 'by': {'id': credential.updated_by}},
         },
     )
+
+
+def map_to_credential_list_schema(credential):
+    return CredentialListSchema(
+        id=credential.id,
+        name=credential.name,
+        owner={'id': credential.account_id},
+        events={
+            'created': {'at': credential.created_at, 'by': {'id': credential.created_by}},
+            'updated': {'at': credential.updated_at, 'by': {'id': credential.updated_by}},
+        },
+    )
