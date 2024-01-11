@@ -274,6 +274,45 @@ def report_schedule():
     }
 
 
+@pytest.fixture
+def eaas_schedule_task():
+    return {
+        "id": "EFS-6538-5881-01-0005",
+        "name": "Create Uploads - PA-065-102",
+        "description": "Create Uploads for recurrent processing.",
+        "method": "create_uploads",
+        "parameter": {},
+        "trigger": {
+            "type": "recurring",
+            "start": "2024-01-10T09:35:03+00:00",
+            "unit": "days",
+            "amount": 7,
+        },
+        "environment": {
+            "id": "ENV-6538-5881-01",
+            "type": "development",
+            "icon": "googleExtensionBaseline",
+        },
+        "events": {
+            "created": {
+                "at": "2024-01-10T09:34:04+00:00",
+                "by": {
+                    "id": "SU-540-221-350",
+                    "name": "token for connect reporter bi",
+                },
+            },
+            "updated": {
+                "at": "2024-01-10T09:34:04+00:00",
+                "by": {
+                    "id": "SU-540-221-350",
+                    "name": "token for connect reporter bi",
+                },
+            },
+        },
+        "status": "pending",
+    }
+
+
 register(CredentialFactory)
 register(FeedFactory)
 register(UploadFactory)
