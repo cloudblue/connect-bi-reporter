@@ -126,6 +126,11 @@ def mocked_get_db_ctx(dbsession, mocker):
     def mocked_context(config):
         yield dbsession
 
+    mocker.patch(
+        'connect_bi_reporter.uploads.tasks.get_db_ctx_manager',
+        wraps=mocked_context,
+    )
+
 
 @pytest.fixture
 def api_client(test_client_factory, dbsession):

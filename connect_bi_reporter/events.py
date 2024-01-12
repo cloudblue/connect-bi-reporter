@@ -13,14 +13,9 @@ from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_
 
 @variables([
     {
-        'name': 'VAR_NAME_1',
-        'initial_value': 'VAR_VALUE_1',
+        'name': 'UPLOADS_CONTAINER_NAME',
+        'initial_value': 'extension-bi-reporter',
         'secure': False,
-    },
-    {
-        'name': 'VAR_NAME_N',
-        'initial_value': 'VAR_VALUE_N',
-        'secure': True,
     },
 ])
 class ConnectBiReporterEventsApplication(
