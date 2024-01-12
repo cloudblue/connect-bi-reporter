@@ -112,3 +112,89 @@ def test_create_feed_fail_credential_not_found(
         'errors': ['Credential `CRED-001` not valid for feed creation.'],
     }
     assert caplog.records[0].message == 'Credential `CRED-001` not valid for feed creation.'
+
+
+def test_list_feeds(installation, feed_factory, api_client, connect_auth_header):
+    feeds = []
+    feed_factory(account_id='other-account')
+    for _ in range(5):
+        feeds.append(feed_factory(account_id=installation['owner']['id']))
+
+    response = api_client.get(
+        '/api/feeds',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 200
+
+    response_data = response.json()
+
+    assert len(response_data) == len(feeds)
+
+    for feed, response_feed in zip(feeds, response_data):
+        assert response_feed['id'] == feed.id
+        assert response_feed['file_name'] == feed.file_name
+        assert response_feed['description'] == feed.description
+        assert response_feed['status'] == feed.status
+        assert response_feed['owner']['id'] == feed.account_id
+        assert response_feed['schedule']['id'] == feed.schedule_id
+        assert response_feed['credential']['id'] == feed.credential_id
+        events = response_feed['events']
+        assert events['created']['at'] is not None
+        assert events['created']['by']['id'] == feed.created_by
+        assert events['updated']['at'] is not None
+        assert events['updated']['by']['id'] == feed.created_by
+
+
+def test_list_feeds_empty(installation, api_client, connect_auth_header):
+    response = api_client.get(
+        '/api/feeds',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_get_feed(installation, feed_factory, api_client, connect_auth_header):
+    feed_factory(account_id=installation['owner']['id'])
+    feed = feed_factory(account_id=installation['owner']['id'])
+    feed_factory(account_id='other-account')
+
+    response = api_client.get(
+        f'/api/feeds/{feed.id}',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 200
+
+    response_feed = response.json()
+    assert response_feed['id'] == feed.id
+    assert response_feed['file_name'] == feed.file_name
+    assert response_feed['description'] == feed.description
+    assert response_feed['status'] == feed.status
+    assert response_feed['owner']['id'] == feed.account_id
+    assert response_feed['schedule']['id'] == feed.schedule_id
+    assert response_feed['credential']['id'] == feed.credential_id
+    events = response_feed['events']
+    assert events['created']['at'] is not None
+    assert events['created']['by']['id'] == feed.created_by
+    assert events['updated']['at'] is not None
+    assert events['updated']['by']['id'] == feed.created_by
+
+
+def test_get_feed_404(installation, feed_factory, api_client, connect_auth_header):
+    feed_factory(account_id=installation['owner']['id'])
+    feed_factory(account_id=installation['owner']['id'])
+    feed_factory(account_id='other-account')
+
+    response = api_client.get(
+        '/api/feeds/INVALID',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 404
