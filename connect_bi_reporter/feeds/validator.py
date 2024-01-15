@@ -8,6 +8,7 @@ from connect_bi_reporter.db import VerboseBaseSession
 from connect_bi_reporter.feeds.errors import FeedError
 from connect_bi_reporter.feeds.api.schemas import FeedCreateSchema
 from connect_bi_reporter.connect_services.reports import get_report_schedule
+from connect_bi_reporter.constants import ALLOWED_RENDERERS
 
 
 class FeedValidator:
@@ -32,11 +33,20 @@ class FeedValidator:
         client = args[1]
         feed_schema = args[3]
         logger = args[4]
+        reason = None
+        report_schedule = None
         try:
-            get_report_schedule(client, feed_schema.schedule.id)
+            report_schedule = get_report_schedule(client, feed_schema.schedule.id)
         except ClientError as ex:
-            logger.warning(str(ex))
-            raise FeedError.RF_000(format_kwargs={'report_schedule': feed_schema.schedule.id})
+            reason = str(ex)
+        if report_schedule and report_schedule['renderer'] not in ALLOWED_RENDERERS:
+            reason = f"Renderer `{report_schedule['renderer']}` not allowed."
+        if reason:
+            logger.warning(reason)
+            raise FeedError.RF_000(format_kwargs={
+                'report_schedule': feed_schema.schedule.id,
+                'reason': reason,
+            })
 
     @classmethod
     def validate_credential(cls, *args, **kwargs):

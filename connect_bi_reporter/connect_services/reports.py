@@ -12,3 +12,12 @@ def get_reporting_reports(client, filters):
 
 def download_report(client, report_id):
     return client.ns('reporting').collection('reports')[report_id]('download').get()
+
+
+def get_reporting_report(client, filters):
+    return (
+        client.ns('reporting')
+        .reports.filter(filters)
+        .order_by('-events.created.at')
+        .first()
+    )

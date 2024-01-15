@@ -2,23 +2,59 @@ import io
 from datetime import datetime
 from zipfile import ZipFile
 
+from connect.client import ClientError
 from connect.eaas.core.decorators import schedulable
 from connect.eaas.core.responses import (
     ScheduledExecutionResponse,
 )
+from sqlalchemy.exc import DBAPIError
 
 from connect_bi_reporter.connect_services.reports import download_report
 from connect_bi_reporter.db import get_db_ctx_manager
+from connect_bi_reporter.feeds.enums import FeedStatusChoices
+from connect_bi_reporter.feeds.models import Feed
+from connect_bi_reporter.uploads.enums import Errors, Info
 from connect_bi_reporter.uploads.models import Upload
+from connect_bi_reporter.uploads.services import create_process_upload_tasks, create_uploads
 from connect_bi_reporter.uploads.storage_utils import upload_file
+from connect_bi_reporter.scheduler import Scheduler
 
 
 class UploadTaskApplicationMixin:
     @schedulable(
         'Create Uploads',
-        'DESCRIPTION',
+        'Create Upload objects base on Connect Report files',
     )
     def create_uploads(self, schedule):
+        if 'installation_id' not in schedule['parameter']:
+            return ScheduledExecutionResponse.fail(output='Parameter installation_id is missing.')
+
+        installation_id = schedule['parameter']['installation_id']
+        try:
+            client = self.get_installation_admin_client(installation_id)
+            installation = client('devops').installations[installation_id].get()
+            with get_db_ctx_manager(self.config) as db:
+                feeds = db.query(Feed).filter(
+                    Feed.account_id == installation['owner']['id'],
+                    Feed.status == FeedStatusChoices.enabled,
+                ).all()
+                if not feeds:
+                    self.logger.info(Info.no_feeds_to_process)
+                    return ScheduledExecutionResponse.done()
+                uploads = create_uploads(db, client, self.logger, feeds)
+                scheduler = Scheduler(client, self.context, self.logger)
+                create_process_upload_tasks(
+                    uploads,
+                    scheduler,
+                    installation_id=installation['id'],
+                    account_id=installation['owner']['id'],
+                )
+        except (ClientError, DBAPIError) as exc:
+            output = Errors.connect_client_error
+            if isinstance(exc, DBAPIError):
+                output = Errors.db_error
+            self.logger.error(msg=output, exc_info=True)
+            return ScheduledExecutionResponse.fail(output=output)
         return ScheduledExecutionResponse.done()
 
     @schedulable(
@@ -61,7 +97,7 @@ class UploadTaskApplicationMixin:
                 with ZipFile(io.BytesIO(report_data), 'r') as myzip:
                     with myzip.open('report.csv') as myfile:
                         uploaded_file_props = upload_file(
-                            myfile.read(), file_name, feed.credential, self.logger,
+                            myfile.read(), file_name, feed.credential, self.logger, self.config,
                         )
                         upload.size = uploaded_file_props.get('size', 0)
 
