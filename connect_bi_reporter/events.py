@@ -17,6 +17,12 @@ from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_
         'initial_value': 'extension-bi-reporter',
         'secure': False,
     },
+
+    {
+        'name': 'DATABASE_URL',
+        'initial_value': 'postgresql+psycopg2://postgres:1q2w3e@db/bi_reporter',
+        'secure': True,
+    },
 ])
 class ConnectBiReporterEventsApplication(
     EventsApplicationBase,

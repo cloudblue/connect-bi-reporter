@@ -1,11 +1,9 @@
-import os
-
 from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob import ContainerClient
 
 
-def upload_file(data, filename, credentials, logger):  # pragma: no cover
-    container_name = os.getenv('UPLOADS_CONTAINER_NAME')
+def upload_file(data, filename, credentials, logger, config):  # pragma: no cover
+    container_name = config.get('UPLOADS_CONTAINER_NAME')
 
     try:
         container_client = ContainerClient.from_connection_string(

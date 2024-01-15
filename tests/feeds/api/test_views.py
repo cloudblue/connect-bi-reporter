@@ -1,4 +1,5 @@
 from connect.client import ClientError
+import pytest
 
 
 def test_create_feed(
@@ -43,6 +44,13 @@ def test_create_feed(
     assert events['updated']['by'] is not None
 
 
+@pytest.mark.parametrize(
+    'response,reason',
+    (
+        ({'side_effect': ClientError(status_code=500)}, '500 Internal Server Error'),
+        ({'return_value': {'renderer': 'test'}}, 'Renderer `test` not allowed.'),
+    ),
+)
 def test_create_feed_fail_schedule_report_not_valid(
     installation,
     report_schedule,
@@ -51,10 +59,12 @@ def test_create_feed_fail_schedule_report_not_valid(
     connect_auth_header,
     mocker,
     caplog,
+    response,
+    reason,
 ):
     mocker.patch(
         'connect_bi_reporter.feeds.validator.get_report_schedule',
-        side_effect=ClientError(status_code=500),
+        **response,
     )
     credential = credential_factory(account_id=installation['owner']['id'])
 
@@ -74,9 +84,11 @@ def test_create_feed_fail_schedule_report_not_valid(
     response_data = response.json()
     assert response_data == {
         'error_code': 'RF_000',
-        'errors': [f'Report schedule `{report_schedule["id"]}` not valid for feed creation.'],
+        'errors': [
+            f'Report schedule `{report_schedule["id"]}` not '
+            f'valid for feed creation: {reason}'],
     }
-    assert caplog.records[0].message == '500 Internal Server Error'
+    assert caplog.records[0].message == reason
 
 
 def test_create_feed_fail_credential_not_found(
@@ -89,7 +101,7 @@ def test_create_feed_fail_credential_not_found(
 ):
     mocker.patch(
         'connect_bi_reporter.feeds.validator.get_report_schedule',
-        side_effect={'id': 'some'},
+        return_value=report_schedule,
     )
 
     body = {
