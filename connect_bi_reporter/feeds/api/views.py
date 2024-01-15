@@ -1,4 +1,5 @@
 from logging import Logger
+from typing import List
 
 from connect.client import ConnectClient
 from fastapi import Depends, Request, status
@@ -8,12 +9,39 @@ from connect.eaas.core.inject.synchronous import get_installation, get_installat
 
 from connect_bi_reporter.db import get_db, VerboseBaseSession
 from connect_bi_reporter.feeds.api.schemas import FeedCreateSchema, FeedSchema, map_to_feed_schema
-from connect_bi_reporter.feeds.services import create_feed
+from connect_bi_reporter.feeds.services import create_feed, get_feed_or_404, get_feeds
 from connect_bi_reporter.feeds.validator import FeedValidator
 from connect_bi_reporter.utils import get_user_data_from_auth_token
 
 
 class FeedsWebAppMixin:
+
+    @router.get(
+        '/feeds/{feed_id}',
+        summary='Returns the require feed',
+        response_model=FeedSchema,
+        status_code=status.HTTP_200_OK,
+    )
+    def get_feed(
+        self,
+        feed_id: str,
+        db: VerboseBaseSession = Depends(get_db),
+        installation: dict = Depends(get_installation),
+    ):
+        return map_to_feed_schema(get_feed_or_404(db, installation, feed_id))
+
+    @router.get(
+        '/feeds',
+        summary='Returns all feeds',
+        response_model=List[FeedSchema],
+        status_code=status.HTTP_200_OK,
+    )
+    def get_feeds(
+        self,
+        db: VerboseBaseSession = Depends(get_db),
+        installation: dict = Depends(get_installation),
+    ):
+        return [map_to_feed_schema(feed) for feed in get_feeds(db, installation)]
 
     @router.post(
         '/feeds',

@@ -2,6 +2,7 @@ from typing import Any, Dict
 
 from connect_bi_reporter.feeds.models import Feed
 from connect_bi_reporter.feeds.api.schemas import FeedCreateSchema
+from connect_bi_reporter.utils import get_object_or_404
 
 
 def create_feed(db, data: FeedCreateSchema, account_id: str, user: Dict[str, Any]):
@@ -20,3 +21,15 @@ def create_feed(db, data: FeedCreateSchema, account_id: str, user: Dict[str, Any
     db.commit()
     db.refresh(feed)
     return feed
+
+
+def get_feed_or_404(db, installation: Dict[str, Any], feed_id: str):
+    filters = (
+        Feed.account_id == installation['owner']['id'],
+        Feed.id == feed_id,
+    )
+    return get_object_or_404(db, Feed, filters, feed_id)
+
+
+def get_feeds(db, installation: Dict[str, Any]):
+    return db.query(Feed).filter_by(account_id=installation['owner']['id']).all()
