@@ -1,0 +1,12 @@
+env: production
+type: multiaccount
+package_id: com.cloudblue.dl.export
+name: CloudBlue Datalake Export
+description: Connect BI Reporter
+overview: overview.md
+website: https://connect.cloudblue.com
+icon: icon.png
+category: eCommerce
+var:                        # dictionary of variables, if 'value' missing = it will be retrieved from environment variables,
+  DATABASE_URL:               # if 'secure' flag is missing - it will be set to False
+      secure: true
