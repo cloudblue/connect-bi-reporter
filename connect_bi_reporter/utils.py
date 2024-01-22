@@ -18,7 +18,7 @@ def get_extension_owner_client(logger):
 
 
 def get_extension_owner_installation(client):
-    rql = R().external_id.eq(os.getenv('ENVIRONMENT_ID'))
+    rql = R().environment.id.eq(os.getenv('ENVIRONMENT_ID'))
     return client('devops').installations.filter(rql).first()
 
 
