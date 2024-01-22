@@ -35,7 +35,7 @@ class ConnectBiReporterWebApplication(
         try:
             installation = get_extension_owner_installation(client)
         except ClientError:
-            logger.info(
+            logger.exception(
                 'Something went wrong when trying to initialize the extension:'
                 ' Please stop it and run it again.',
             )
