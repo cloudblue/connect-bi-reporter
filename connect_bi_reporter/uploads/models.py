@@ -2,8 +2,8 @@ from datetime import datetime
 
 from sqlalchemy.orm import relationship
 import sqlalchemy as db
+from connect_extension_utils.db.models import Model
 
-from connect_bi_reporter.db import Model
 from connect_bi_reporter.feeds.models import Feed
 from connect_bi_reporter.uploads.enums import UploadStatusChoices
 

@@ -132,5 +132,5 @@ def test_get_credential_404(installation, api_client, connect_auth_header, crede
 
     assert response.status_code == 404
     response_data = response.json()
-    assert response_data['error_code'] == 'CBIR_000'
+    assert response_data['error_code'] == 'NFND_000'
     assert response_data['errors'][0] == 'Object `NOT-FOUND` not found.'

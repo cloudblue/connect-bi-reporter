@@ -3,8 +3,9 @@ from typing import List
 from fastapi import Depends, Request, status
 from connect.eaas.core.decorators import router
 from connect.eaas.core.inject.synchronous import get_installation
+from connect_extension_utils.api.views import get_user_data_from_auth_token
+from connect_extension_utils.db.models import get_db, VerboseBaseSession
 
-from connect_bi_reporter.db import get_db, VerboseBaseSession
 from connect_bi_reporter.credentials.api.schemas import (
     CredentialCreateSchema,
     CredentialGetSchema,
@@ -13,7 +14,6 @@ from connect_bi_reporter.credentials.api.schemas import (
     map_to_credential_list_schema,
 )
 from connect_bi_reporter.credentials import services
-from connect_bi_reporter.utils import get_user_data_from_auth_token
 
 
 class CredentialsWebAppMixin:
