@@ -10,6 +10,7 @@ from connect_bi_reporter.credentials.api.schemas import (
     CredentialCreateSchema,
     CredentialGetSchema,
     CredentialListSchema,
+    CredentialUpdateSchema,
     map_to_credential_get_schema,
     map_to_credential_list_schema,
 )
@@ -68,3 +69,36 @@ class CredentialsWebAppMixin:
             db, credential_schema, account_id, logged_user_data,
         )
         return map_to_credential_get_schema(credential)
+
+    @router.put(
+        '/credentials/{credential_id}',
+        summary='Update a Credential',
+        response_model=CredentialGetSchema,
+        status_code=status.HTTP_200_OK,
+    )
+    def update_credential(
+        self,
+        credential_id: str,
+        credential_schema: CredentialUpdateSchema,
+        db: VerboseBaseSession = Depends(get_db),
+        installation: dict = Depends(get_installation),
+        request: Request = None,
+    ):
+        logged_user_data = get_user_data_from_auth_token(request.headers['connect-auth'])
+        credential = services.update_credential(
+            db, credential_schema, installation, credential_id, logged_user_data,
+        )
+        return map_to_credential_get_schema(credential)
+
+    @router.delete(
+        '/credentials/{credential_id}',
+        summary='Delete a Credential',
+        status_code=status.HTTP_204_NO_CONTENT,
+    )
+    def delete_credential(
+        self,
+        credential_id: str,
+        db: VerboseBaseSession = Depends(get_db),
+        installation: dict = Depends(get_installation),
+    ):
+        services.delete_credential(db, installation, credential_id)
