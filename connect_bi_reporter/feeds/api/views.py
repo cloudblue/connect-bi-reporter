@@ -6,12 +6,12 @@ from fastapi import Depends, Request, status
 from connect.eaas.core.decorators import router
 from connect.eaas.core.inject.common import get_logger
 from connect.eaas.core.inject.synchronous import get_installation, get_installation_client
+from connect_extension_utils.api.views import get_user_data_from_auth_token
+from connect_extension_utils.db.models import get_db, VerboseBaseSession
 
-from connect_bi_reporter.db import get_db, VerboseBaseSession
 from connect_bi_reporter.feeds.api.schemas import FeedCreateSchema, FeedSchema, map_to_feed_schema
 from connect_bi_reporter.feeds.services import create_feed, get_feed_or_404, get_feeds
 from connect_bi_reporter.feeds.validator import FeedValidator
-from connect_bi_reporter.utils import get_user_data_from_auth_token
 
 
 class FeedsWebAppMixin:

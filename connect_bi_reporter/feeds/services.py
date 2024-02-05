@@ -1,8 +1,9 @@
 from typing import Any, Dict
 
+from connect_extension_utils.api.views import get_object_or_404
+
 from connect_bi_reporter.feeds.models import Feed
 from connect_bi_reporter.feeds.api.schemas import FeedCreateSchema
-from connect_bi_reporter.utils import get_object_or_404
 
 
 def create_feed(db, data: FeedCreateSchema, account_id: str, user: Dict[str, Any]):

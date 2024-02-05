@@ -2,9 +2,9 @@ from logging import Logger
 from typing import Any, Dict
 
 from connect.client import ClientError, ConnectClient
+from connect_extension_utils.db.models import VerboseBaseSession
 
 from connect_bi_reporter.credentials.models import Credential
-from connect_bi_reporter.db import VerboseBaseSession
 from connect_bi_reporter.feeds.errors import FeedError
 from connect_bi_reporter.feeds.api.schemas import FeedCreateSchema
 from connect_bi_reporter.connect_services.reports import get_report_schedule

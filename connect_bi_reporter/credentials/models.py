@@ -2,8 +2,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import relationship
 import sqlalchemy as db
-
-from connect_bi_reporter.db import Model
+from connect_extension_utils.db.models import Model
 
 
 class Credential(Model):

@@ -1,8 +1,9 @@
 from typing import Any, Dict
 
+from connect_extension_utils.api.views import get_object_or_404
+
 from connect_bi_reporter.credentials.api.schemas import CredentialCreateSchema
 from connect_bi_reporter.credentials.models import Credential
-from connect_bi_reporter.utils import get_object_or_404
 
 
 def get_credentials(db, installation: Dict[str, Any]):

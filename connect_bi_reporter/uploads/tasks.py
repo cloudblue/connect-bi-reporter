@@ -7,10 +7,10 @@ from connect.eaas.core.decorators import schedulable
 from connect.eaas.core.responses import (
     ScheduledExecutionResponse,
 )
+from connect_extension_utils.db.models import get_db_ctx_manager
 from sqlalchemy.exc import DBAPIError
 
 from connect_bi_reporter.connect_services.reports import download_report
-from connect_bi_reporter.db import get_db_ctx_manager
 from connect_bi_reporter.feeds.enums import FeedStatusChoices
 from connect_bi_reporter.feeds.models import Feed
 from connect_bi_reporter.uploads.enums import Errors, Info

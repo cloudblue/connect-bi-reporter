@@ -7,15 +7,15 @@ from connect.client import ClientError
 from connect.eaas.core.decorators import router, web_app
 from connect.eaas.core.inject.models import Context
 from connect.eaas.core.extension import WebApplicationBase
-
-from connect_bi_reporter.credentials.api.views import CredentialsWebAppMixin
-from connect_bi_reporter.feeds.api.views import FeedsWebAppMixin
-from connect_bi_reporter.db import create_db
-from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_task
-from connect_bi_reporter.utils import (
+from connect_extension_utils.connect_services.base import (
     get_extension_owner_client,
     get_extension_owner_installation,
 )
+from connect_extension_utils.db.models import create_db
+
+from connect_bi_reporter.credentials.api.views import CredentialsWebAppMixin
+from connect_bi_reporter.feeds.api.views import FeedsWebAppMixin
+from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_task
 
 
 @web_app(router)
