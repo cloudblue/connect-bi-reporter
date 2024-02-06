@@ -1,6 +1,6 @@
 from typing import Optional
 
-from connect_bi_reporter.schemas import Events, NonNullSchema, ReferenceSchema
+from connect_extension_utils.api.schemas import Events, NonNullSchema, ReferenceSchema
 
 
 class CredentialCreateSchema(NonNullSchema):

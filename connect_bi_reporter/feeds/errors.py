@@ -6,5 +6,7 @@ class FeedError(ExtensionErrorBase):
 
     ERRORS = {
         0: "Report schedule `{report_schedule}` not valid for feed creation: {reason}",
-        1: "Credential `{credential_id}` not valid for feed creation.",
+        1: "Can not {action} Feed, the Credential `{credential_id}` is not valid.",
+        2: "Can not delete Feed `{feed_id}`, "
+        "is already related to Uploads `{uploads}`.",
     }
