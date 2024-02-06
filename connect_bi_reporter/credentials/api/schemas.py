@@ -1,3 +1,5 @@
+from typing import Optional
+
 from connect_bi_reporter.schemas import Events, NonNullSchema, ReferenceSchema
 
 
@@ -9,6 +11,11 @@ class CredentialCreateSchema(NonNullSchema):
 class CredentialListSchema(ReferenceSchema):
     owner: ReferenceSchema
     events: Events
+
+
+class CredentialUpdateSchema(NonNullSchema):
+    name: Optional[str]
+    connection_string: Optional[str]
 
 
 class CredentialGetSchema(CredentialListSchema):

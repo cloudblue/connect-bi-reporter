@@ -1,4 +1,5 @@
 import pytest
+from connect_extension_utils.api.views import get_user_data_from_auth_token
 
 
 def test_create_credential(installation, api_client, connect_auth_header):
@@ -134,3 +135,141 @@ def test_get_credential_404(installation, api_client, connect_auth_header, crede
     response_data = response.json()
     assert response_data['error_code'] == 'NFND_000'
     assert response_data['errors'][0] == 'Object `NOT-FOUND` not found.'
+
+
+def test_update_credential(
+    dbsession,
+    installation,
+    api_client,
+    connect_auth_header,
+    credential_factory,
+):
+    cred = credential_factory(account_id=installation['owner']['id'])
+    updated_at = cred.updated_at
+    body = {'name': 'My credentials', 'connection_string': 'core.windows.net'}
+    response = api_client.put(
+        f'/api/credentials/{cred.id}',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+        json=body,
+    )
+    user = get_user_data_from_auth_token(connect_auth_header)
+    assert response.status_code == 200
+
+    response_data = response.json()
+    assert response_data['id'] is not None
+    assert response_data['name'] == body['name']
+    assert response_data['connection_string'] == body['connection_string']
+    assert response_data['owner']['id'] == installation['owner']['id']
+    events = response_data['events']
+    assert events['created']['at'] == cred.created_at.isoformat()
+    assert events['created']['by'] == {'id': cred.created_by}
+    dbsession.refresh(cred)
+    assert events['updated']['at'] == cred.updated_at.isoformat()
+    assert cred.updated_at > updated_at
+    assert events['updated']['by'] == {'id': user['id']}
+
+
+def test_update_credential_404(installation, api_client, connect_auth_header):
+    body = {'name': 'My credentials', 'connection_string': 'core.windows.net'}
+    response = api_client.put(
+        '/api/credentials/NOT-FOUND',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+        json=body,
+    )
+
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['error_code'] == 'NFND_000'
+    assert response_data['errors'][0] == 'Object `NOT-FOUND` not found.'
+
+
+def test_update_credential_nothing_to_update(
+    installation,
+    api_client,
+    connect_auth_header,
+    credential_factory,
+):
+    cred = credential_factory(account_id=installation['owner']['id'])
+    updated_at = cred.updated_at
+    body = {}
+    response = api_client.put(
+        f'/api/credentials/{cred.id}',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+        json=body,
+    )
+
+    assert response.status_code == 200
+
+    response_data = response.json()
+    assert response_data['id'] is not None
+    assert response_data['name'] == cred.name
+    assert response_data['connection_string'] == cred.connection_string
+    assert response_data['owner']['id'] == installation['owner']['id']
+    events = response_data['events']
+    assert events['created']['at'] is not None
+    assert events['created']['by'] is not None
+    assert events['updated']['at'] == cred.updated_at.isoformat()
+    assert cred.updated_at == updated_at
+    assert events['updated']['by'] == {'id': cred.updated_by}
+
+
+def test_delete_credential(
+    dbsession,
+    installation,
+    api_client,
+    connect_auth_header,
+    credential_factory,
+):
+    cred = credential_factory(account_id=installation['owner']['id'])
+    response = api_client.delete(
+        f'/api/credentials/{cred.id}',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+    assert response.status_code == 204
+    assert not dbsession.query(credential_factory._meta.model).all()
+
+
+def test_delete_credential_404(
+    installation,
+    api_client,
+    connect_auth_header,
+):
+    response = api_client.delete(
+        '/api/credentials/NOT-FOUND',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['error_code'] == 'NFND_000'
+    assert response_data['errors'][0] == 'Object `NOT-FOUND` not found.'
+
+
+def test_delete_credential_already_in_use(
+    dbsession,
+    installation,
+    api_client,
+    connect_auth_header,
+    credential_factory,
+    feed_factory,
+):
+    cred = credential_factory(account_id=installation['owner']['id'])
+    feed_factory(credential_id=cred.id)
+    response = api_client.delete(
+        f'/api/credentials/{cred.id}',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+    assert response.status_code == 400
+    response_data = response.json()
+    assert response_data['error_code'] == 'CRED_000'
+    assert response_data['errors'][0] == (
+        f'Can not delete Credential `{cred.id}`, '
+        f'is already related to Feeds `{", ".join(feed.id for feed in cred.feed.all())}`.'
+    )
+    assert dbsession.query(credential_factory._meta.model).count() == 1
