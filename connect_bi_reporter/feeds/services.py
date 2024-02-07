@@ -4,6 +4,7 @@ from typing import Any, Dict
 from connect_extension_utils.api.views import get_object_or_404
 
 from connect_bi_reporter.feeds.api.schemas import FeedCreateSchema, FeedUpdateSchema
+from connect_bi_reporter.feeds.enums import FeedStatusChoices
 from connect_bi_reporter.feeds.errors import FeedError
 from connect_bi_reporter.feeds.models import Feed
 from connect_bi_reporter.feeds.validator import FeedValidator
@@ -76,3 +77,23 @@ def delete_feed(
         )
     db.delete(feed)
     db.commit()
+
+
+def enable_feed(
+    db,
+    installation: Dict[str, Any],
+    feed_id: str,
+    user: Dict[str, str],
+):
+    feed = get_feed_or_404(db, installation, feed_id)
+    if feed.status == FeedStatusChoices.enabled:
+        raise FeedError.RF_003(
+            format_kwargs={
+                'feed_id': feed.id,
+                'status': feed.status,
+            },
+        )
+    feed.status = FeedStatusChoices.enabled
+    feed.updated_by = user['id']
+    db.commit()
+    return feed

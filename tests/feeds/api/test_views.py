@@ -388,3 +388,71 @@ def test_delete_feed_already_in_use(
         f'is already related to Uploads `{", ".join(feed.id for feed in feed.upload.all())}`.'
     )
     assert dbsession.query(feed_factory._meta.model).count() == 1
+
+
+def test_enable_feed(
+    installation,
+    feed_factory,
+    api_client,
+    connect_auth_header,
+):
+    feed = feed_factory(account_id=installation['owner']['id'], status='disabled')
+    updated_at = feed.updated_at
+    previous_status = feed.status
+
+    response = api_client.post(
+        f'/api/feeds/{feed.id}/enable',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+    user = get_user_data_from_auth_token(connect_auth_header)
+
+    assert response.status_code == 200
+
+    response_data = response.json()
+    assert response_data['id'] == feed.id
+    assert response_data['id'].startswith(feed_factory._meta.model.PREFIX)
+    assert response_data['file_name'] == feed.file_name
+    assert response_data['description'] == feed.description
+    assert response_data['owner']['id'] == installation['owner']['id']
+    events = response_data['events']
+    assert events['created']['at'] is not None
+    assert events['created']['by'] is not None
+    assert feed.updated_at > updated_at
+    assert events['updated']['by']['id'] == user['id']
+    assert response_data['status'] == 'enabled'
+    assert feed.status != previous_status and feed.status == 'enabled'
+
+
+def test_enable_feed_404(installation, api_client, connect_auth_header):
+    response = api_client.post(
+        '/api/feeds/NOT-FOUND/enable',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 404
+    response_data = response.json()
+    assert response_data['error_code'] == 'NFND_000'
+    assert response_data['errors'][0] == 'Object `NOT-FOUND` not found.'
+
+
+def test_already_enable_feed(
+    installation,
+    feed_factory,
+    api_client,
+    connect_auth_header,
+):
+    feed = feed_factory(account_id=installation['owner']['id'])
+    response = api_client.post(
+        f'/api/feeds/{feed.id}/enable',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 400
+    response_data = response.json()
+    assert response_data['error_code'] == 'RF_003'
+    assert response_data['errors'][0] == (
+        f'Feed `{feed.id}` is already in status `{feed.status}`.'
+    )
