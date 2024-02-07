@@ -1,6 +1,8 @@
 from typing import Optional
 
-from connect_bi_reporter.schemas import Events, NonNullSchema, ReferenceSchema
+from connect_extension_utils.api.schemas import Events, NonNullSchema, ReferenceSchema
+
+from connect_bi_reporter.schemas import flatten
 
 
 class FeedCreateSchema(NonNullSchema):
@@ -31,3 +33,13 @@ def map_to_feed_schema(feed):
             'updated': {'at': feed.updated_at, 'by': {'id': feed.updated_by}},
         },
     )
+
+
+class FeedUpdateSchema(NonNullSchema):
+    credential: Optional[ReferenceSchema]
+    file_name: Optional[str]
+    description: Optional[str]
+
+    def dict(self, *args, **kwargs):
+        result = super().dict(*args, **kwargs)
+        return flatten(result)

@@ -54,11 +54,15 @@ class FeedValidator:
         installation = args[2]
         feed_schema = args[3]
         logger = args[4]
+        action = kwargs.pop('action', 'create')
         cred = db.query(Credential).filter(
             Credential.account_id == installation['owner']['id'],
             Credential.id == feed_schema.credential.id,
         ).one_or_none()
         if not cred:
-            exc = FeedError.RF_001(format_kwargs={'credential_id': feed_schema.credential.id})
+            exc = FeedError.RF_001(format_kwargs={
+                'credential_id': feed_schema.credential.id,
+                'action': action,
+            })
             logger.warning(exc.message)
             raise exc

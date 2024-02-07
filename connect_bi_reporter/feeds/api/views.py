@@ -9,8 +9,19 @@ from connect.eaas.core.inject.synchronous import get_installation, get_installat
 from connect_extension_utils.api.views import get_user_data_from_auth_token
 from connect_extension_utils.db.models import get_db, VerboseBaseSession
 
-from connect_bi_reporter.feeds.api.schemas import FeedCreateSchema, FeedSchema, map_to_feed_schema
-from connect_bi_reporter.feeds.services import create_feed, get_feed_or_404, get_feeds
+from connect_bi_reporter.feeds.api.schemas import (
+    FeedCreateSchema,
+    FeedSchema,
+    FeedUpdateSchema,
+    map_to_feed_schema,
+)
+from connect_bi_reporter.feeds.services import (
+    create_feed,
+    delete_feed,
+    get_feed_or_404,
+    get_feeds,
+    update_feed,
+)
 from connect_bi_reporter.feeds.validator import FeedValidator
 
 
@@ -63,3 +74,37 @@ class FeedsWebAppMixin:
         account_id = installation['owner']['id']
         feed = create_feed(db, feed_schema, account_id, logged_user_data)
         return map_to_feed_schema(feed)
+
+    @router.put(
+        '/feeds/{feed_id}',
+        summary='Update a Feed',
+        response_model=FeedSchema,
+        status_code=status.HTTP_200_OK,
+    )
+    def update_feed(
+        self,
+        feed_id: str,
+        feed_schema: FeedUpdateSchema,
+        db: VerboseBaseSession = Depends(get_db),
+        installation: dict = Depends(get_installation),
+        logger: Logger = Depends(get_logger),
+        request: Request = None,
+    ):
+        logged_user_data = get_user_data_from_auth_token(request.headers['connect-auth'])
+        feed = update_feed(
+            db, feed_schema, installation, feed_id, logged_user_data, logger,
+        )
+        return map_to_feed_schema(feed)
+
+    @router.delete(
+        '/feeds/{feed_id}',
+        summary='Delete a Feed',
+        status_code=status.HTTP_204_NO_CONTENT,
+    )
+    def delete_feed(
+        self,
+        feed_id: str,
+        db: VerboseBaseSession = Depends(get_db),
+        installation: dict = Depends(get_installation),
+    ):
+        delete_feed(db, installation, feed_id)
