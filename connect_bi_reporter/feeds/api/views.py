@@ -15,10 +15,11 @@ from connect_bi_reporter.feeds.api.schemas import (
     FeedUpdateSchema,
     map_to_feed_schema,
 )
+from connect_bi_reporter.feeds.enums import FeedStatusChoices
 from connect_bi_reporter.feeds.services import (
+    change_feed_status,
     create_feed,
     delete_feed,
-    enable_feed,
     get_feed_or_404,
     get_feeds,
     update_feed,
@@ -115,6 +116,7 @@ class FeedsWebAppMixin:
         summary='Enable a Feed',
         response_model=FeedSchema,
         status_code=status.HTTP_200_OK,
+        name=FeedStatusChoices.enabled,
     )
     def enable_feed(
         self,
@@ -123,6 +125,26 @@ class FeedsWebAppMixin:
         installation: dict = Depends(get_installation),
         request: Request = None,
     ):
+        return self.handle_feed_status_change(feed_id, db, installation, request)
+
+    @router.post(
+        '/feeds/{feed_id}/disable',
+        summary='Enable a Feed',
+        response_model=FeedSchema,
+        status_code=status.HTTP_200_OK,
+        name=FeedStatusChoices.disabled,
+    )
+    def disable_feed(
+        self,
+        feed_id: str,
+        db: VerboseBaseSession = Depends(get_db),
+        installation: dict = Depends(get_installation),
+        request: Request = None,
+    ):
+        return self.handle_feed_status_change(feed_id, db, installation, request)
+
+    def handle_feed_status_change(self, feed_id, db, installation, request):
         logged_user_data = get_user_data_from_auth_token(request.headers['connect-auth'])
-        feed = enable_feed(db, installation, feed_id, logged_user_data)
+        status_for_change = request.scope['route'].name
+        feed = change_feed_status(db, installation, feed_id, logged_user_data, status_for_change)
         return map_to_feed_schema(feed)
