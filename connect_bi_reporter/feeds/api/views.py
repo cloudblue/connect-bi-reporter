@@ -18,6 +18,7 @@ from connect_bi_reporter.feeds.api.schemas import (
 from connect_bi_reporter.feeds.services import (
     create_feed,
     delete_feed,
+    enable_feed,
     get_feed_or_404,
     get_feeds,
     update_feed,
@@ -108,3 +109,20 @@ class FeedsWebAppMixin:
         installation: dict = Depends(get_installation),
     ):
         delete_feed(db, installation, feed_id)
+
+    @router.post(
+        '/feeds/{feed_id}/enable',
+        summary='Enable a Feed',
+        response_model=FeedSchema,
+        status_code=status.HTTP_200_OK,
+    )
+    def enable_feed(
+        self,
+        feed_id: str,
+        db: VerboseBaseSession = Depends(get_db),
+        installation: dict = Depends(get_installation),
+        request: Request = None,
+    ):
+        logged_user_data = get_user_data_from_auth_token(request.headers['connect-auth'])
+        feed = enable_feed(db, installation, feed_id, logged_user_data)
+        return map_to_feed_schema(feed)
