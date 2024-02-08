@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import util
 from connect.client import ClientError
 from connect.client.rql import R
+from connect_extension_utils.api.errors import Http404
 
 from connect_bi_reporter.feeds.enums import FeedStatusChoices
 from connect_bi_reporter.scheduler import TriggerTypeEnum
@@ -187,3 +188,27 @@ def create_process_upload_tasks(uploads, scheduler, **kwargs):
                 report_id=upload.report_id,
             ),
         )
+
+
+def get_feed_for_uploads(db, installation, feed_id):
+    feed_model = Upload.feed.mapper.class_
+    filters = (
+        feed_model.account_id == installation['owner']['id'],
+        feed_model.id == feed_id,
+    )
+    return db.query(feed_model).filter(*filters).one_or_none()
+
+
+def get_uploads_or_404(db, installation, feed_id):
+    feed = get_feed_for_uploads(db, installation, feed_id)
+    if not feed:
+        raise Http404(obj_id=feed_id)
+    return feed.upload
+
+
+def get_upload_or_404(db, installation, feed_id, upload_id):
+    upload_list = get_uploads_or_404(db, installation, feed_id)
+    upload = upload_list.filter(Upload.id == upload_id).one_or_none()
+    if not upload:
+        raise Http404(obj_id=upload_id)
+    return upload

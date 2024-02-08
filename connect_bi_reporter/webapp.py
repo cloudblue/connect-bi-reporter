@@ -15,6 +15,7 @@ from connect_extension_utils.db.models import create_db
 
 from connect_bi_reporter.credentials.api.views import CredentialsWebAppMixin
 from connect_bi_reporter.feeds.api.views import FeedsWebAppMixin
+from connect_bi_reporter.uploads.api.views import UploadsWebAppMixin
 from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_task
 
 
@@ -22,6 +23,7 @@ from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_
 class ConnectBiReporterWebApplication(
     CredentialsWebAppMixin,
     FeedsWebAppMixin,
+    UploadsWebAppMixin,
     WebApplicationBase,
 ):
 
