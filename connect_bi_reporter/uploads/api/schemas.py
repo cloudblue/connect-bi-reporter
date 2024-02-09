@@ -11,3 +11,22 @@ class UploadSchema(NonNullSchema):
     size: Optional[int]
     status: str
     events: Events
+
+
+def map_to_upload_schema(upload):
+    return UploadSchema(
+        id=upload.id,
+        name=upload.name,
+        feed={'id': upload.feed_id},
+        report={'id': upload.report_id},
+        size=upload.size,
+        status=upload.status,
+        events={
+            'created': {
+                'at': upload.created_at,
+            },
+            'updated': {
+                'at': upload.updated_at,
+            },
+        },
+    )
