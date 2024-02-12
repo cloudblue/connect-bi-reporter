@@ -9,6 +9,7 @@ from connect_bi_reporter.feeds.enums import FeedStatusChoices
 from connect_bi_reporter.scheduler import TriggerTypeEnum
 from connect_bi_reporter.uploads.models import Upload
 from connect_bi_reporter.uploads.enums import Errors, Info
+from connect_bi_reporter.uploads.errors import UploadError
 from connect_bi_reporter.connect_services.reports import get_report_schedule, get_reporting_report
 from connect_bi_reporter.constants import (
     ALLOWED_RENDERERS,
@@ -211,4 +212,42 @@ def get_upload_or_404(db, installation, feed_id, upload_id):
     upload = upload_list.filter(Upload.id == upload_id).one_or_none()
     if not upload:
         raise Http404(obj_id=upload_id)
+    return upload
+
+
+def retry_failed_upload(
+    db,
+    installation,
+    feed_id,
+    upload_id,
+    scheduler,
+):
+    upload = get_upload_or_404(db, installation, feed_id, upload_id)
+    reason = "Expected status is `failed`, but received `{status}`.".format(status=upload.status)
+    if upload.status != Upload.STATUSES.failed:
+        raise UploadError.UPL_000(
+            format_kwargs={
+                'upload_id': upload.id,
+                'reason': reason,
+            },
+        )
+    try:
+        create_process_upload_tasks(
+            [upload],
+            scheduler,
+            installation_id=installation['id'],
+            account_id=installation['owner']['id'],
+        )
+    except ClientError:
+        reason = Errors.connect_client_error
+        scheduler.logger.exception(reason)
+        raise UploadError.UPL_000(
+            format_kwargs={
+                'upload_id': upload.id,
+                'reason': reason,
+            },
+        )
+
+    upload.status = Upload.STATUSES.pending
+    db.commit()
     return upload
