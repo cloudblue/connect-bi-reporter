@@ -251,3 +251,38 @@ def retry_failed_upload(
     upload.status = Upload.STATUSES.pending
     db.commit()
     return upload
+
+
+def force_upload(db, client, scheduler, installation, feed):
+    if feed.status == FeedStatusChoices.disabled:
+        raise UploadError.UPL_001(
+            format_kwargs={
+                'feed_id': feed.id,
+                'status': feed.status,
+            },
+        )
+    logger = scheduler.logger
+    try:
+        uploads = create_uploads(db, client, logger, [feed])
+        create_process_upload_tasks(
+            uploads,
+            scheduler,
+            installation_id=installation['id'],
+            account_id=installation['owner']['id'],
+        )
+    except ClientError:
+        reason = Errors.connect_client_error
+        logger.exception(reason)
+        raise UploadError.UPL_002(
+            format_kwargs={
+                'feed_id': feed.id,
+                'reason': reason,
+            })
+    if not uploads:
+        reason = 'Validation error.'
+        raise UploadError.UPL_002(
+            format_kwargs={
+                'feed_id': feed.id,
+                'reason': reason,
+            })
+    return uploads[0]

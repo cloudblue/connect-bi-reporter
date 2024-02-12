@@ -12,6 +12,8 @@ from connect_extension_utils.db.models import get_db, VerboseBaseSession
 from connect_bi_reporter.scheduler import Scheduler
 from connect_bi_reporter.uploads.api.schemas import map_to_upload_schema, UploadSchema
 from connect_bi_reporter.uploads.services import (
+    force_upload,
+    get_feed_for_uploads,
     get_upload_or_404,
     get_uploads_or_404,
     retry_failed_upload,
@@ -71,3 +73,26 @@ class UploadsWebAppMixin:
         scheduler = Scheduler(client, context, logger)
         upload = retry_failed_upload(db, installation, feed_id, upload_id, scheduler)
         return map_to_upload_schema(upload)
+
+    def _force_upload(self, db, client, context, logger, installation, feed):
+        scheduler = Scheduler(client, context, logger)
+        upload = force_upload(db, client, scheduler, installation, feed)
+        return map_to_upload_schema(upload)
+
+    @router.post(
+        '/feeds/{feed_id}/uploads/force',
+        summary='Force creation of Upload from a Feed',
+        response_model=UploadSchema,
+        status_code=status.HTTP_201_CREATED,
+    )
+    def force_upload(
+        self,
+        feed_id: str,
+        db: VerboseBaseSession = Depends(get_db),
+        client: ConnectClient = Depends(get_installation_client),
+        context: Context = Depends(get_call_context),
+        logger: Logger = Depends(get_logger),
+        installation: dict = Depends(get_installation),
+    ):
+        feed = get_feed_for_uploads(db, installation, feed_id)
+        return self._force_upload(db, client, context, logger, installation, feed)
