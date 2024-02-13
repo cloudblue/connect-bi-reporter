@@ -1,4 +1,4 @@
-from connect_bi_reporter.errors import ExtensionErrorBase
+from connect_extension_utils.api.errors import ExtensionErrorBase
 
 
 class FeedError(ExtensionErrorBase):
