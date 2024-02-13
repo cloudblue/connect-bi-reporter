@@ -4,6 +4,7 @@
 # All rights reserved.
 #
 from connect.client import ClientError
+from connect.eaas.core.constants import PROXIED_CONNECT_API_ATTR_NAME
 
 from connect_bi_reporter.webapp import ConnectBiReporterWebApplication
 
@@ -97,3 +98,11 @@ def test_on_startup_web_app_connect_client_error_create_schedule_task(
         'Something went wrong when trying to initialize the extension:'
         ' Please stop it and run it again.'
     )
+
+
+def test_proxied_connect_endpoints(api_client):
+    proxied = getattr(api_client._webapp_class, PROXIED_CONNECT_API_ATTR_NAME)
+    assert isinstance(proxied, dict)
+    assert proxied == {
+        '/public/v1/reporting/reports': 'view',
+    }
