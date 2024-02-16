@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "~/*": ["./ui/*"]
+    }
+  },
+  "exclude": ["node_modules", "connect_bi_reporter", "__mocks", "tests"]
+}

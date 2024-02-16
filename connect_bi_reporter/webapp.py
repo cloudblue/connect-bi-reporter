@@ -4,7 +4,7 @@
 # All rights reserved.
 #
 from connect.client import ClientError
-from connect.eaas.core.decorators import proxied_connect_api, router, web_app
+from connect.eaas.core.decorators import module_pages, proxied_connect_api, router, web_app
 from connect.eaas.core.inject.models import Context
 from connect.eaas.core.extension import WebApplicationBase
 from connect_extension_utils.connect_services.base import (
@@ -20,6 +20,10 @@ from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_
 
 
 @web_app(router)
+@module_pages(
+    label='Feeds',
+    url='/static/main.html',
+)
 @proxied_connect_api(
     {
         '/public/v1/reporting/reports': 'view',
