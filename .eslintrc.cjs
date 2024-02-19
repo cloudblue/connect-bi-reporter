@@ -11,6 +11,12 @@ module.exports = {
     'plugin:vitest-globals/recommended',
   ],
 
+  rules: {
+  'vue/block-order': ['error', {
+      order: ['template', 'script', 'style'],
+    }],
+  },
+
   env: {
     'vitest-globals/env': true,
   },

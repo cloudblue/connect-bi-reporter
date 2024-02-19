@@ -1,5 +1,15 @@
+<template>
+  <div
+    class="app"
+    :style="styles"
+  >
+    <router-view />
+  </div>
+</template>
+
 <script setup>
 import { ref, computed } from 'vue';
+import { RouterView } from 'vue-router';
 import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
 
 const height = ref('');
@@ -13,12 +23,3 @@ toolkit.listen('containerSize', (containerSize) => {
   height.value = containerSize.height;
 });
 </script>
-
-<template>
-  <div
-    class="app"
-    :style="styles"
-  >
-    <p>Connect BI Reporter Extension UI</p>
-  </div>
-</template>
