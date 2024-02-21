@@ -4,6 +4,8 @@ import createToolkitApp, {
   Icon,
   Button,
   Status,
+  Menu,
+  Tabs,
 } from '@cloudblueconnect/connect-ui-toolkit';
 import { toolkitPlugin } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
 import { createApp } from 'vue';
@@ -19,6 +21,8 @@ createToolkitApp({
   'ui-icon': Icon,
   'ui-button': Button,
   'ui-status': Status,
+  'ui-menu': Menu,
+  'ui-tabs': Tabs,
 }).then((toolkitInstance) => {
   const app = createApp(MainPage);
   app.use(router);

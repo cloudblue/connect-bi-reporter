@@ -13,6 +13,6 @@ export default [
   {
     name: 'feeds.details',
     path: '/feeds/:id',
-    component: FeedsView, // temp
+    component: () => import('~/views/FeedDetails.vue'),
   },
 ];

@@ -1,4 +1,9 @@
 export const COLORS_DICT = {
   NICE_GREEN: '#0BB071',
+  NICE_RED: '#FF6A6A',
   MIDDLE_GREY: '#BDBDBD',
+  DARK_GREY: '#666666',
+  TEXT: '#212121',
+  WHITE: '#FFFFFF',
+  TRANSPARENT: 'transparent',
 };

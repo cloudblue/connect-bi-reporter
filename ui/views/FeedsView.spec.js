@@ -63,6 +63,7 @@ describe('Feeds View component', () => {
             icon: 'googleFiberManualRecordBaseline',
             color: COLORS_DICT.NICE_GREEN,
           },
+          rawFeed: feedItems[0],
         },
         {
           id: 'RF-456',
@@ -74,6 +75,7 @@ describe('Feeds View component', () => {
             icon: 'googleFiberManualRecordBaseline',
             color: COLORS_DICT.MIDDLE_GREY,
           },
+          rawFeed: feedItems[1],
         },
       ]);
     });
