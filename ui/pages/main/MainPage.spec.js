@@ -19,7 +19,7 @@ describe('MainPage component', () => {
     // mock does not take effect until after the doMock declaration
     // See https://vitest.dev/api/vi.html#vi-domock
     const { default: MainPage } = await import('./MainPage.vue');
-    wrapper = mount(MainPage);
+    wrapper = mount(MainPage, { shallow: true });
   });
 
   test('uses the toolkit to listen to the containerSize event', () => {
