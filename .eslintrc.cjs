@@ -1,4 +1,5 @@
 /* eslint-env node */
+const path = require('node:path');
 require('@rushstack/eslint-patch/modern-module-resolution');
 
 module.exports = {
@@ -9,12 +10,33 @@ module.exports = {
     '@vue/eslint-config-prettier/skip-formatting',
     'prettier',
     'plugin:vitest-globals/recommended',
+    'plugin:import/recommended',
   ],
 
   rules: {
-  'vue/block-order': ['error', {
-      order: ['template', 'script', 'style'],
-    }],
+    // Disable rule due to "exports" field not supported yet: https://github.com/browserify/resolve/issues/222
+    'import/no-unresolved': 'off',
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc',
+          caseInsensitive: false,
+        },
+      },
+    ],
+
+    'vue/block-order': [
+      'error',
+      {
+        order: ['template', 'script', 'style'],
+      },
+    ],
+
+    // Disabled to allow fair web component slot usage
+    'vue/no-deprecated-slot-attribute': 'off',
   },
 
   env: {
@@ -23,5 +45,19 @@ module.exports = {
 
   parserOptions: {
     ecmaVersion: 'latest',
+  },
+
+  settings: {
+    'import/resolver': {
+      vite: {
+        viteConfig: {
+          resolve: {
+            alias: {
+              '~': path.resolve(__dirname, 'ui'),
+            },
+          },
+        },
+      },
+    },
   },
 };

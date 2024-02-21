@@ -1,7 +1,9 @@
 import * as fastApiAdapter from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
 import { mount, flushPromises } from '@vue/test-utils';
-import FeedsView from './FeedsView.vue';
+
 import { COLORS_DICT } from '~/constants/colors';
+
+import FeedsView from './FeedsView.vue';
 
 const feedItems = [
   {

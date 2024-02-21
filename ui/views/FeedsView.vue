@@ -66,14 +66,14 @@
 </template>
 
 <script setup>
+import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
+import { useFastApiTableAdapter } from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
 import { onMounted, computed } from 'vue';
 import { RouterLink } from 'vue-router';
-import { useFastApiTableAdapter } from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
-import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
+
+import DateItem from '~/components/DateItem.vue';
 import EmptyPlaceholder from '~/components/EmptyPlaceholder.vue';
 import SpaLink from '~/components/SpaLink.vue';
-import DateItem from '~/components/DateItem.vue';
-
 import { STATUSES } from '~/constants/statuses';
 
 const headers = [

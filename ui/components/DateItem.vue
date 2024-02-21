@@ -3,8 +3,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
+import { computed } from 'vue';
 
 const { sharedContext } = useToolkit();
 

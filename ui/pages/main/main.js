@@ -1,4 +1,3 @@
-import { createApp } from 'vue';
 import createToolkitApp, {
   View,
   ComplexTable,
@@ -7,9 +6,11 @@ import createToolkitApp, {
   Status,
 } from '@cloudblueconnect/connect-ui-toolkit';
 import { toolkitPlugin } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
+import { createApp } from 'vue';
 
 import '~/assets/main.css';
 import router from '~/router';
+
 import MainPage from './MainPage.vue';
 
 createToolkitApp({

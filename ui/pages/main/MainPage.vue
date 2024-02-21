@@ -8,9 +8,9 @@
 </template>
 
 <script setup>
+import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
 import { ref, computed } from 'vue';
 import { RouterView } from 'vue-router';
-import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
 
 const height = ref('');
 const styles = computed(() => ({

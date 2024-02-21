@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils';
+
 import EmptyPlaceholder from './EmptyPlaceholder.vue';
 
 describe('EmptyPlaceholder component', () => {
