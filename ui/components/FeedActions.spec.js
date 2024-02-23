@@ -6,7 +6,7 @@ import { STATUSES_DICT } from '~/constants/statuses';
 
 const mockUseRequest = vi.hoisted(() => ({
   loading: false,
-  request: vi.fn(),
+  request: vi.fn().mockReturnValue(200),
 }));
 vi.mock('~/composables/api', () => ({
   useRequest: vi.fn().mockReturnValue(mockUseRequest),

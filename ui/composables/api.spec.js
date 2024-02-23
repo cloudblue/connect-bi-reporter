@@ -1,16 +1,21 @@
 import { useRequest } from '~/composables/api';
-import { request as apiRequest } from '~/utils/api';
+import { ApiError, request as apiRequest } from '~/utils/api';
 
-vi.mock('~/utils/api', () => ({
-  request: vi.fn(),
-}));
+vi.mock('~/utils/api', async (importOriginal) => {
+  const originalModule = await importOriginal();
+
+  return {
+    ...originalModule,
+    request: vi.fn(),
+  };
+});
 
 describe('api composables', () => {
   describe('useRequest', () => {
     let responseBody;
     let toolkitInstance;
     let loading;
-    let responseObject;
+    let result;
     let request;
 
     beforeEach(() => {
@@ -23,20 +28,20 @@ describe('api composables', () => {
           }),
       );
 
-      ({ loading, responseObject, request } = useRequest(toolkitInstance));
+      ({ loading, result, request } = useRequest(toolkitInstance));
     });
 
     test('returns the required properties', () => {
       expect(loading.value).toEqual(false);
-      expect(responseObject).toEqual({});
+      expect(result).toEqual({});
       expect(request).toEqual(expect.any(Function));
     });
 
     describe('request call', () => {
-      test('calls api utils request with the given args', async () => {
+      test('calls api utils request with the given args and fullResponse=true', async () => {
         await request('/foo/1', 'PUT', { description: 'bar' });
 
-        expect(apiRequest).toHaveBeenCalledWith('/foo/1', 'PUT', { description: 'bar' });
+        expect(apiRequest).toHaveBeenCalledWith('/foo/1', 'PUT', { description: 'bar' }, true);
       });
 
       test('sets loading to true', () => {
@@ -51,17 +56,25 @@ describe('api composables', () => {
         expect(loading.value).toEqual(false);
       });
 
-      test('assigns the returned value to responseObject', async () => {
-        apiRequest.mockResolvedValueOnce({ id: '1', description: 'foo' });
+      test("assigns the response's body to result", async () => {
+        apiRequest.mockResolvedValueOnce({ body: { id: '1', description: 'foo' } });
 
         await request('/foo');
 
-        expect(responseObject).toEqual({ id: '1', description: 'foo' });
+        expect(result).toEqual({ id: '1', description: 'foo' });
+      });
+
+      test('returns the response status', async () => {
+        apiRequest.mockResolvedValueOnce({ status: 200, body: { id: '1', description: 'foo' } });
+
+        const status = await request('/foo');
+
+        expect(status).toEqual(200);
       });
 
       describe('if there are errors', () => {
         test('emits a "snackbar:error" event to the toolkit', async () => {
-          const err = new Error('Foo >:(');
+          const err = new ApiError('Foo >:(', 404);
           apiRequest.mockRejectedValueOnce(err);
 
           await request('/foo');
@@ -70,7 +83,7 @@ describe('api composables', () => {
         });
 
         test('does not throw if propagateErrors is false', async () => {
-          const err = new Error('Foo >:(');
+          const err = new ApiError('Foo >:(', 404);
           apiRequest.mockRejectedValueOnce(err);
 
           ({ request } = useRequest(toolkitInstance, false));
@@ -86,7 +99,7 @@ describe('api composables', () => {
         });
 
         test('throws if propagateErrors is true', async () => {
-          const err = new Error('Foo >:(');
+          const err = new ApiError('Foo >:(', 404);
           apiRequest.mockRejectedValueOnce(err);
 
           ({ request } = useRequest(toolkitInstance, true));
@@ -99,6 +112,17 @@ describe('api composables', () => {
           }
 
           expect(error).toEqual(err);
+        });
+
+        test('returns the error status if propagateErrors is false', async () => {
+          const err = new ApiError('Foo >:(', 404);
+          apiRequest.mockRejectedValueOnce(err);
+
+          ({ request } = useRequest(toolkitInstance, false));
+
+          const status = await request('/foo');
+
+          expect(status).toEqual(404);
         });
       });
     });

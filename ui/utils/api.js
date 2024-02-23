@@ -1,3 +1,10 @@
+export class ApiError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.status = status;
+  }
+}
+
 const buildErrorMessage = (response, responseBody) => {
   let errorMessage = `Error ${response.status}: ${response.statusText}.`;
 
@@ -37,7 +44,7 @@ export const request = async (endpoint, method = 'GET', body = null, fullRespons
 
   if (!response.ok) {
     const errorMessage = buildErrorMessage(response, responseBody);
-    throw new Error(errorMessage);
+    throw new ApiError(errorMessage);
   }
 
   return fullResponse ? { ...response, body: responseBody } : responseBody;

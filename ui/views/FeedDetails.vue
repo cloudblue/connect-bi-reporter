@@ -132,7 +132,7 @@ const route = useRoute();
 const router = useRouter();
 const toolkit = useToolkit();
 
-const { loading, request, responseObject: feed } = useRequest(toolkit);
+const { loading, request, result: feed } = useRequest(toolkit);
 
 const feedId = computed(() => route.params.id);
 const feedStatus = computed(() => STATUSES[feed.status]);

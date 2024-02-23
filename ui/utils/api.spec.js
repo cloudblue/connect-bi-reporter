@@ -1,4 +1,4 @@
-import { request } from '~/utils/api.js';
+import { ApiError, request } from '~/utils/api.js';
 
 describe('api utils', () => {
   describe('request', () => {
@@ -36,6 +36,20 @@ describe('api utils', () => {
     });
 
     describe('if there is an error', () => {
+      test('returns an ApiError instance', async () => {
+        let error;
+        response.ok = false;
+        response.status = 404;
+
+        try {
+          await request('/foo');
+        } catch (e) {
+          error = e;
+        }
+
+        expect(error).toBeInstanceOf(ApiError);
+      });
+
       test('returns an error with the status and status text', async () => {
         let error;
         response.ok = false;

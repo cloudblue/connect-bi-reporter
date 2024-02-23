@@ -46,7 +46,7 @@ describe('FeedDetails component', () => {
       return {
         loading,
         request: mockRequest,
-        responseObject: feed,
+        result: feed,
       };
     });
 

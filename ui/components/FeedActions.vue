@@ -63,13 +63,33 @@ const emit = defineEmits(['enabled', 'disabled', 'uploaded', 'deleted']);
 
 const toolkit = useToolkit();
 
-const enableAction = useRequest(toolkit, true);
-const disableAction = useRequest(toolkit, true);
-const deleteAction = useRequest(toolkit, true);
-const forceUploadAction = useRequest(toolkit, true);
+const enableAction = useRequest(toolkit);
+const disableAction = useRequest(toolkit);
+const deleteAction = useRequest(toolkit);
+const forceUploadAction = useRequest(toolkit);
 
 const feedId = computed(() => props.feed.id);
 const isFeedDisabled = computed(() => props.feed.status === STATUSES_DICT.DISABLED);
+
+const disableFeed = async () => {
+  const status = await disableAction.request(`/api/feeds/${feedId.value}/disable`, 'POST');
+  if (status < 400) emit('disabled');
+};
+const enableFeed = async () => {
+  const status = await enableAction.request(`/api/feeds/${feedId.value}/enable`, 'POST');
+  if (status < 400) emit('enabled');
+};
+const forceUpload = async () => {
+  const status = await forceUploadAction.request(
+    `/api/feeds/${feedId.value}/uploads/force`,
+    'POST',
+  );
+  if (status < 400) emit('uploaded');
+};
+const deleteFeed = async () => {
+  const status = await deleteAction.request(`/api/feeds/${feedId.value}`, 'DELETE');
+  if (status < 400) emit('deleted');
+};
 
 const buttons = reactive([
   {
@@ -79,14 +99,7 @@ const buttons = reactive([
     icon: 'googleToggleOffBaseline',
     loading: disableAction.loading,
     hide: isFeedDisabled,
-    handler: async () => {
-      try {
-        await disableAction.request(`/api/feeds/${feedId.value}/disable`, 'POST');
-        emit('disabled');
-      } catch (e) {
-        /* empty */
-      }
-    },
+    handler: disableFeed,
   },
   {
     action: 'enable',
@@ -95,14 +108,7 @@ const buttons = reactive([
     icon: 'googleToggleOnBaseline',
     loading: enableAction.loading,
     hide: !isFeedDisabled.value,
-    handler: async () => {
-      try {
-        await enableAction.request(`/api/feeds/${feedId.value}/enable`, 'POST');
-        emit('enabled');
-      } catch (e) {
-        /* empty */
-      }
-    },
+    handler: enableFeed,
   },
   {
     action: 'forceUpload',
@@ -111,14 +117,7 @@ const buttons = reactive([
     icon: 'googleUploadBaseline',
     loading: forceUploadAction.loading,
     disabled: isFeedDisabled.value,
-    handler: async () => {
-      try {
-        await forceUploadAction.request(`/api/feeds/${feedId.value}/uploads/force`, 'POST');
-        emit('uploaded');
-      } catch (e) {
-        /* empty */
-      }
-    },
+    handler: forceUpload,
   },
   {
     separated: true,
@@ -127,14 +126,7 @@ const buttons = reactive([
     text: 'Delete',
     icon: 'googleDeleteForeverBaseline',
     loading: deleteAction.loading,
-    handler: async () => {
-      try {
-        await deleteAction.request(`/api/feeds/${feedId.value}`, 'DELETE');
-        emit('deleted');
-      } catch (e) {
-        /* empty */
-      }
-    },
+    handler: deleteFeed,
   },
 ]);
 </script>
