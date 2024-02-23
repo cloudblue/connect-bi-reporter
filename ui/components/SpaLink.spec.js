@@ -1,5 +1,5 @@
-import { mount } from '@vue/test-utils';
 import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
+import { mount } from '@vue/test-utils';
 
 describe('SpaLink component', () => {
   let wrapper;

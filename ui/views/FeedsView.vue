@@ -1,10 +1,12 @@
 <template>
   <ui-view
     title="Feeds"
+    style="min-height: inherit"
     no-padded
   >
+    <loading-indicator v-if="loading" />
     <empty-placeholder
-      v-if="noItems"
+      v-else-if="noItems"
       title="No Feeds"
       icon="googleAutoGraphBaseline"
       action="Create Feed"
@@ -48,8 +50,29 @@
             v-else-if="header.key === 'createdAt'"
             :date="item.createdAt"
           />
+          <feed-actions
+            v-if="header.key === 'actions'"
+            :feed="item.rawFeed"
+            @enabled="load"
+            @disabled="load"
+            @uploaded="load"
+            @deleted="load"
+          >
+            <ui-button
+              class="actions-button"
+              :background-color="COLORS_DICT.WHITE"
+              height="36px"
+              width="36px"
+            >
+              <ui-icon
+                class="actions-button__trigger-icon"
+                :color="COLORS_DICT.TEXT"
+                icon-name="googleMoreVertBaseline"
+              />
+            </ui-button>
+          </feed-actions>
           <div
-            v-else
+            v-else-if="header.key === 'description'"
             class="truncator"
           >
             <span
@@ -66,14 +89,17 @@
 </template>
 
 <script setup>
+import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
+import { useFastApiTableAdapter } from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
 import { onMounted, computed } from 'vue';
 import { RouterLink } from 'vue-router';
-import { useFastApiTableAdapter } from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
-import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
-import EmptyPlaceholder from '~/components/EmptyPlaceholder.vue';
-import SpaLink from '~/components/SpaLink.vue';
-import DateItem from '~/components/DateItem.vue';
 
+import DateItem from '~/components/DateItem.vue';
+import EmptyPlaceholder from '~/components/EmptyPlaceholder.vue';
+import FeedActions from '~/components/FeedActions.vue';
+import LoadingIndicator from '~/components/LoadingIndicator.vue';
+import SpaLink from '~/components/SpaLink.vue';
+import { COLORS_DICT } from '~/constants/colors';
 import { STATUSES } from '~/constants/statuses';
 
 const headers = [
@@ -82,9 +108,10 @@ const headers = [
   { key: 'createdAt', text: 'created', width: '200px' },
   { key: 'description', text: 'description' },
   { key: 'status', text: 'status', width: '105px' },
+  { key: 'actions', width: '36px' },
 ];
 
-const { items, page, total, load, next, previous } = useFastApiTableAdapter('/api/feeds');
+const { items, page, total, load, loading, next, previous } = useFastApiTableAdapter('/api/feeds');
 
 const noItems = computed(() => {
   return !items.value.length;
@@ -96,6 +123,7 @@ const preparedItems = computed(() =>
     createdAt: item.events.created.at,
     description: item.description,
     status: STATUSES[item.status],
+    rawFeed: item,
   })),
 );
 
@@ -106,3 +134,9 @@ onMounted(async () => {
   await load();
 });
 </script>
+
+<style scoped>
+.actions-button__trigger-icon {
+  margin: 0 -8px;
+}
+</style>
