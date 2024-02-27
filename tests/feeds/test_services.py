@@ -54,7 +54,7 @@ def test_get_feeds(dbsession, installation, feed_factory, account_id, expected_c
     feed_factory(account_id=account_id)
     feed_factory(account_id=account_id)
 
-    assert len(get_feeds(dbsession, installation)) == expected_count
+    assert get_feeds(dbsession, installation).count() == expected_count
 
 
 def test_update_feed_ok(

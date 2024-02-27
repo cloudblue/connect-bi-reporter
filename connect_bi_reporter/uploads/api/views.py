@@ -1,12 +1,13 @@
 from logging import Logger
 from typing import List
 
-from fastapi import Depends, status
+from fastapi import Depends, Response, status
 from connect.client import ConnectClient
 from connect.eaas.core.decorators import router
 from connect.eaas.core.inject.common import get_call_context, get_logger
 from connect.eaas.core.inject.models import Context
 from connect.eaas.core.inject.synchronous import get_installation, get_installation_client
+from connect_extension_utils.api.pagination import apply_pagination, PaginationParams
 from connect_extension_utils.db.models import get_db, VerboseBaseSession
 
 from connect_bi_reporter.scheduler import Scheduler
@@ -46,13 +47,18 @@ class UploadsWebAppMixin:
     def get_uploads(
         self,
         feed_id: str,
+        pagination_params: PaginationParams = Depends(),
         db: VerboseBaseSession = Depends(get_db),
         installation: dict = Depends(get_installation),
+        response: Response = None,
     ):
-        return [
-            map_to_upload_schema(upload)
-            for upload in get_uploads_or_404(db, installation, feed_id)
-        ]
+        paginated_response = apply_pagination(
+            get_uploads_or_404(db, installation, feed_id),
+            db,
+            pagination_params,
+            response,
+        )
+        return [map_to_upload_schema(upload) for upload in paginated_response]
 
     @router.post(
         '/feeds/{feed_id}/uploads/{upload_id}/retry',

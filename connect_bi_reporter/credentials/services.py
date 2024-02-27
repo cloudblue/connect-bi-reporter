@@ -11,7 +11,7 @@ from connect_bi_reporter.credentials.models import Credential
 
 
 def get_credentials(db, installation: Dict[str, Any]):
-    return db.query(Credential).filter_by(account_id=installation['owner']['id']).all()
+    return db.query(Credential).filter_by(account_id=installation['owner']['id'])
 
 
 def create_credentials(db, data: CredentialCreateSchema, account_id: str, user: Dict[str, str]):

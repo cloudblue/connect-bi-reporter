@@ -524,3 +524,39 @@ def test_already_disabled_feed(
     assert response_data['errors'][0] == (
         f'Feed `{feed.id}` is already in status `{feed.status}`.'
     )
+
+
+@pytest.mark.parametrize(
+    ('limit', 'offset', 'expected_length', 'expected_header'),
+    (
+        (10, 0, 10, 'items 0-9/20'),
+        (10, 20, 0, 'items 20-20/20'),
+        (9, 18, 2, 'items 18-19/20'),
+    ),
+)
+def test_list_feeds_paginated(
+    installation,
+    api_client,
+    connect_auth_header,
+    feed_factory,
+    limit,
+    offset,
+    expected_length,
+    expected_header,
+
+):
+    for _ in range(20):
+        feed_factory(account_id=installation['owner']['id'])
+
+    response = api_client.get(
+        f'/api/feeds?offset={offset}&limit={limit}',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 200
+
+    paginated_response_data = response.json()
+
+    assert len(paginated_response_data) == expected_length
+    assert response.headers['Content-Range'] == expected_header
