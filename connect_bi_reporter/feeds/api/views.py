@@ -2,10 +2,11 @@ from logging import Logger
 from typing import List
 
 from connect.client import ConnectClient
-from fastapi import Depends, Request, status
+from fastapi import Depends, Request, Response, status
 from connect.eaas.core.decorators import router
 from connect.eaas.core.inject.common import get_logger
 from connect.eaas.core.inject.synchronous import get_installation, get_installation_client
+from connect_extension_utils.api.pagination import apply_pagination, PaginationParams
 from connect_extension_utils.api.views import get_user_data_from_auth_token
 from connect_extension_utils.db.models import get_db, VerboseBaseSession
 
@@ -51,10 +52,18 @@ class FeedsWebAppMixin:
     )
     def get_feeds(
         self,
+        pagination_params: PaginationParams = Depends(),
         db: VerboseBaseSession = Depends(get_db),
         installation: dict = Depends(get_installation),
+        response: Response = None,
     ):
-        return [map_to_feed_schema(feed) for feed in get_feeds(db, installation)]
+        paginated_response = apply_pagination(
+            get_feeds(db, installation),
+            db,
+            pagination_params,
+            response,
+        )
+        return [map_to_feed_schema(feed) for feed in paginated_response]
 
     @router.post(
         '/feeds',

@@ -1,8 +1,9 @@
 from typing import List
 
-from fastapi import Depends, Request, status
+from fastapi import Depends, Request, Response, status
 from connect.eaas.core.decorators import router
 from connect.eaas.core.inject.synchronous import get_installation
+from connect_extension_utils.api.pagination import apply_pagination, PaginationParams
 from connect_extension_utils.api.views import get_user_data_from_auth_token
 from connect_extension_utils.db.models import get_db, VerboseBaseSession
 
@@ -42,12 +43,19 @@ class CredentialsWebAppMixin:
     )
     def get_credentials(
         self,
+        pagination_params: PaginationParams = Depends(),
         db: VerboseBaseSession = Depends(get_db),
         installation: dict = Depends(get_installation),
+        response: Response = None,
     ):
+        paginated_response = apply_pagination(
+            services.get_credentials(db, installation),
+            db,
+            pagination_params,
+            response,
+        )
         return [
-            map_to_credential_list_schema(cred)
-            for cred in services.get_credentials(db, installation)
+            map_to_credential_list_schema(cred) for cred in paginated_response
         ]
 
     @router.post(

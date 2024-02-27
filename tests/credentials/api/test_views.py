@@ -273,3 +273,41 @@ def test_delete_credential_already_in_use(
         f'is already related to Feeds `{", ".join(feed.id for feed in cred.feed.all())}`.'
     )
     assert dbsession.query(credential_factory._meta.model).count() == 1
+
+
+@pytest.mark.parametrize(
+    ('limit', 'offset', 'expected_length', 'expected_header'),
+    (
+        (10, 0, 10, 'items 0-9/20'),
+        (10, 20, 0, 'items 20-20/20'),
+        (9, 18, 2, 'items 18-19/20'),
+    ),
+)
+def test_get_credentials_paginated(
+    installation,
+    api_client,
+    connect_auth_header,
+    credential_factory,
+    limit,
+    offset,
+    expected_length,
+    expected_header,
+
+):
+    credentials = []
+    credential_factory(account_id='other-account')
+    for _ in range(20):
+        credentials.append(credential_factory(account_id=installation['owner']['id']))
+
+    response = api_client.get(
+        f'/api/credentials?offset={offset}&limit={limit}',
+        installation=installation,
+        headers={'connect-auth': connect_auth_header},
+    )
+
+    assert response.status_code == 200
+
+    paginated_response_data = response.json()
+
+    assert len(paginated_response_data) == expected_length
+    assert response.headers['Content-Range'] == expected_header

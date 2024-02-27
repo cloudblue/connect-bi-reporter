@@ -36,7 +36,7 @@ def get_feed_or_404(db, installation: Dict[str, Any], feed_id: str):
 
 
 def get_feeds(db, installation: Dict[str, Any]):
-    return db.query(Feed).filter_by(account_id=installation['owner']['id']).all()
+    return db.query(Feed).filter_by(account_id=installation['owner']['id'])
 
 
 def update_feed(
