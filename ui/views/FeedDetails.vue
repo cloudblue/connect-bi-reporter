@@ -2,7 +2,7 @@
   <ui-view
     :title="feedId"
     assistive-title="Feed Details"
-    style="min-height: inherit"
+    style="height: inherit"
     show-back-button
     @go-back="goToFeeds"
   >

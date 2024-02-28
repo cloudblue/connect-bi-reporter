@@ -4,7 +4,7 @@
       <div class="empty-placeholder_icon">
         <ui-icon
           :icon-name="icon"
-          color="#BDBDBD"
+          :color="COLORS_DICT.MIDDLE_GREY"
           size="56"
         />
       </div>
@@ -14,12 +14,12 @@
         v-if="action"
         class="empty-placeholder_action"
         background-color="transparent"
-        color="#2C98F0"
+        :color="COLORS_DICT.NICE_BLUE"
         @clicked="$emit('actionClicked')"
       >
         <ui-icon
           icon-name="googleAddBaseline"
-          color="#2C98F0"
+          :color="COLORS_DICT.NICE_BLUE"
           size="18"
         />
         <span>{{ action }}</span>
@@ -29,6 +29,8 @@
 </template>
 
 <script setup>
+import { COLORS_DICT } from '~/constants/colors';
+
 defineProps({
   title: {
     type: String,
