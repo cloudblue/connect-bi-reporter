@@ -1,33 +1,30 @@
 import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
-import { mount } from '@vue/test-utils';
+import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
+
+import SpaLink from '~/components/SpaLink.vue';
+import { createFactory } from '~/tests/utils';
+
+vi.mock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin', () => ({
+  useToolkit: vi.fn(),
+}));
 
 describe('SpaLink component', () => {
   let wrapper;
   let toolkitStub;
+  const factory = createFactory(SpaLink, {
+    props: { to: '/dashboard' },
+    slots: {
+      default: 'Go to the SPA Dashboard page',
+    },
+  });
 
   beforeEach(async () => {
     toolkitStub = {
       navigateTo: vi.fn(),
     };
+    useToolkit.mockReturnValue(toolkitStub);
 
-    vi.doMock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin', () => {
-      return {
-        useToolkit: () => toolkitStub,
-      };
-    });
-
-    // Import needs to be done here because vi.doMock is not hoisted and the toolkitPlugin
-    // mock does not take effect until after the doMock declaration
-    // See https://vitest.dev/api/vi.html#vi-domock
-    const { default: SpaLink } = await import('./SpaLink.vue');
-    wrapper = mount(SpaLink, {
-      props: {
-        to: '/dashboard',
-      },
-      slots: {
-        default: 'Go to the SPA Dashboard page',
-      },
-    });
+    wrapper = factory();
   });
 
   test('the component renders a link', () => {
@@ -59,14 +56,10 @@ describe('SpaLink component', () => {
     });
 
     test("calls the toolkit's navigateTo method with the params prop", async () => {
-      const { default: SpaLink } = await import('./SpaLink.vue');
-      wrapper = mount(SpaLink, {
+      wrapper = factory({
         props: {
           to: connectPortalRoutes.productDetails,
           params: 'PRD-123',
-        },
-        slots: {
-          default: 'Go to the SPA Dashboard page',
         },
       });
 

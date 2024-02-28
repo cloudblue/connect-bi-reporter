@@ -1,21 +1,20 @@
-import { mount } from '@vue/test-utils';
-
+import EmptyPlaceholder from '~/components/EmptyPlaceholder.vue';
 import { COLORS_DICT } from '~/constants/colors';
-
-import EmptyPlaceholder from './EmptyPlaceholder.vue';
+import { createFactory } from '~/tests/utils';
 
 describe('EmptyPlaceholder component', () => {
   let wrapper;
+  const factory = createFactory(EmptyPlaceholder, {
+    props: {
+      title: 'Foo',
+      message: 'Lorem ipsum',
+      icon: 'googleAppleMicrosoft',
+      action: 'Bar',
+    },
+  });
 
   beforeEach(() => {
-    wrapper = mount(EmptyPlaceholder, {
-      props: {
-        title: 'Foo',
-        message: 'Lorem ipsum',
-        icon: 'googleAppleMicrosoft',
-        action: 'Bar',
-      },
-    });
+    wrapper = factory();
   });
 
   test('renders the icon', () => {
@@ -59,11 +58,9 @@ describe('EmptyPlaceholder component', () => {
   });
 
   test('does not render the action button if there is none', () => {
-    wrapper = mount(EmptyPlaceholder, {
+    wrapper = factory({
       props: {
-        title: 'Foo',
-        message: 'Lorem ipsum',
-        icon: 'googleAppleMicrosoft',
+        action: '',
       },
     });
 

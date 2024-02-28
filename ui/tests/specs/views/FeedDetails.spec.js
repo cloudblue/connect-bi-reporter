@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useRequest } from '~/composables/api';
-import { STATUSES_DICT } from '~/constants/statuses.js';
+import { STATUSES_DICT } from '~/constants/statuses';
 import FeedDetails from '~/views/FeedDetails.vue';
 
 const feed = {

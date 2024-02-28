@@ -1,32 +1,26 @@
-import { mount } from '@vue/test-utils';
-
 import RadioTable from '~/components/RadioTable.vue';
+import { createFactory } from '~/tests/utils';
 
 describe('RadioTable component', () => {
   let wrapper;
   const initialItems = [
-    {
-      id: 'foo',
-      name: 'Foo',
-    },
-    {
-      id: 'bar',
-      name: 'Bar',
-    },
+    { id: 'foo', name: 'Foo' },
+    { id: 'bar', name: 'Bar' },
   ];
+  const factory = createFactory(RadioTable, {
+    props: {
+      modelValue: '',
+      items: initialItems,
+      title: 'Lorem ipsum',
+    },
+    slots: {
+      default: `{{ params.item.name }}`,
+    },
+  });
 
   describe('render', () => {
     test('renders the base component', () => {
-      wrapper = mount(RadioTable, {
-        props: {
-          modelValue: '',
-          items: initialItems,
-          title: 'Lorem ipsum',
-        },
-        slots: {
-          default: `{{ params.item.name }}`,
-        },
-      });
+      wrapper = factory();
 
       expect(wrapper.get('.radio-table__title').text()).toEqual('Lorem ipsum');
       expect(wrapper.get('.radio-table__search')).toBeDefined();
@@ -36,7 +30,7 @@ describe('RadioTable component', () => {
     });
 
     test('does not render the search input if hideSearch is true', () => {
-      wrapper = mount(RadioTable, {
+      wrapper = factory({
         props: {
           hideSearch: true,
         },
@@ -48,15 +42,7 @@ describe('RadioTable component', () => {
 
   describe('events', () => {
     test('clicking an "radio-table__item" selects it', async () => {
-      wrapper = mount(RadioTable, {
-        props: {
-          modelValue: '',
-          items: initialItems,
-          title: 'Lorem ipsum',
-        },
-        slots: {
-          default: `{{ params.item.name }}`,
-        },
+      wrapper = factory({
         shallow: true,
       });
 
@@ -81,7 +67,7 @@ describe('RadioTable component', () => {
     });
 
     test('the "search" event is triggered if the ui-textfield search element emits "input"', async () => {
-      wrapper = mount(RadioTable);
+      wrapper = factory();
 
       await wrapper.find('.radio-table__search ui-textfield').trigger('input', { detail: ['foo'] });
 

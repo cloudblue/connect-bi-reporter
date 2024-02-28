@@ -1,6 +1,5 @@
-import { mount } from '@vue/test-utils';
-
 import VerticalTabs from '~/components/VerticalTabs.vue';
+import { createFactory } from '~/tests/utils';
 
 describe('VerticalTabs component', () => {
   let wrapper;
@@ -26,15 +25,17 @@ describe('VerticalTabs component', () => {
       skipStep: false,
     },
   ];
+  const factory = createFactory(VerticalTabs, {
+    props: {
+      tabs: initialTabs,
+      activeTabKey: initialTabs[0].key,
+    },
+  });
 
   describe('render', () => {
     describe('base render', () => {
       test('renders the tabs', () => {
-        wrapper = mount(VerticalTabs, {
-          props: {
-            tabs: initialTabs,
-          },
-        });
+        wrapper = factory();
 
         const tabElements = wrapper.findAll('.vertical-tabs__tab');
         tabElements.forEach((tabEl, index) => {
@@ -45,10 +46,9 @@ describe('VerticalTabs component', () => {
 
     describe('if the linear prop is true', () => {
       beforeAll(() => {
-        wrapper = mount(VerticalTabs, {
+        wrapper = factory({
           props: {
             linear: true,
-            tabs: initialTabs,
             activeTabKey: initialTabs[1].key,
           },
         });
@@ -83,10 +83,9 @@ describe('VerticalTabs component', () => {
 
     describe('if the linear prop is false', () => {
       beforeAll(() => {
-        wrapper = mount(VerticalTabs, {
+        wrapper = factory({
           props: {
             linear: false,
-            tabs: initialTabs,
             activeTabKey: initialTabs[1].key,
           },
         });
@@ -107,12 +106,7 @@ describe('VerticalTabs component', () => {
   describe('events', () => {
     describe('on tab click', () => {
       test('sets the clicked tab as the active tab', async () => {
-        wrapper = mount(VerticalTabs, {
-          props: {
-            tabs: initialTabs,
-            activeTabKey: initialTabs[0].key,
-          },
-        });
+        wrapper = factory();
 
         const tabElements = wrapper.findAll('.vertical-tabs__tab');
         expect(tabElements[0].classes()).toContain('vertical-tabs__tab_active');

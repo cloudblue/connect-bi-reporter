@@ -1,4 +1,11 @@
+import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
 import { mount } from '@vue/test-utils';
+
+import DateItem from '~/components/DateItem.vue';
+
+vi.mock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin', () => ({
+  useToolkit: vi.fn(),
+}));
 
 describe('DateItem component', () => {
   let wrapper;
@@ -17,20 +24,10 @@ describe('DateItem component', () => {
       },
     };
 
-    vi.doMock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin', () => {
-      return {
-        useToolkit: () => toolkitStub,
-      };
-    });
+    useToolkit.mockReturnValue(toolkitStub);
 
-    // Import needs to be done here because vi.doMock is not hoisted and the toolkitPlugin
-    // mock does not take effect until after the doMock declaration
-    // See https://vitest.dev/api/vi.html#vi-domock
-    const { default: DateItem } = await import('./DateItem.vue');
     wrapper = mount(DateItem, {
-      props: {
-        date: DATE_STR,
-      },
+      props: { date: DATE_STR },
     });
   });
 

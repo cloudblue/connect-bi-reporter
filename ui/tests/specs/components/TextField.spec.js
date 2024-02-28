@@ -1,23 +1,23 @@
-import { mount } from '@vue/test-utils';
-
 import TextField from '~/components/TextField.vue';
+import { createFactory } from '~/tests/utils';
 
 describe('TextField component', () => {
   let wrapper;
+  const factory = createFactory(TextField, {
+    props: {
+      label: 'Foo',
+      placeholder: 'Bar',
+      suffix: 'Baz',
+
+      // v-model
+      modelValue: 'initialValue',
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+  });
 
   describe('render', () => {
     test('passes down all props to the ui-textfield element', () => {
-      wrapper = mount(TextField, {
-        props: {
-          label: 'Foo',
-          placeholder: 'Bar',
-          suffix: 'Baz',
-
-          // v-model
-          modelValue: 'initialValue',
-          'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
-        },
-      });
+      wrapper = factory();
 
       const uiTextfieldEl = wrapper.get('ui-textfield');
 
@@ -28,17 +28,7 @@ describe('TextField component', () => {
     });
 
     test('updates the v-model when the ui-textfield emits the input event', async () => {
-      wrapper = mount(TextField, {
-        props: {
-          label: 'Foo',
-          placeholder: 'Bar',
-          suffix: 'Baz',
-
-          // v-model
-          modelValue: 'initialValue',
-          'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
-        },
-      });
+      wrapper = factory();
 
       await wrapper.get('ui-textfield').trigger('input', { detail: ['new value'] });
 

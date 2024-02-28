@@ -1,4 +1,9 @@
-import { mount } from '@vue/test-utils';
+import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
+import { shallowMount } from '@vue/test-utils';
+
+import MainPage from '~/pages/main/MainPage.vue';
+
+vi.mock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin');
 
 describe('MainPage component', () => {
   let wrapper;
@@ -8,18 +13,9 @@ describe('MainPage component', () => {
     toolkitStub = {
       listen: vi.fn().mockImplementation((_, cb) => cb({ height: 400 })),
     };
+    useToolkit.mockReturnValue(toolkitStub);
 
-    vi.doMock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin', () => {
-      return {
-        useToolkit: () => toolkitStub,
-      };
-    });
-
-    // Import needs to be done here because vi.doMock is not hoisted and the toolkitPlugin
-    // mock does not take effect until after the doMock declaration
-    // See https://vitest.dev/api/vi.html#vi-domock
-    const { default: MainPage } = await import('./MainPage.vue');
-    wrapper = mount(MainPage, { shallow: true });
+    wrapper = shallowMount(MainPage);
   });
 
   test('uses the toolkit to listen to the fullscreenSize event', () => {

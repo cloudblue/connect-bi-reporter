@@ -1,50 +1,40 @@
-import { mount } from '@vue/test-utils';
-
 import FormDialog from '~/components/FormDialog.vue';
-import { validationRules } from '~/utils/validation.js';
+import { createFactory } from '~/tests/utils';
+import { validationRules } from '~/utils/validation';
 
 describe('FormDialog component', () => {
-  const factory = (options = {}) =>
-    mount(FormDialog, {
-      ...options,
-      props: {
-        modelValue: true,
-        title: 'My dialog',
-        mode: 'wizard',
-        rules: {
-          three: [validationRules.required()],
-        },
-        form: {
-          three: null,
-        },
-        tabs: [
-          { key: 'one' },
-          { key: 'two' },
-          { key: 'three', includes: ['three'] },
-          { key: 'four', submittable: true },
-          { key: 'summary' },
-        ],
-        ...options.props,
-      },
-      slots: {
-        one: '<p class="one-tab">Content for one tab</p>',
-        two: '<p class="two-tab">Content for two tab</p>',
-        three: '<p class="three-tab">Content for three tab</p>',
-        four: '<p class="four-tab">Content for four tab</p>',
-        summary: '<p class="summary-tab">Content for summary tab</p>',
-        ...options.slots,
-      },
-      shallow: true,
-      global: {
-        ...options.global,
-        stubs: {
-          'simple-dialog': {
-            name: 'SimpleDialog',
-            template: '<div class="simple-dialog"><slot name="sidebar" /><slot /></div>',
-          },
+  const factory = createFactory(FormDialog, {
+    props: {
+      modelValue: true,
+      title: 'My dialog',
+      mode: 'wizard',
+      rules: { three: [validationRules.required()] },
+      form: { three: null },
+      tabs: [
+        { key: 'one' },
+        { key: 'two' },
+        { key: 'three', includes: ['three'] },
+        { key: 'four', submittable: true },
+        { key: 'summary' },
+      ],
+    },
+    slots: {
+      one: '<p class="one-tab">Content for one tab</p>',
+      two: '<p class="two-tab">Content for two tab</p>',
+      three: '<p class="three-tab">Content for three tab</p>',
+      four: '<p class="four-tab">Content for four tab</p>',
+      summary: '<p class="summary-tab">Content for summary tab</p>',
+    },
+    shallow: true,
+    global: {
+      stubs: {
+        'simple-dialog': {
+          name: 'SimpleDialog',
+          template: '<div class="simple-dialog"><slot name="sidebar" /><slot /></div>',
         },
       },
-    });
+    },
+  });
 
   let wrapper;
 

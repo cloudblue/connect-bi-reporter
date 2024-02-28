@@ -4,7 +4,8 @@ htmlcov
 coverage.xml
 .connect_bi_reporter_dev.env
 node_modules
-ui/__tests__/**/*
+ui/tests/coverage
+ui/tests/report.json
 pg_data
 .vscode
 .idea

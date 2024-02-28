@@ -1,8 +1,9 @@
-import { mount, flushPromises } from '@vue/test-utils';
+import { flushPromises } from '@vue/test-utils';
 import * as router from 'vue-router';
 
 import SimpleDialog from '~/components/SimpleDialog.vue';
 import { COLORS_DICT } from '~/constants/colors';
+import { createFactory } from '~/tests/utils';
 
 vi.mock('vue-router', () => ({
   useRouter: vi.fn(),
@@ -11,6 +12,23 @@ vi.mock('vue-router', () => ({
 describe('SimpleDialog component', () => {
   let wrapper;
   const routerPushMock = vi.fn();
+  const factory = createFactory(SimpleDialog, {
+    props: {
+      modelValue: true,
+      title: 'My dialog',
+      actions: ['close', 'save'],
+    },
+    slots: {
+      default: '<p>Default slot content</p>',
+    },
+    shallow: true,
+    global: {
+      renderStubDefaultSlot: true,
+      provide: {
+        'fullscreen-height': '800px',
+      },
+    },
+  });
 
   beforeEach(() => {
     router.useRouter.mockReturnValue({
@@ -20,23 +38,7 @@ describe('SimpleDialog component', () => {
 
   describe('render', () => {
     test('renders the base component', () => {
-      wrapper = mount(SimpleDialog, {
-        props: {
-          modelValue: true,
-          title: 'My dialog',
-          actions: ['close', 'save'],
-        },
-        slots: {
-          default: '<p>Default slot content</p>',
-        },
-        shallow: true,
-        global: {
-          renderStubDefaultSlot: true,
-          provide: {
-            'fullscreen-height': '800px',
-          },
-        },
-      });
+      wrapper = factory();
 
       expect(wrapper.get('.dialog__title').text()).toEqual('My dialog');
       expect(wrapper.find('.dialog__sidebar').exists()).toBeFalsy();
@@ -50,22 +52,9 @@ describe('SimpleDialog component', () => {
     });
 
     test('renders the header if using the header slot', () => {
-      wrapper = mount(SimpleDialog, {
-        props: {
-          modelValue: true,
-          title: 'My dialog',
-          actions: ['close', 'save'],
-        },
+      wrapper = factory({
         slots: {
-          default: '<p>Default slot content</p>',
           header: '<p>My custom header</p>',
-        },
-        shallow: true,
-        global: {
-          renderStubDefaultSlot: true,
-          provide: {
-            'fullscreen-height': '800px',
-          },
         },
       });
 
@@ -73,22 +62,9 @@ describe('SimpleDialog component', () => {
     });
 
     test('renders the sidebar if using the sidebar slot', () => {
-      wrapper = mount(SimpleDialog, {
-        props: {
-          modelValue: true,
-          title: 'My dialog',
-          actions: ['close', 'save'],
-        },
+      wrapper = factory({
         slots: {
-          default: '<p>Default slot content</p>',
           sidebar: '<p>My custom sidebar</p>',
-        },
-        shallow: true,
-        global: {
-          renderStubDefaultSlot: true,
-          provide: {
-            'fullscreen-height': '800px',
-          },
         },
       });
 
@@ -98,21 +74,9 @@ describe('SimpleDialog component', () => {
 
   describe('action buttons', () => {
     beforeEach(() => {
-      wrapper = mount(SimpleDialog, {
+      wrapper = factory({
         props: {
-          modelValue: true,
-          title: 'My dialog',
           actions: [],
-        },
-        slots: {
-          default: '<p>Default slot content</p>',
-        },
-        shallow: true,
-        global: {
-          renderStubDefaultSlot: true,
-          provide: {
-            'fullscreen-height': '800px',
-          },
         },
       });
     });
@@ -511,18 +475,9 @@ describe('SimpleDialog component', () => {
   describe('watchers', () => {
     describe('value', () => {
       beforeEach(() => {
-        wrapper = mount(SimpleDialog, {
+        wrapper = factory({
           props: {
             modelValue: false,
-            title: 'My dialog',
-            actions: ['close', 'save'],
-          },
-          shallow: true,
-          global: {
-            renderStubDefaultSlot: true,
-            provide: {
-              'fullscreen-height': '800px',
-            },
           },
         });
       });
@@ -552,18 +507,9 @@ describe('SimpleDialog component', () => {
   describe('lifecycle', () => {
     describe('unmounted', () => {
       test('removes the "is-clipped" class from the document', () => {
-        wrapper = mount(SimpleDialog, {
+        wrapper = factory({
           props: {
             modelValue: false,
-            title: 'My dialog',
-            actions: ['close', 'save'],
-          },
-          shallow: true,
-          global: {
-            renderStubDefaultSlot: true,
-            provide: {
-              'fullscreen-height': '800px',
-            },
           },
         });
         document.documentElement.classList.add('is-clipped');

@@ -1,9 +1,8 @@
 import * as fastApiAdapter from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
-import { mount, flushPromises } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 
 import { COLORS_DICT } from '~/constants/colors';
-
-import FeedsView from './FeedsView.vue';
+import FeedsView from '~/views/FeedsView.vue';
 
 const feedItems = [
   {
@@ -41,7 +40,7 @@ describe('Feeds View component', () => {
   let useFastApiAdapterSpy = vi.spyOn(fastApiAdapter, 'useFastApiTableAdapter');
 
   beforeEach(async () => {
-    wrapper = mount(FeedsView, { shallow: true });
+    wrapper = shallowMount(FeedsView);
 
     await flushPromises();
   });
@@ -83,7 +82,7 @@ describe('Feeds View component', () => {
 
   describe('render', () => {
     test('shows the empty placeholder if there are no items', () => {
-      wrapper = mount(FeedsView, { shallow: true });
+      wrapper = shallowMount(FeedsView);
 
       expect(wrapper.find('empty-placeholder-stub').exists()).toEqual(true);
     });

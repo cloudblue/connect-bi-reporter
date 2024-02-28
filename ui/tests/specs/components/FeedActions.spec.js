@@ -1,8 +1,7 @@
-import { mount } from '@vue/test-utils';
-
 import FeedActions from '~/components/FeedActions.vue';
 import { COLORS_DICT } from '~/constants/colors';
 import { STATUSES_DICT } from '~/constants/statuses';
+import { createFactory } from '~/tests/utils';
 
 const mockUseRequest = vi.hoisted(() => ({
   loading: false,
@@ -17,14 +16,15 @@ vi.mock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin', () => ({
 
 describe('FeedActions component', () => {
   let wrapper;
+  const factory = createFactory(FeedActions, {
+    props: {
+      feed: { status: STATUSES_DICT.ENABLED },
+    },
+  });
 
   describe('render', () => {
     test('renders the correct buttons if the feed status is "enabled"', () => {
-      wrapper = mount(FeedActions, {
-        props: {
-          feed: { status: STATUSES_DICT.ENABLED },
-        },
-      });
+      wrapper = factory();
 
       const buttons = wrapper.findAll('.action-button__wrapper ui-button');
 
@@ -46,7 +46,7 @@ describe('FeedActions component', () => {
     });
 
     test('renders the correct buttons if the feed status is "disabled"', () => {
-      wrapper = mount(FeedActions, {
+      wrapper = factory({
         props: {
           feed: { status: STATUSES_DICT.DISABLED },
         },
@@ -76,7 +76,7 @@ describe('FeedActions component', () => {
   describe('actions', () => {
     describe('click on the "disable" button', () => {
       beforeEach(async () => {
-        wrapper = mount(FeedActions, {
+        wrapper = factory({
           props: {
             feed: {
               id: 'RF-123',
@@ -99,7 +99,7 @@ describe('FeedActions component', () => {
 
     describe('click on the "enable" button', () => {
       beforeEach(async () => {
-        wrapper = mount(FeedActions, {
+        wrapper = factory({
           props: {
             feed: {
               id: 'RF-123',
@@ -122,7 +122,7 @@ describe('FeedActions component', () => {
 
     describe('click on the "force upload" button', () => {
       beforeEach(async () => {
-        wrapper = mount(FeedActions, {
+        wrapper = factory({
           props: {
             feed: {
               id: 'RF-123',
@@ -148,7 +148,7 @@ describe('FeedActions component', () => {
 
     describe('click on the "delete" button', () => {
       beforeEach(async () => {
-        wrapper = mount(FeedActions, {
+        wrapper = factory({
           props: {
             feed: {
               id: 'RF-123',

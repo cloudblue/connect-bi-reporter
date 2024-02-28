@@ -1,20 +1,20 @@
-import { mount } from '@vue/test-utils';
-
 import RadioInput from '~/components/RadioInput.vue';
 import { COLORS_DICT } from '~/constants/colors';
+import { createFactory } from '~/tests/utils';
 
 describe('RadioInput component', () => {
   let wrapper;
+  const factory = createFactory(RadioInput, {
+    props: {
+      modelValue: 'foo',
+      value: 'bar',
+      label: 'My radio input',
+    },
+  });
 
   describe('render', () => {
     test('renders the base component', () => {
-      wrapper = mount(RadioInput, {
-        props: {
-          modelValue: 'foo',
-          value: 'bar',
-          label: 'My radio input',
-        },
-      });
+      wrapper = factory();
 
       expect(wrapper.get('.radio-input ui-icon').attributes()).toEqual(
         expect.objectContaining({
@@ -29,10 +29,9 @@ describe('RadioInput component', () => {
     });
 
     test('adds the "radio-input__label_empty" class to the label element if there is no label', () => {
-      wrapper = mount(RadioInput, {
+      wrapper = factory({
         props: {
-          modelValue: 'foo',
-          value: 'bar',
+          label: '',
         },
       });
 
@@ -42,11 +41,8 @@ describe('RadioInput component', () => {
 
   describe('events', () => {
     test('click the component selects the value', async () => {
-      wrapper = mount(RadioInput, {
+      wrapper = factory({
         props: {
-          modelValue: 'foo',
-          value: 'bar',
-          label: 'My radio input',
           'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
         },
       });

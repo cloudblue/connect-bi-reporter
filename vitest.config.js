@@ -10,16 +10,16 @@ export default mergeConfig(
   defineConfig({
     test: {
       globals: true,
-      globalSetup: './vitest-global-setup.js',
+      globalSetup: resolve(__dirname, 'ui/tests/config/vitest-global-setup.js'),
       environment: 'jsdom',
       exclude: [...configDefaults.exclude, 'e2e/*'],
       root: fileURLToPath(new URL('./ui/', import.meta.url)),
       reporters: ['json', 'default'],
-      outputFile: resolve(__dirname, 'ui/__tests__/report.json'),
+      outputFile: resolve(__dirname, 'ui/tests/report.json'),
       coverage: {
         enabled: false,
         provider: 'v8',
-        reportsDirectory: resolve(__dirname, 'ui/__tests__/coverage'),
+        reportsDirectory: resolve(__dirname, 'ui/tests/coverage'),
       },
     },
   }),
