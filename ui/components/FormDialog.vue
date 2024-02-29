@@ -41,6 +41,9 @@ const props = defineProps({
   tabs: {
     type: Array,
     required: true,
+    validator(value) {
+      return value.length > 0;
+    },
   },
   mode: {
     type: String,
@@ -99,18 +102,14 @@ const computedTitle = computed(() => {
 });
 
 const isTabValid = computed(() => {
-  if (activeTab.value.includes) {
-    return activeTab.value.includes.every((field) => {
-      const fieldRules = props.rules[field];
-      if (fieldRules) {
-        return fieldRules.every((rule) => rule(props.form[field]));
-      }
+  const fieldsToCheck = activeTab.value.includes || [];
 
-      return true;
-    });
-  }
+  return fieldsToCheck.every((field) => {
+    const fieldRules = props.rules[field];
 
-  return true;
+    if (fieldRules) return fieldRules.every((rule) => rule(props.form[field]));
+    return true;
+  });
 });
 
 const goToTab = (index) => {

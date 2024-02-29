@@ -1,5 +1,5 @@
 <template>
-  <Teleport to=".dialogs-container">
+  <teleport to=".dialogs-container">
     <div
       v-if="value"
       v-bind="$attrs"
@@ -63,7 +63,7 @@
         </div>
       </div>
     </div>
-  </Teleport>
+  </teleport>
 </template>
 
 <script setup>

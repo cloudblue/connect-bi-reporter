@@ -38,6 +38,35 @@ describe('FormDialog component', () => {
 
   let wrapper;
 
+  describe('props validation', () => {
+    describe('tabs prop validator', () => {
+      it.each([
+        // expected, value
+        [true, [1]],
+        [true, ['a', 'b']],
+        [false, []],
+      ])('returns %s if the prop tabs is %s', (expected, value) => {
+        const result = FormDialog.props.tabs.validator(value);
+
+        expect(result).toEqual(expected);
+      });
+    });
+
+    describe('mode prop validator', () => {
+      it.each([
+        // expected, value
+        [true, 'edit'],
+        [true, 'wizard'],
+        [false, 'foo'],
+        [false, ''],
+      ])('returns %s if the prop mode is %s', (expected, value) => {
+        const result = FormDialog.props.mode.validator(value);
+
+        expect(result).toEqual(expected);
+      });
+    });
+  });
+
   describe('render', () => {
     test('renders the base component', () => {
       wrapper = factory();

@@ -36,6 +36,24 @@ describe('SimpleDialog component', () => {
     });
   });
 
+  describe('props validation', () => {
+    describe('actions prop validator', () => {
+      it.each([
+        // expected, value
+        [true, ['cancel', 'close', 'details', 'save', 'submit', 'spacer', 'next', 'back']],
+        [true, ['close', 'spacer', 'back', 'next']],
+        [false, ['foo']],
+        ...['cancel', 'close', 'details', 'save', 'submit', 'spacer', 'next', 'back'].map(
+          (action) => [true, [action]],
+        ),
+      ])('returns %s if the prop actions is %s', (expected, value) => {
+        const result = SimpleDialog.props.actions.validator(value);
+
+        expect(result).toEqual(expected);
+      });
+    });
+  });
+
   describe('render', () => {
     test('renders the base component', () => {
       wrapper = factory();
