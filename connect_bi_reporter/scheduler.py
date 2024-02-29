@@ -86,6 +86,15 @@ class Scheduler:
     def get_schedule_tasks(self):
         return get_schedule_tasks(self.client, self.context)
 
+    def get_schedule_task_by_method_name(self, method_name: str):
+        existing_tasks = self.get_schedule_tasks()
+        task = None
+        for _task in existing_tasks:
+            if _task['method'] == method_name:
+                task = _task
+                break
+        return task
+
     def create_schedule_task(
         self,
         trigger_type: TriggerTypeEnum,
