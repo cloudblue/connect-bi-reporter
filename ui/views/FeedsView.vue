@@ -1,7 +1,7 @@
 <template>
   <ui-view
     title="Feeds"
-    style="min-height: inherit"
+    style="height: inherit"
     no-padded
   >
     <loading-indicator v-if="loading" />

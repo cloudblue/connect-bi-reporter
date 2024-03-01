@@ -3,12 +3,14 @@
     <ui-icon
       icon-name="connectLoaderAnimated"
       :size="size"
-      color="#4797f2"
+      :color="COLORS_DICT.DARKER_BLUE"
     />
   </div>
 </template>
 
 <script setup>
+import { COLORS_DICT } from '~/constants/colors';
+
 defineProps({
   size: {
     type: [Number, String],
