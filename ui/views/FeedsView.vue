@@ -4,6 +4,21 @@
     style="height: inherit"
     no-padded
   >
+    <div
+      v-if="!noItems"
+      slot="actions"
+      class="header-actions"
+    >
+      <ui-button
+        class="header-button"
+        :background-color="COLORS_DICT.WHITE"
+        :color="COLORS_DICT.TEXT"
+        height="36px"
+        @clicked="openCreateFeedDialog"
+      >
+        <span>Create Feed</span>
+      </ui-button>
+    </div>
     <loading-indicator v-if="loading" />
     <empty-placeholder
       v-else-if="noItems"
@@ -38,8 +53,9 @@
             v-else-if="header.key === 'schedule'"
             :to="connectPortalRoutes.reportsScheduleDetails"
             :params="item.scheduleId"
-            >{{ item.scheduleId }}</spa-link
           >
+            {{ item.scheduleId }}
+          </spa-link>
           <ui-status
             v-else-if="header.key === 'status'"
             :icon-name="item.status.icon"
@@ -85,15 +101,21 @@
         </td>
       </tr>
     </ui-complex-table>
+
+    <create-feed-dialog
+      v-model="isCreateFeedDialogOpen"
+      @created="load"
+    />
   </ui-view>
 </template>
 
 <script setup>
 import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
 import { useFastApiTableAdapter } from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
+import CreateFeedDialog from '~/components/CreateFeedDialog.vue';
 import DateItem from '~/components/DateItem.vue';
 import EmptyPlaceholder from '~/components/EmptyPlaceholder.vue';
 import FeedActions from '~/components/FeedActions.vue';
@@ -127,8 +149,10 @@ const preparedItems = computed(() =>
   })),
 );
 
-// noop
-const openCreateFeedDialog = () => {};
+const isCreateFeedDialogOpen = ref(false);
+const openCreateFeedDialog = () => {
+  isCreateFeedDialogOpen.value = true;
+};
 
 onMounted(async () => {
   await load();

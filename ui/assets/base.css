@@ -56,6 +56,13 @@ a:active {
   color: #707070;
 }
 
+.assistive-text {
+  color: #707070;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+
 /* Table cell styling for Connect UI Toolkit tables */
 td {
   padding: 0 12px;
@@ -70,4 +77,18 @@ td {
 
 .is-clipped {
   overflow: hidden;
+}
+
+/* Buttons styles */
+.header-button {
+  display: block;
+  height: 36px;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+}
+
+.header-button span {
+  padding: 0 8px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
 }

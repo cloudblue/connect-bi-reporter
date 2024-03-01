@@ -37,6 +37,14 @@ describe('api composables', () => {
       expect(request).toEqual(expect.any(Function));
     });
 
+    test('returns the required properties if the isList parameter is true', () => {
+      ({ loading, result, request } = useRequest(toolkitInstance, false, true));
+
+      expect(loading.value).toEqual(false);
+      expect(result).toEqual([]);
+      expect(request).toEqual(expect.any(Function));
+    });
+
     describe('request call', () => {
       test('calls api utils request with the given args and fullResponse=true', async () => {
         await request('/foo/1', 'PUT', { description: 'bar' });
@@ -56,12 +64,24 @@ describe('api composables', () => {
         expect(loading.value).toEqual(false);
       });
 
-      test("assigns the response's body to result", async () => {
-        apiRequest.mockResolvedValueOnce({ body: { id: '1', description: 'foo' } });
+      describe("assigns the response's body to result", () => {
+        test('if isList is false', async () => {
+          ({ loading, result, request } = useRequest(toolkitInstance, false, false));
+          apiRequest.mockResolvedValueOnce({ body: { id: '1', description: 'foo' } });
 
-        await request('/foo');
+          await request('/foo');
 
-        expect(result).toEqual({ id: '1', description: 'foo' });
+          expect(result).toEqual({ id: '1', description: 'foo' });
+        });
+
+        test('if isList is true', async () => {
+          ({ loading, result, request } = useRequest(toolkitInstance, false, true));
+          apiRequest.mockResolvedValueOnce({ body: [{ id: '1', description: 'foo' }] });
+
+          await request('/foo');
+
+          expect(result).toEqual([{ id: '1', description: 'foo' }]);
+        });
       });
 
       test('returns the response status', async () => {

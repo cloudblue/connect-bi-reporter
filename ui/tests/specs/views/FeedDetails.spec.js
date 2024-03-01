@@ -72,7 +72,7 @@ describe('FeedDetails component', () => {
       wrapper.vm.loading = true;
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.find('loading-indicator-stub').exists()).toEqual(true);
+      expect(wrapper.get('loading-indicator-stub')).toBeDefined();
     });
 
     test('does not render the loading indicator if loading is false', async () => {
@@ -83,21 +83,37 @@ describe('FeedDetails component', () => {
     });
 
     test('renders the general tab if currentTab=general', () => {
-      expect(wrapper.find('.general-tab').exists()).toEqual(true);
+      expect(wrapper.get('.general-tab')).toBeDefined();
     });
   });
 
-  describe('actions', () => {
+  describe('events', () => {
     test('replaces the current route if ui-view triggers the "go-back" event', async () => {
-      await wrapper.find('ui-view').trigger('go-back');
+      await wrapper.get('ui-view').trigger('go-back');
 
       expect(mockReplace).toHaveBeenCalledWith({ name: 'feeds' });
     });
 
     test('sets currentTab to the given value if ui-tabs triggers the "click-tab" event', async () => {
-      await wrapper.find('ui-tabs').trigger('click-tab', { detail: 'foo' });
+      await wrapper.get('ui-tabs').trigger('click-tab', { detail: 'foo' });
 
       expect(wrapper.vm.currentTab).toEqual('foo');
+    });
+
+    test('opens the edit feed dialog if the edit header action button is clicked', async () => {
+      await wrapper.get('.header-button').trigger('clicked');
+
+      expect(wrapper.getComponent({ name: 'edit-feed-dialog' }).props('modelValue')).toEqual(true);
+    });
+
+    test('loads the feed if the edit feed dialog emits the updated event', async () => {
+      await flushPromises();
+      vi.clearAllMocks();
+
+      wrapper.getComponent({ name: 'edit-feed-dialog' }).vm.$emit('updated');
+      await wrapper.vm.$nextTick();
+
+      expect(mockRequest).toHaveBeenCalled();
     });
   });
 });

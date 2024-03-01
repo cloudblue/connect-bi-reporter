@@ -105,4 +105,5 @@ def test_proxied_connect_endpoints(api_client):
     assert isinstance(proxied, dict)
     assert proxied == {
         '/public/v1/reporting/reports': 'view',
+        '/public/v1/reporting/schedules': 'view',
     }

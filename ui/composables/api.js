@@ -2,16 +2,22 @@ import { reactive, ref } from 'vue';
 
 import { request } from '~/utils/api';
 
-export const useRequest = (toolkitInstance, propagateErrors = false) => {
+export const useRequest = (toolkitInstance, propagateErrors = false, isList = false) => {
   const loading = ref(false);
-  const result = reactive({});
+  const result = isList ? reactive([]) : reactive({});
 
   const doRequest = async (endpoint, method, body) => {
     loading.value = true;
 
     try {
       const response = await request(endpoint, method, body, true);
-      Object.assign(result, response.body);
+      if (isList) {
+        result.splice(0);
+        result.push(...response.body);
+      } else {
+        Object.assign(result, {});
+        Object.assign(result, response.body);
+      }
 
       return response.status;
     } catch (e) {
