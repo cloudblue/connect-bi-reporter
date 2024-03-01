@@ -9,14 +9,8 @@ const buildErrorMessage = (response, responseBody) => {
   let errorMessage = `Error ${response.status}: ${response.statusText}.`;
 
   if (responseBody) {
-    if (responseBody.error_code) {
-      errorMessage += ` Error code: ${responseBody.error_code}.`;
-    }
-    if (responseBody.errors) {
-      responseBody.errors.map((err) => {
-        errorMessage += ` ${err}`;
-      });
-    }
+    if (responseBody.error_code) errorMessage += ` Error code: ${responseBody.error_code}.`;
+    if (responseBody.errors) errorMessage += responseBody.errors.map((err) => ` ${err}`).join('');
   }
 
   return errorMessage;
@@ -34,10 +28,9 @@ const parseResponseBody = async (response) => {
 };
 
 export const request = async (endpoint, method = 'GET', body = null, fullResponse = false) => {
-  const options = { method };
-  if (body) {
-    options.body = body;
-  }
+  const options = { method, headers: { 'Content-Type': 'application/json' } };
+
+  if (body) options.body = JSON.stringify(body);
 
   const response = await fetch(endpoint, options);
   const responseBody = await parseResponseBody(response);
@@ -47,5 +40,7 @@ export const request = async (endpoint, method = 'GET', body = null, fullRespons
     throw new ApiError(errorMessage);
   }
 
-  return fullResponse ? { ...response, body: responseBody } : responseBody;
+  // There is no way to spread the response object to modify its body, so the current solution at
+  // the moment is this: return the status and the body instead of the full & real response
+  return fullResponse ? { status: response.status, body: responseBody } : responseBody;
 };

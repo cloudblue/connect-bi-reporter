@@ -17,8 +17,9 @@
           :background-color="COLORS_DICT.WHITE"
           :color="COLORS_DICT.TEXT"
           height="36px"
+          @clicked="openEditFeedDialog"
         >
-          <span>EDIT</span>
+          <span>Edit</span>
         </ui-button>
         <feed-actions
           :feed="feed"
@@ -109,6 +110,11 @@
         </div>
       </ui-tabs>
     </template>
+    <edit-feed-dialog
+      v-model="isDialogOpen"
+      :feed="feed"
+      @updated="loadFeed"
+    />
   </ui-view>
 </template>
 
@@ -121,6 +127,7 @@ import { useRoute, useRouter } from 'vue-router';
 import DateItem from '~/components/DateItem.vue';
 import DetailItem from '~/components/DetailItem.vue';
 import DetailItemGroup from '~/components/DetailItemGroup.vue';
+import EditFeedDialog from '~/components/EditFeedDialog.vue';
 import FeedActions from '~/components/FeedActions.vue';
 import LoadingIndicator from '~/components/LoadingIndicator.vue';
 import SpaLink from '~/components/SpaLink.vue';
@@ -157,6 +164,11 @@ const setCurrentTab = ({ detail: tab }) => {
   currentTab.value = tab;
 };
 
+const isDialogOpen = ref(false);
+const openEditFeedDialog = () => {
+  isDialogOpen.value = true;
+};
+
 watch(feedId, loadFeed, { immediate: true });
 </script>
 
@@ -169,19 +181,6 @@ watch(feedId, loadFeed, { immediate: true });
 
 .header-actions .feed-actions .header-button {
   margin-left: 16px;
-}
-
-.header-button {
-  display: block;
-  height: 36px;
-  border: 1px solid #e0e0e0;
-  border-radius: 2px;
-}
-
-.header-button span {
-  padding: 0 8px;
-  font-weight: 500;
-  letter-spacing: 0.4px;
 }
 
 .actions-menu__trigger-icon {

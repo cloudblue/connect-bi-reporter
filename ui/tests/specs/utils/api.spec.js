@@ -1,4 +1,4 @@
-import { ApiError, request } from '~/utils/api.js';
+import { ApiError, request } from '~/utils/api';
 
 describe('api utils', () => {
   describe('request', () => {
@@ -26,13 +26,20 @@ describe('api utils', () => {
     test('calls fetch with endpoint and method', async () => {
       await request('/foo', 'DELETE');
 
-      expect(fetch).toHaveBeenCalledWith('/foo', { method: 'DELETE' });
+      expect(fetch).toHaveBeenCalledWith('/foo', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
     });
 
     test('calls fetch with endpoint, method and body', async () => {
       await request('/foo', 'PUT', { foo: 'bar' });
 
-      expect(fetch).toHaveBeenCalledWith('/foo', { method: 'PUT', body: { foo: 'bar' } });
+      expect(fetch).toHaveBeenCalledWith('/foo', {
+        method: 'PUT',
+        body: JSON.stringify({ foo: 'bar' }),
+        headers: { 'Content-Type': 'application/json' },
+      });
     });
 
     describe('if there is an error', () => {
@@ -127,7 +134,7 @@ describe('api utils', () => {
         const result = await request('/foo', 'GET', null, true);
 
         expect(result).toEqual({
-          ...response,
+          status: 200,
           body: { id: 'foo' },
         });
       });

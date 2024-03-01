@@ -84,29 +84,63 @@ describe('Feeds View component', () => {
     test('shows the empty placeholder if there are no items', () => {
       wrapper = shallowMount(FeedsView);
 
-      expect(wrapper.find('empty-placeholder-stub').exists()).toEqual(true);
+      expect(wrapper.get('empty-placeholder-stub').attributes()).toEqual(
+        expect.objectContaining({
+          title: 'No Feeds',
+          action: 'Create Feed',
+          icon: 'googleAutoGraphBaseline',
+        }),
+      );
     });
 
-    test('shows the ui-complex-table component otherwise', () => {
-      expect(wrapper.find('ui-complex-table').exists()).toEqual(true);
+    test('shows the loading indicator if loading is truthy', async () => {
+      wrapper = shallowMount(FeedsView);
+      wrapper.vm.loading = true;
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.get('loading-indicator-stub')).toBeDefined();
+    });
+
+    describe('otherwise', () => {
+      test('shows the ui-complex-table component', () => {
+        expect(wrapper.get('ui-complex-table')).toBeDefined();
+      });
+
+      test('shows the header action to create a feed', () => {
+        expect(wrapper.get('.header-actions ui-button').text()).toEqual('Create Feed');
+      });
     });
   });
 
-  describe('actions', () => {
-    test('loads next page when ui-complex-table emits the "next-clicked" event', () => {
+  describe('events', () => {
+    test('loads next page when ui-complex-table emits the "next-clicked" event', async () => {
       const nextSpy = vi.spyOn(wrapper.vm, 'next');
 
-      wrapper.find('ui-complex-table').trigger('next-clicked');
+      await wrapper.get('ui-complex-table').trigger('next-clicked');
 
       expect(nextSpy).toHaveBeenCalled();
     });
 
-    test('loads previous page when ui-complex-table emits the "previous-clicked" event', () => {
+    test('loads previous page when ui-complex-table emits the "previous-clicked" event', async () => {
       const previousSpy = vi.spyOn(wrapper.vm, 'previous');
 
-      wrapper.find('ui-complex-table').trigger('previous-clicked');
+      await wrapper.get('ui-complex-table').trigger('previous-clicked');
 
       expect(previousSpy).toHaveBeenCalled();
+    });
+
+    test('opens the create feed dialog when the header action button to create a feed is clicked', async () => {
+      await wrapper.get('.header-actions ui-button').trigger('clicked');
+
+      expect(wrapper.get('create-feed-dialog-stub').attributes('modelvalue')).toEqual('true');
+    });
+
+    test('opens the create feed dialog when the empty placeholder emits the "action-clicked" event', async () => {
+      wrapper = shallowMount(FeedsView);
+
+      await wrapper.get('empty-placeholder-stub').trigger('action-clicked');
+
+      expect(wrapper.get('create-feed-dialog-stub').attributes('modelvalue')).toEqual('true');
     });
   });
 });
