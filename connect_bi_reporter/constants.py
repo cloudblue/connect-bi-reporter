@@ -10,8 +10,10 @@ UPLOAD_BASE_ERROR_LOG_MESSAGE = (
 SECONDS_DELAY = 120
 # Backoff factor in seconds between Upload tasks creation
 SECONDS_BACKOFF_FACTOR = 10
+CREATE_UPLOADS_METHOD_NAME = 'create_uploads'
+PROCESS_UPLOADS_METHOD_NAME = 'process_upload'
 PROCESS_UPLOAD_TAKS_BASE_METHOD_PAYLOAD = {
-    'method': 'process_upload',
+    'method': PROCESS_UPLOADS_METHOD_NAME,
     'description': (
         'This task will download the report from connect'
         ' and published it in the respective storage.'
