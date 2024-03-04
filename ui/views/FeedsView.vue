@@ -73,20 +73,7 @@
             @disabled="load"
             @uploaded="load"
             @deleted="load"
-          >
-            <ui-button
-              class="actions-button"
-              :background-color="COLORS_DICT.WHITE"
-              height="36px"
-              width="36px"
-            >
-              <ui-icon
-                class="actions-button__trigger-icon"
-                :color="COLORS_DICT.TEXT"
-                icon-name="googleMoreVertBaseline"
-              />
-            </ui-button>
-          </feed-actions>
+          />
           <div
             v-else-if="header.key === 'description'"
             class="truncator"

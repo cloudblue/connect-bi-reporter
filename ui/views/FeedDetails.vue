@@ -29,13 +29,13 @@
           @deleted="goToFeeds"
         >
           <ui-button
-            class="header-button"
+            class="header-button header-button_menu"
             :background-color="COLORS_DICT.WHITE"
             height="36px"
             width="36px"
           >
             <ui-icon
-              class="actions-menu__trigger-icon"
+              class="header-button__trigger-icon"
               :color="COLORS_DICT.TEXT"
               icon-name="googleArrowDropDownBaseline"
             />
@@ -108,6 +108,14 @@
             </detail-item>
           </detail-item-group>
         </div>
+
+        <div
+          v-if="currentTab === 'uploads'"
+          slot="uploads"
+          class="uploads-tab"
+        >
+          <uploads-table :feed-id="feedId" />
+        </div>
       </ui-tabs>
     </template>
     <edit-feed-dialog
@@ -131,6 +139,7 @@ import EditFeedDialog from '~/components/EditFeedDialog.vue';
 import FeedActions from '~/components/FeedActions.vue';
 import LoadingIndicator from '~/components/LoadingIndicator.vue';
 import SpaLink from '~/components/SpaLink.vue';
+import UploadsTable from '~/components/UploadsTable.vue';
 import { useRequest } from '~/composables/api';
 import { COLORS_DICT } from '~/constants/colors';
 import { STATUSES } from '~/constants/statuses';
@@ -177,14 +186,6 @@ watch(feedId, loadFeed, { immediate: true });
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-
-.header-actions .feed-actions .header-button {
-  margin-left: 16px;
-}
-
-.actions-menu__trigger-icon {
-  margin: 0 -8px;
 }
 
 .general-tab {
