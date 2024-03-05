@@ -18,7 +18,15 @@ describe('FeedActions component', () => {
   let wrapper;
   const factory = createFactory(FeedActions, {
     props: {
-      feed: { status: STATUSES_DICT.ENABLED },
+      feed: {
+        id: 'RF-123',
+        status: STATUSES_DICT.ENABLED,
+      },
+    },
+    global: {
+      stubs: {
+        'simple-dialog': true,
+      },
     },
   });
 
@@ -75,7 +83,6 @@ describe('FeedActions component', () => {
         wrapper = factory({
           props: {
             feed: {
-              id: 'RF-123',
               status: STATUSES_DICT.ENABLED,
             },
           },
@@ -101,7 +108,6 @@ describe('FeedActions component', () => {
         wrapper = factory({
           props: {
             feed: {
-              id: 'RF-123',
               status: STATUSES_DICT.DISABLED,
             },
           },
@@ -127,7 +133,6 @@ describe('FeedActions component', () => {
         wrapper = factory({
           props: {
             feed: {
-              id: 'RF-123',
               status: STATUSES_DICT.ENABLED,
             },
           },
@@ -156,7 +161,6 @@ describe('FeedActions component', () => {
         wrapper = factory({
           props: {
             feed: {
-              id: 'RF-123',
               status: STATUSES_DICT.ENABLED,
             },
           },
@@ -168,13 +172,19 @@ describe('FeedActions component', () => {
           .trigger('clicked');
       });
 
-      test('calls the delete endpoint', () => {
-        expect(mockUseRequest.request).toHaveBeenCalledWith('/api/feeds/RF-123', 'DELETE');
+      test('opens the delete feed dialog', () => {
+        expect(wrapper.getComponent({ name: 'delete-feed-dialog' }).props().modelValue).toEqual(
+          true,
+        );
       });
+    });
+  });
 
-      test('emits the "deleted" event', () => {
-        expect(wrapper.emitted().deleted).toBeTruthy();
-      });
+  describe('events', () => {
+    test('emits the deleted event when the delete feed dialog emits the deleted event', async () => {
+      await wrapper.getComponent({ name: 'delete-feed-dialog' }).vm.$emit('deleted');
+
+      expect(wrapper.emitted().deleted).toBeTruthy();
     });
   });
 });
