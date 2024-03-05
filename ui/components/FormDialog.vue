@@ -4,11 +4,11 @@
     class="form-dialog"
     :class="`form-dialog_${mode}`"
     :actions="actions"
-    :back-disabled="isFirstTab"
-    :details-route="detailsRoute"
+    :backDisabled="isFirstTab"
+    :detailsRoute="detailsRoute"
     :height="height"
-    :is-valid="isTabValid"
-    :on-submit="submit"
+    :isValid="isTabValid"
+    :onSubmit="submit"
     :title="computedTitle"
     :width="width"
     @back="goToPreviousTab"
@@ -18,7 +18,7 @@
       <vertical-tabs
         v-model:active-tab-key="activeTabKey"
         :tabs="tabs"
-        :linear="mode === 'wizard'"
+        :linear="isWizardMode"
       />
     </template>
     <template #default>
@@ -32,6 +32,7 @@ import { ref, computed, watch } from 'vue';
 
 import SimpleDialog from '~/components/SimpleDialog.vue';
 import VerticalTabs from '~/components/VerticalTabs.vue';
+import { FORM_DIALOG_TYPES_DICT } from '~/constants/dialogs';
 
 const props = defineProps({
   title: {
@@ -49,7 +50,7 @@ const props = defineProps({
     type: String,
     required: true,
     validator(value) {
-      return ['wizard', 'edit'].includes(value);
+      return Object.values(FORM_DIALOG_TYPES_DICT).includes(value);
     },
   },
   form: {
@@ -87,6 +88,9 @@ const value = defineModel({
   default: false,
 });
 
+const isWizardMode = computed(() => props.mode === FORM_DIALOG_TYPES_DICT.WIZARD);
+const isEditMode = computed(() => props.mode === FORM_DIALOG_TYPES_DICT.EDIT);
+
 const activeTabKey = ref('');
 const activeTabIdx = computed(() => props.tabs.findIndex((tab) => tab.key === activeTabKey.value));
 const activeTab = computed(() => props.tabs.find((tab) => tab.key === activeTabKey.value));
@@ -96,7 +100,7 @@ const isSummaryTab = computed(() => activeTabKey.value === 'summary');
 const isSubmittableTab = computed(() => activeTab.value.submittable);
 
 const computedTitle = computed(() => {
-  if (props.mode === 'edit') return props.title;
+  if (isEditMode.value) return props.title;
   if (isSummaryTab.value) return `${props.title} – Summary`;
   return `${props.title} – Step ${activeTabIdx.value + 1}`;
 });
@@ -127,7 +131,7 @@ const goToPreviousTab = () => {
 const submit = async () => {
   try {
     await props.onSubmit();
-    if (props.mode === 'wizard' && !isLastTab.value) goToNextTab();
+    if (isWizardMode.value && !isLastTab.value) goToNextTab();
   } catch (e) {
     // empty
     // TODO: Set text error in dialog?
@@ -135,7 +139,7 @@ const submit = async () => {
 };
 
 const actions = computed(() => {
-  if (props.mode === 'edit') {
+  if (isEditMode.value) {
     return ['spacer', 'close', 'save'];
   }
 

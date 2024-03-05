@@ -5,8 +5,8 @@
       class="destination-tab__input"
       :options="credentials"
       label="Credentials"
-      prop-display="name"
-      prop-value="id"
+      propDisplay="name"
+      propValue="id"
     >
       <template #selected="{ selectedItem }">{{ selectedItem?.name || '–' }}</template>
       <template #option="{ option }">{{ option.name }}</template>

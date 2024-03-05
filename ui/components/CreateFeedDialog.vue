@@ -3,12 +3,12 @@
     v-model="value"
     :form="form"
     :rules="rules"
-    :on-submit="createFeed"
+    :onSubmit="createFeed"
     :tabs="tabs"
-    :details-route="detailsRoute"
+    :detailsRoute="detailsRoute"
     title="Create Feed"
     mode="wizard"
-    submit-label="Create"
+    submitLabel="Create"
   >
     <template #schedule>
       <schedule-tab v-model="form.scheduleId" />
@@ -26,7 +26,7 @@
         :status="feed.status"
         :description="feed.description"
         :credential="feed.credential"
-        :schedule-id="feed.scheduleId"
+        :scheduleId="feed.scheduleId"
       />
     </template>
   </form-dialog>

@@ -4,7 +4,13 @@
 # All rights reserved.
 #
 from connect.client import ClientError
-from connect.eaas.core.decorators import account_settings_page, module_pages, proxied_connect_api, router, web_app
+from connect.eaas.core.decorators import (
+    account_settings_page,
+    module_pages,
+    proxied_connect_api,
+    router,
+    web_app,
+)
 from connect.eaas.core.inject.models import Context
 from connect.eaas.core.extension import WebApplicationBase
 from connect_extension_utils.connect_services.base import (

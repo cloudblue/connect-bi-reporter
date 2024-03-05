@@ -18,7 +18,7 @@
     "lint-format": "npm run lint:fix; npm run format"
   },
   "dependencies": {
-    "@cloudblueconnect/connect-ui-toolkit": "^30.5.0",
+    "@cloudblueconnect/connect-ui-toolkit": "^30.6.0",
     "filesize": "^10.1.0",
     "vue": "^3.4.19",
     "vue-router": "^4.3.0"

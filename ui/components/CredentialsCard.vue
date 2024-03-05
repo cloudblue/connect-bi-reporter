@@ -1,14 +1,17 @@
 <template>
-  <ui-card title="Credentials">
+  <ui-card
+    class="credentials-card"
+    title="Credentials"
+  >
     <div slot="actions">
       <ui-button
-        background-color="#2C98F0"
+        backgroundColor="#2C98F0"
         width="61px"
         height="28px"
         @click="addCredential"
       >
         <ui-icon
-          icon-name="googleAddBaseline"
+          iconName="googleAddBaseline"
           color="#fff"
           size="14"
         />
@@ -16,67 +19,86 @@
       </ui-button>
     </div>
     <div>
-
       <ui-table
         v-if="credentials.length > 0"
         :headers="headers"
       >
-        <tr v-for="credential in credentials" :key="credential.id">
+        <tr
+          v-for="credential in credentials"
+          :key="credential.id"
+        >
           <td>{{ credential.name }}</td>
           <td>
-            <ui-button
-              class="actions-button"
-              background-color="white"
-              height="36px"
-              width="36px"
+            <actions-menu
+              class="credentials-actions"
+              :actions="getCredentialsActions(credential.id)"
             >
-              <ui-icon
-                class="actions-button__trigger-icon"
-                :color="black"
-                icon-name="googleMoreVertBaseline"
-              />
-            </ui-button>
+            </actions-menu>
           </td>
         </tr>
-    </ui-table>
-    <alert-item
-      v-else
-      message="No credentials added"
-    />
+      </ui-table>
+      <alert-item
+        v-else
+        message="No credentials added"
+      />
     </div>
   </ui-card>
 </template>
 
-
 <script setup>
 import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
-import { reactive } from 'vue'
+import { reactive } from 'vue';
 
+import ActionsMenu from '~/components/ActionsMenu.vue';
 import AlertItem from '~/components/AlertItem.vue';
 import { useRequest } from '~/composables/api';
+import { COLORS_DICT } from '~/constants/colors';
 
 const { result: credentials, request: credentialRequest } = useRequest(useToolkit(), false, true);
 credentialRequest('/api/credentials');
 
-// request('/api/credentials', 'POST', {
-//   name: 'marta',
-//   connection_string: 'DefaultEndpointsProtocol=https;AccountName=juan;AccountKey=llavecita;EndpointSuffix=core.windows.net'
-// });
-
-
 const headers = reactive([
-  {value: 'name', text: 'Name'},
-  {value: 'actions', text: '', width: '48px'},
-])
+  { value: 'name', text: 'Name' },
+  { value: 'actions', text: '', width: '48px' },
+]);
 
+const openEditCredentialDialog = (id) => {
+  // TODO
+  console.log(id);
+};
 
+const openDeleteCredentialDialog = (id) => {
+  // TODO
+  console.log(id);
+};
 
 const addCredential = () => {
-  console.log('addCredential');
-}
+  // TODO
+};
+
+const getCredentialsActions = (id) => [
+  {
+    key: 'edit',
+    color: COLORS_DICT.TEXT,
+    text: 'Edit',
+    icon: 'googleEditBaseline',
+    handler: () => openEditCredentialDialog(id),
+  },
+  {
+    separated: true,
+    key: 'delete',
+    color: COLORS_DICT.NICE_RED,
+    text: 'Delete',
+    icon: 'googleDeleteForeverBaseline',
+    handler: () => openDeleteCredentialDialog(id),
+  },
+];
 </script>
 
 <style scoped>
+.credentials-card {
+  overflow: visible;
+}
 .add-button-text {
   color: #fff;
 }

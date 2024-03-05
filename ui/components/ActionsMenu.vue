@@ -2,7 +2,7 @@
   <ui-menu
     class="actions-menu"
     align="right"
-    :close-on-click-inside="false"
+    :closeOnClickInside="false"
   >
     <div
       slot="trigger"
@@ -11,14 +11,14 @@
       <slot name="trigger">
         <ui-button
           class="actions-menu__trigger-button"
-          :background-color="COLORS_DICT.WHITE"
+          :backgroundColor="COLORS_DICT.WHITE"
           height="36px"
           width="36px"
         >
           <ui-icon
             class="actions-menu__trigger-icon"
             :color="COLORS_DICT.TEXT"
-            icon-name="googleMoreVertBaseline"
+            iconName="googleMoreVertBaseline"
           />
         </ui-button>
       </slot>
@@ -39,7 +39,7 @@
         <ui-button
           v-if="!action.hide"
           :ref="action.key"
-          :background-color="COLORS_DICT.TRANSPARENT"
+          :backgroundColor="COLORS_DICT.TRANSPARENT"
           :color="action.color || COLORS_DICT.TEXT"
           :disabled="action.disabled"
           height="32px"
@@ -48,7 +48,7 @@
         >
           <div class="actions-menu__action-content">
             <ui-icon
-              :icon-name="action.loading ? 'connectLoaderAnimated' : action.icon"
+              :iconName="action.loading ? 'connectLoaderAnimated' : action.icon"
               :color="action.color || COLORS_DICT.TEXT"
               size="18"
             />

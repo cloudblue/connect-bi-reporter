@@ -3,6 +3,7 @@ import * as router from 'vue-router';
 
 import SimpleDialog from '~/components/SimpleDialog.vue';
 import { COLORS_DICT } from '~/constants/colors';
+import { ACTIONS_DICT } from '~/constants/dialogs.js';
 import { createFactory } from '~/tests/utils';
 
 vi.mock('vue-router', () => ({
@@ -16,7 +17,7 @@ describe('SimpleDialog component', () => {
     props: {
       modelValue: true,
       title: 'My dialog',
-      actions: ['close', 'save'],
+      actions: [ACTIONS_DICT.CLOSE, ACTIONS_DICT.SAVE],
     },
     slots: {
       default: '<p>Default slot content</p>',
@@ -40,12 +41,11 @@ describe('SimpleDialog component', () => {
     describe('actions prop validator', () => {
       it.each([
         // expected, value
-        [true, ['cancel', 'close', 'details', 'save', 'submit', 'spacer', 'next', 'back']],
-        [true, ['close', 'spacer', 'back', 'next']],
+        [true, Object.values(ACTIONS_DICT)],
+        [true, [ACTIONS_DICT.CLOSE, ACTIONS_DICT.SPACER, ACTIONS_DICT.BACK, ACTIONS_DICT.NEXT]],
         [false, ['foo']],
-        ...['cancel', 'close', 'details', 'save', 'submit', 'spacer', 'next', 'back'].map(
-          (action) => [true, [action]],
-        ),
+        [false, ['foo', ACTIONS_DICT.SUBMIT]],
+        ...Object.values(ACTIONS_DICT).map((action) => [true, [action]]),
       ])('returns %s if the prop actions is %s', (expected, value) => {
         const result = SimpleDialog.props.actions.validator(value);
 
@@ -102,7 +102,7 @@ describe('SimpleDialog component', () => {
     describe('cancel action', () => {
       beforeEach(async () => {
         await wrapper.setProps({
-          actions: ['cancel'],
+          actions: [ACTIONS_DICT.CANCEL],
         });
       });
 
@@ -113,7 +113,7 @@ describe('SimpleDialog component', () => {
           expect.objectContaining({
             color: COLORS_DICT.TEXT,
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(cancelButton.text()).toEqual('Cancel');
@@ -131,7 +131,7 @@ describe('SimpleDialog component', () => {
     describe('close action', () => {
       beforeEach(async () => {
         await wrapper.setProps({
-          actions: ['close'],
+          actions: [ACTIONS_DICT.CLOSE],
         });
       });
 
@@ -142,7 +142,7 @@ describe('SimpleDialog component', () => {
           expect.objectContaining({
             color: COLORS_DICT.TEXT,
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(closeButton.text()).toEqual('Close');
@@ -160,7 +160,7 @@ describe('SimpleDialog component', () => {
     describe('spacer action', () => {
       test('renders the spacer element', async () => {
         await wrapper.setProps({
-          actions: ['spacer'],
+          actions: [ACTIONS_DICT.SPACER],
         });
 
         expect(wrapper.find('.dialog__spacer').exists()).toBeTruthy();
@@ -170,7 +170,7 @@ describe('SimpleDialog component', () => {
     describe('next action', () => {
       beforeEach(async () => {
         await wrapper.setProps({
-          actions: ['next'],
+          actions: [ACTIONS_DICT.NEXT],
         });
       });
 
@@ -182,7 +182,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(nextButton.text()).toEqual('Next');
@@ -200,7 +200,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'true',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(nextButton.text()).toEqual('Next');
@@ -218,7 +218,7 @@ describe('SimpleDialog component', () => {
     describe('back action', () => {
       beforeEach(async () => {
         await wrapper.setProps({
-          actions: ['back'],
+          actions: [ACTIONS_DICT.BACK],
         });
       });
 
@@ -230,7 +230,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.TEXT,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(backButton.text()).toEqual('Back');
@@ -248,7 +248,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.TEXT,
             disabled: 'true',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(backButton.text()).toEqual('Back');
@@ -266,7 +266,7 @@ describe('SimpleDialog component', () => {
     describe('details action', () => {
       beforeEach(async () => {
         await wrapper.setProps({
-          actions: ['details'],
+          actions: [ACTIONS_DICT.DETAILS],
           detailsRoute: { name: 'foo' },
         });
       });
@@ -278,7 +278,7 @@ describe('SimpleDialog component', () => {
           expect.objectContaining({
             color: COLORS_DICT.TEXT,
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(detailsButton.text()).toEqual('Go to details');
@@ -296,7 +296,7 @@ describe('SimpleDialog component', () => {
     describe('submit action', () => {
       beforeEach(async () => {
         await wrapper.setProps({
-          actions: ['submit'],
+          actions: [ACTIONS_DICT.SUBMIT],
           isValid: true,
         });
       });
@@ -309,7 +309,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(submitButton.text()).toEqual('Submit');
@@ -327,7 +327,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'true',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(submitButton.text()).toEqual('Submit');
@@ -345,7 +345,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(submitButton.text()).toEqual('Create');
@@ -375,7 +375,7 @@ describe('SimpleDialog component', () => {
         test('renders the loading icon', async () => {
           expect(wrapper.get('.dialog__action ui-icon').attributes()).toEqual(
             expect.objectContaining({
-              'icon-name': 'connectLoaderAnimated',
+              iconname: 'connectLoaderAnimated',
               color: COLORS_DICT.NICE_BLUE,
               size: '24',
             }),
@@ -394,7 +394,7 @@ describe('SimpleDialog component', () => {
     describe('save action', () => {
       beforeEach(async () => {
         await wrapper.setProps({
-          actions: ['save'],
+          actions: [ACTIONS_DICT.SAVE],
           isValid: true,
         });
       });
@@ -407,7 +407,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(saveButton.text()).toEqual('Save');
@@ -425,28 +425,10 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'true',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(saveButton.text()).toEqual('Save');
-      });
-
-      test('renders the save action button with the submitLabel prop as text', async () => {
-        await wrapper.setProps({
-          submitLabel: 'Create',
-        });
-
-        const saveButton = wrapper.get('.dialog__action');
-
-        expect(saveButton.attributes()).toEqual(
-          expect.objectContaining({
-            color: COLORS_DICT.NICE_BLUE,
-            disabled: 'false',
-            height: '36px',
-            'background-color': 'transparent',
-          }),
-        );
-        expect(saveButton.text()).toEqual('Create');
       });
 
       describe('when the button is clicked', () => {
@@ -473,8 +455,88 @@ describe('SimpleDialog component', () => {
         test('renders the loading icon', async () => {
           expect(wrapper.get('.dialog__action ui-icon').attributes()).toEqual(
             expect.objectContaining({
-              'icon-name': 'connectLoaderAnimated',
+              iconname: 'connectLoaderAnimated',
               color: COLORS_DICT.NICE_BLUE,
+              size: '24',
+            }),
+          );
+          await flushPromises();
+        });
+
+        test('renders the button text after handler resolves', async () => {
+          await flushPromises();
+
+          expect(wrapper.find('.dialog__action ui-icon').exists()).toBeFalsy();
+        });
+      });
+    });
+
+    describe('delete action', () => {
+      beforeEach(async () => {
+        await wrapper.setProps({
+          actions: [ACTIONS_DICT.DELETE],
+          isValid: true,
+        });
+      });
+
+      test('renders the delete action button', () => {
+        const deleteButton = wrapper.get('.dialog__action');
+
+        expect(deleteButton.attributes()).toEqual(
+          expect.objectContaining({
+            color: COLORS_DICT.NICE_RED,
+            disabled: 'false',
+            height: '36px',
+            backgroundcolor: 'transparent',
+          }),
+        );
+        expect(deleteButton.text()).toEqual('Delete');
+      });
+
+      test('renders the delete action button disabled if "isValid" is falsy', async () => {
+        await wrapper.setProps({
+          isValid: false,
+        });
+
+        const deleteButton = wrapper.get('.dialog__action');
+
+        expect(deleteButton.attributes()).toEqual(
+          expect.objectContaining({
+            color: COLORS_DICT.NICE_RED,
+            disabled: 'true',
+            height: '36px',
+            backgroundcolor: 'transparent',
+          }),
+        );
+        expect(deleteButton.text()).toEqual('Delete');
+      });
+
+      describe('when the button is clicked', () => {
+        const onSubmitFn = vi.fn().mockImplementation(async () => {
+          // wait for multiple next ticks to check loading state
+          await wrapper.vm.$nextTick();
+          await wrapper.vm.$nextTick();
+          await wrapper.vm.$nextTick();
+        });
+
+        beforeEach(async () => {
+          await wrapper.setProps({
+            onSubmit: onSubmitFn,
+          });
+
+          const deleteButton = wrapper.get('.dialog__action');
+          await deleteButton.trigger('clicked');
+        });
+
+        test('calls the onSubmit prop', () => {
+          expect(onSubmitFn).toHaveBeenCalled();
+        });
+
+        test('renders the loading icon', async () => {
+          expect(wrapper.get('.dialog__action ui-icon').attributes()).toEqual(
+            expect.objectContaining({
+              iconname: 'connectLoaderAnimated',
+              color: COLORS_DICT.NICE_RED,
               size: '24',
             }),
           );

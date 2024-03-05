@@ -114,8 +114,8 @@ describe('UploadsTable component', () => {
       expect(columns[3].get('ui-status').attributes()).toEqual(
         expect.objectContaining({
           text: STATUSES[STATUSES_DICT.UPLOADED].text,
-          'icon-name': STATUSES[STATUSES_DICT.UPLOADED].icon,
-          'icon-color': STATUSES[STATUSES_DICT.UPLOADED].color,
+          iconname: STATUSES[STATUSES_DICT.UPLOADED].icon,
+          iconcolor: STATUSES[STATUSES_DICT.UPLOADED].color,
         }),
       );
       expect(columns[4].get('ui-button ui-icon').attributes('icon-name')).toEqual(

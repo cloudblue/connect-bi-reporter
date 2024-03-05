@@ -1,39 +1,40 @@
 <template>
-<div class="alert-holder">
   <div
-    class="alert"
-    :class="`alert_${ type }`">
-    <div class="alert__icon">
-      <ui-icon
-        :icon-name="icon"
-        :color="typeAlert[type]"
-        size="24"
-      />
+    class="alert-holder"
+    :class="`alert_${type}`"
+  >
+    <div class="alert">
+      <div class="alert__icon">
+        <ui-icon
+          :iconName="icon"
+          :color="typeAlert[type]"
+          size="24"
+        />
+      </div>
+      <div class="alert__text">
+        <slot name="message"> {{ message }} </slot>
+      </div>
     </div>
-    <div class="alert__text">
-      <slot name="message"> {{ message }} </slot>
-    </div>
-  </div>
   </div>
 </template>
 
 <script setup>
 defineProps({
   message: {
-      type: String,
-      default: 'List is empty. Please add item.',
-    },
+    type: String,
+    default: 'List is empty. Please add item.',
+  },
 
-    icon: {
-      type: String,
-      default: 'googleInfoBaseline',
-    },
+  icon: {
+    type: String,
+    default: 'googleInfoBaseline',
+  },
 
-    type: {
-      type: String,
-      default: 'default',
-    },
-})
+  type: {
+    type: String,
+    default: 'default',
+  },
+});
 
 const typeAlert = {
   info: '#0055ff',
@@ -45,17 +46,20 @@ const typeAlert = {
 </script>
 
 <style scoped>
+.alert-holder {
+  width: 100%;
+  /* #bdbdbd */
+  background-color: rgba(189, 189, 189, 0.15);
+}
 .alert {
   align-items: center;
   box-sizing: border-box;
   display: inline-flex;
-  min-height:64px;
+  min-height: 64px;
   min-width: 240px;
   max-width: 600px;
   padding: 16px;
   border-radius: 2px;
-  /* #bdbdbd */
-  background-color: rgba(189, 189, 189, 0.15);
   color: #bdbdbd;
 }
 
@@ -66,17 +70,16 @@ const typeAlert = {
 
 .alert_info {
   /* 0, 85, 255 */
-  background-color: _rgba(0, 85, 255, 0.15);
+  background-color: rgba(0, 85, 255, 0.15);
 }
 .alert_success {
   /* #0bb071 */
-  background-color: rgb(11, 176, 113, 0.15);
+  background-color: rgba(11, 176, 113, 0.15);
 }
 .alert_warning {
   /* #FFC700 */
   background-color: rgba(255, 199, 0, 0.15);
 }
-
 
 .alert__icon {
   flex: 0 0 auto;
@@ -91,5 +94,4 @@ const typeAlert = {
   text-align: left;
   color: #212121;
 }
-
 </style>

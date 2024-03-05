@@ -26,8 +26,8 @@ describe('FeedSummary component', () => {
       expect(summaryRows[1].text()).toContain('Status');
       expect(summaryRows[1].get('ui-status').attributes()).toEqual(
         expect.objectContaining({
-          'icon-name': 'googleFiberManualRecordBaseline',
-          'icon-color': COLORS_DICT.NICE_GREEN,
+          iconname: 'googleFiberManualRecordBaseline',
+          iconcolor: COLORS_DICT.NICE_GREEN,
           text: 'Enabled',
         }),
       );

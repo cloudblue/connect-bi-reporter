@@ -21,7 +21,7 @@ describe('EmptyPlaceholder component', () => {
     expect(wrapper.find('.empty-placeholder_icon ui-icon').attributes()).toEqual(
       expect.objectContaining({
         color: COLORS_DICT.MIDDLE_GREY,
-        'icon-name': 'googleAppleMicrosoft',
+        iconname: 'googleAppleMicrosoft',
       }),
     );
   });
@@ -37,13 +37,13 @@ describe('EmptyPlaceholder component', () => {
   test('renders the action, if any', () => {
     expect(wrapper.find('.empty-placeholder_action').attributes()).toEqual(
       expect.objectContaining({
-        'background-color': 'transparent',
+        backgroundcolor: 'transparent',
         color: COLORS_DICT.NICE_BLUE,
       }),
     );
     expect(wrapper.find('.empty-placeholder_action ui-icon').attributes()).toEqual(
       expect.objectContaining({
-        'icon-name': 'googleAddBaseline',
+        iconname: 'googleAddBaseline',
         size: '18',
         color: COLORS_DICT.NICE_BLUE,
       }),
