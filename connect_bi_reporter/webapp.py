@@ -27,6 +27,8 @@ from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_
 )
 @proxied_connect_api(
     {
+        '/files': 'view',
+        '/public/v1/media': 'view',
         '/public/v1/reporting/reports': 'view',
         '/public/v1/reporting/schedules': 'view',
     },

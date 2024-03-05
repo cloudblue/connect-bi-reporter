@@ -104,6 +104,8 @@ def test_proxied_connect_endpoints(api_client):
     proxied = getattr(api_client._webapp_class, PROXIED_CONNECT_API_ATTR_NAME)
     assert isinstance(proxied, dict)
     assert proxied == {
+        '/files': 'view',
+        '/public/v1/media': 'view',
         '/public/v1/reporting/reports': 'view',
         '/public/v1/reporting/schedules': 'view',
     }

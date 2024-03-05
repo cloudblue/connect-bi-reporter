@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="detail-item"
-    :class="{ 'detail-item_dense': dense }"
-  >
+  <div class="detail-item">
     <div
       v-if="title || $slots.title"
       class="detail-item__head"
@@ -65,10 +62,6 @@ defineProps({
   assistiveText: {
     type: String,
     default: '',
-  },
-  dense: {
-    type: Boolean,
-    default: false,
   },
 });
 </script>

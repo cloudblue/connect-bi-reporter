@@ -66,6 +66,7 @@ a:active {
 /* Table cell styling for Connect UI Toolkit tables */
 td {
   padding: 0 12px;
+  vertical-align: middle;
 }
 
 .horizontal-divider {
@@ -77,6 +78,13 @@ td {
 
 .is-clipped {
   overflow: hidden;
+}
+
+.dot-separator:after {
+  content: '•';
+  line-height: 20px;
+  font-size: 14px;
+  margin: 0 8px;
 }
 
 /* Buttons styles */
@@ -91,4 +99,23 @@ td {
   padding: 0 8px;
   font-weight: 500;
   letter-spacing: 0.4px;
+}
+
+.header-button_menu {
+  margin-left: 16px;
+}
+
+.header-button__trigger-icon {
+  margin: 0 -8px;
+}
+
+.reset-button {
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  display: inline;
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.4;
 }
