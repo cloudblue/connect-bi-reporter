@@ -2,7 +2,7 @@
   <form-dialog
     v-model="isDialogOpen"
     :form="form"
-    :on-submit="updateFeed"
+    :onSubmit="updateFeed"
     :rules="rules"
     :tabs="tabs"
     title="Edit Feed"

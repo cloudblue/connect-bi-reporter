@@ -87,10 +87,10 @@ describe('FormDialog component', () => {
       expect(wrapper.getComponent({ name: 'SimpleDialog' }).attributes()).toEqual(
         expect.objectContaining({
           actions: 'cancel,spacer,back,next',
-          'back-disabled': 'true',
+          backdisabled: 'true',
           height: '400px',
           width: '400px',
-          'is-valid': 'true',
+          isvalid: 'true',
           title: 'Lorem Ipsum – Step 1',
         }),
       );
@@ -134,7 +134,7 @@ describe('FormDialog component', () => {
           expect(wrapper.getComponent({ name: 'SimpleDialog' }).attributes()).toEqual(
             expect.objectContaining({
               actions: 'cancel,spacer,back,next',
-              'back-disabled': 'true',
+              backdisabled: 'true',
             }),
           );
         });
@@ -146,8 +146,8 @@ describe('FormDialog component', () => {
           expect(wrapper.getComponent({ name: 'SimpleDialog' }).attributes()).toEqual(
             expect.objectContaining({
               actions: 'cancel,spacer,back,next',
-              'back-disabled': 'false',
-              'is-valid': 'true',
+              backdisabled: 'false',
+              isvalid: 'true',
             }),
           );
         });
@@ -159,8 +159,8 @@ describe('FormDialog component', () => {
           expect(wrapper.getComponent({ name: 'SimpleDialog' }).attributes()).toEqual(
             expect.objectContaining({
               actions: 'cancel,spacer,back,next',
-              'back-disabled': 'false',
-              'is-valid': 'false',
+              backdisabled: 'false',
+              isvalid: 'false',
             }),
           );
         });
@@ -172,8 +172,8 @@ describe('FormDialog component', () => {
           expect(wrapper.getComponent({ name: 'SimpleDialog' }).attributes()).toEqual(
             expect.objectContaining({
               actions: 'cancel,spacer,back,submit',
-              'back-disabled': 'false',
-              'is-valid': 'true',
+              backdisabled: 'false',
+              isvalid: 'true',
             }),
           );
         });
@@ -185,8 +185,8 @@ describe('FormDialog component', () => {
           expect(wrapper.getComponent({ name: 'SimpleDialog' }).attributes()).toEqual(
             expect.objectContaining({
               actions: 'spacer,details,close',
-              'back-disabled': 'false',
-              'is-valid': 'true',
+              backdisabled: 'false',
+              isvalid: 'true',
             }),
           );
         });

@@ -40,14 +40,14 @@
                   :disabled="action.disabled"
                   :color="action.color || COLORS_DICT.TEXT"
                   height="36px"
-                  background-color="transparent"
+                  backgroundColor="transparent"
                   @clicked="action.handler"
                 >
                   <ui-icon
                     v-if="action.loading"
                     class="dialog__action-icon"
                     :color="action.color || COLORS_DICT.TEXT"
-                    icon-name="connectLoaderAnimated"
+                    iconName="connectLoaderAnimated"
                     size="24"
                   />
                   <span

@@ -113,7 +113,7 @@ describe('SimpleDialog component', () => {
           expect.objectContaining({
             color: COLORS_DICT.TEXT,
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(cancelButton.text()).toEqual('Cancel');
@@ -142,7 +142,7 @@ describe('SimpleDialog component', () => {
           expect.objectContaining({
             color: COLORS_DICT.TEXT,
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(closeButton.text()).toEqual('Close');
@@ -182,7 +182,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(nextButton.text()).toEqual('Next');
@@ -200,7 +200,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'true',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(nextButton.text()).toEqual('Next');
@@ -230,7 +230,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.TEXT,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(backButton.text()).toEqual('Back');
@@ -248,7 +248,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.TEXT,
             disabled: 'true',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(backButton.text()).toEqual('Back');
@@ -278,7 +278,7 @@ describe('SimpleDialog component', () => {
           expect.objectContaining({
             color: COLORS_DICT.TEXT,
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(detailsButton.text()).toEqual('Go to details');
@@ -309,7 +309,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(submitButton.text()).toEqual('Submit');
@@ -327,7 +327,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'true',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(submitButton.text()).toEqual('Submit');
@@ -345,7 +345,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(submitButton.text()).toEqual('Create');
@@ -375,7 +375,7 @@ describe('SimpleDialog component', () => {
         test('renders the loading icon', async () => {
           expect(wrapper.get('.dialog__action ui-icon').attributes()).toEqual(
             expect.objectContaining({
-              'icon-name': 'connectLoaderAnimated',
+              iconname: 'connectLoaderAnimated',
               color: COLORS_DICT.NICE_BLUE,
               size: '24',
             }),
@@ -407,7 +407,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(saveButton.text()).toEqual('Save');
@@ -425,7 +425,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'true',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(saveButton.text()).toEqual('Save');
@@ -443,7 +443,7 @@ describe('SimpleDialog component', () => {
             color: COLORS_DICT.NICE_BLUE,
             disabled: 'false',
             height: '36px',
-            'background-color': 'transparent',
+            backgroundcolor: 'transparent',
           }),
         );
         expect(saveButton.text()).toEqual('Create');
@@ -473,7 +473,7 @@ describe('SimpleDialog component', () => {
         test('renders the loading icon', async () => {
           expect(wrapper.get('.dialog__action ui-icon').attributes()).toEqual(
             expect.objectContaining({
-              'icon-name': 'connectLoaderAnimated',
+              iconname: 'connectLoaderAnimated',
               color: COLORS_DICT.NICE_BLUE,
               size: '24',
             }),

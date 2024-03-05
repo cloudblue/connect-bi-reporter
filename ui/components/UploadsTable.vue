@@ -4,8 +4,8 @@
     <ui-complex-table
       v-else
       :headers="headers"
-      :total-items="total"
-      :current-page="page"
+      :totalItems="total"
+      :currentPage="page"
       fixed
       @next-clicked="next"
       @previous-clicked="previous"
@@ -43,7 +43,7 @@
             <!-- TODO: Show download link if status!=uploaded ? -->
             <detail-item
               v-else
-              :assistive-text="item.file.size"
+              :assistiveText="item.file.size"
             >
               <template #body-text>
                 <link-button
@@ -55,8 +55,8 @@
           </template>
           <span v-else-if="header.key === 'status'">
             <ui-status
-              :icon-name="item.status.icon"
-              :icon-color="item.status.color"
+              :iconName="item.status.icon"
+              :iconColor="item.status.color"
               :text="item.status.text"
             />
             <template v-if="item.isFailed">
@@ -72,7 +72,7 @@
             <!-- TODO: Show download button if status!=uploaded ? -->
             <ui-button
               class="actions-button"
-              :background-color="COLORS_DICT.WHITE"
+              :backgroundColor="COLORS_DICT.WHITE"
               height="36px"
               width="36px"
               @clicked="downloadFile(item)"
@@ -80,7 +80,7 @@
               <ui-icon
                 class="actions-button__trigger-icon"
                 :color="COLORS_DICT.TEXT"
-                icon-name="googleFileDownloadBaseline"
+                iconName="googleFileDownloadBaseline"
               />
             </ui-button>
             <actions-menu

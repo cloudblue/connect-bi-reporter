@@ -29,17 +29,15 @@ describe('FeedActions component', () => {
       const buttons = wrapper.findAll('.actions-menu__action ui-button');
 
       expect(buttons[0].text()).toContain('Disable');
-      expect(buttons[0].find('ui-icon').attributes()['icon-name']).toEqual(
-        'googleToggleOffBaseline',
-      );
+      expect(buttons[0].find('ui-icon').attributes('iconname')).toEqual('googleToggleOffBaseline');
       expect(buttons[0].attributes().color).toEqual(COLORS_DICT.TEXT);
 
       expect(buttons[1].text()).toContain('Force upload');
-      expect(buttons[1].find('ui-icon').attributes()['icon-name']).toEqual('googleUploadBaseline');
+      expect(buttons[1].find('ui-icon').attributes('iconname')).toEqual('googleUploadBaseline');
       expect(buttons[1].attributes().color).toEqual(COLORS_DICT.TEXT);
 
       expect(buttons[2].text()).toContain('Delete');
-      expect(buttons[2].find('ui-icon').attributes()['icon-name']).toEqual(
+      expect(buttons[2].find('ui-icon').attributes('iconname')).toEqual(
         'googleDeleteForeverBaseline',
       );
       expect(buttons[2].attributes().color).toEqual(COLORS_DICT.NICE_RED);
@@ -55,18 +53,16 @@ describe('FeedActions component', () => {
       const buttons = wrapper.findAll('.actions-menu__action ui-button');
 
       expect(buttons[0].text()).toContain('Enable');
-      expect(buttons[0].find('ui-icon').attributes()['icon-name']).toEqual(
-        'googleToggleOnBaseline',
-      );
+      expect(buttons[0].find('ui-icon').attributes('iconname')).toEqual('googleToggleOnBaseline');
       expect(buttons[0].attributes().color).toEqual(COLORS_DICT.TEXT);
 
       expect(buttons[1].text()).toContain('Force upload');
-      expect(buttons[1].find('ui-icon').attributes()['icon-name']).toEqual('googleUploadBaseline');
+      expect(buttons[1].find('ui-icon').attributes('iconname')).toEqual('googleUploadBaseline');
       expect(buttons[1].attributes().color).toEqual(COLORS_DICT.TEXT);
       expect(buttons[1].attributes().disabled).toEqual('true');
 
       expect(buttons[2].text()).toContain('Delete');
-      expect(buttons[2].find('ui-icon').attributes()['icon-name']).toEqual(
+      expect(buttons[2].find('ui-icon').attributes('iconname')).toEqual(
         'googleDeleteForeverBaseline',
       );
       expect(buttons[2].attributes().color).toEqual(COLORS_DICT.NICE_RED);

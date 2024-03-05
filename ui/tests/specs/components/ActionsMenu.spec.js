@@ -60,13 +60,13 @@ describe('ActionsMenu component', () => {
       ).toEqual(
         expect.objectContaining({
           color: COLORS_DICT.TEXT,
-          'icon-name': 'googleMoreVertBaseline',
+          iconname: 'googleMoreVertBaseline',
         }),
       );
       expect(wrapper.findAll('.actions-menu__action').length).toEqual(1);
       expect(wrapper.get('.actions-menu__action ui-button').attributes()).toEqual(
         expect.objectContaining({
-          'background-color': COLORS_DICT.TRANSPARENT,
+          backgroundcolor: COLORS_DICT.TRANSPARENT,
           color: COLORS_DICT.TEXT,
           height: '32px',
           width: '156px',
@@ -75,7 +75,7 @@ describe('ActionsMenu component', () => {
       expect(wrapper.get('.actions-menu__action ui-button').text()).toEqual('Foo');
       expect(wrapper.get('.actions-menu__action ui-icon').attributes()).toEqual(
         expect.objectContaining({
-          'icon-name': 'googleCheckBaseline',
+          iconname: 'googleCheckBaseline',
           color: COLORS_DICT.TEXT,
           size: '18',
         }),
@@ -168,7 +168,7 @@ describe('ActionsMenu component', () => {
           },
         });
 
-        expect(wrapper.get('.actions-menu__action ui-icon').attributes('icon-name')).toEqual(
+        expect(wrapper.get('.actions-menu__action ui-icon').attributes('iconname')).toEqual(
           'connectLoaderAnimated',
         );
       });

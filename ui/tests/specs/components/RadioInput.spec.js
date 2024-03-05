@@ -18,7 +18,7 @@ describe('RadioInput component', () => {
 
       expect(wrapper.get('.radio-input ui-icon').attributes()).toEqual(
         expect.objectContaining({
-          'icon-name': 'googleRadioButtonUncheckedBaseline',
+          iconname: 'googleRadioButtonUncheckedBaseline',
           color: '',
         }),
       );
@@ -52,7 +52,7 @@ describe('RadioInput component', () => {
       expect(wrapper.emitted()['update:modelValue'][0]).toEqual(['bar']);
       expect(wrapper.get('.radio-input ui-icon').attributes()).toEqual(
         expect.objectContaining({
-          'icon-name': 'googleRadioButtonCheckedBaseline',
+          iconname: 'googleRadioButtonCheckedBaseline',
           color: COLORS_DICT.NICE_BLUE,
         }),
       );

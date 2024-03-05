@@ -37,6 +37,9 @@ module.exports = {
 
     // Disabled to allow fair web component slot usage
     'vue/no-deprecated-slot-attribute': 'off',
+
+    // Force pascalCase attributes to avoid issues with some web components
+    'vue/attribute-hyphenation': ['error', 'never'],
   },
 
   env: {

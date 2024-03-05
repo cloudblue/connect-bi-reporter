@@ -8,8 +8,8 @@
     <div class="feed-summary__row">
       <p class="feed-summary__label">Status</p>
       <ui-status
-        :icon-name="feedStatus.icon"
-        :icon-color="feedStatus.color"
+        :iconName="feedStatus.icon"
+        :iconColor="feedStatus.color"
         :text="feedStatus.text"
       />
     </div>

@@ -3,7 +3,7 @@
     <div class="empty-placeholder_content">
       <div class="empty-placeholder_icon">
         <ui-icon
-          :icon-name="icon"
+          :iconName="icon"
           :color="COLORS_DICT.MIDDLE_GREY"
           size="56"
         />
@@ -13,12 +13,12 @@
       <ui-button
         v-if="action"
         class="empty-placeholder_action"
-        background-color="transparent"
+        backgroundColor="transparent"
         :color="COLORS_DICT.NICE_BLUE"
         @clicked="$emit('actionClicked')"
       >
         <ui-icon
-          icon-name="googleAddBaseline"
+          iconName="googleAddBaseline"
           :color="COLORS_DICT.NICE_BLUE"
           size="18"
         />

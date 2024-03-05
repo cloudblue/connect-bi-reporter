@@ -2,14 +2,14 @@
   <radio-table
     v-model="model"
     :items="filteredReportSchedules"
-    search-placeholder="Search for Report Schedule name or ID"
+    searchPlaceholder="Search for Report Schedule name or ID"
     title="Select Report Schedule"
     @search="loadReportSchedulesDebounced"
   >
     <template #default="{ item }">
       <detail-item
-        :body-text="item.name"
-        :assistive-text="item.id"
+        :bodyText="item.name"
+        :assistiveText="item.id"
       />
     </template>
   </radio-table>
