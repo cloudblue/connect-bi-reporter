@@ -10,13 +10,19 @@
       <slot />
     </template>
   </actions-menu>
+  <delete-feed-dialog
+    v-model="isDeleteFeedDialogOpen"
+    :feedId="feedId"
+    @deleted="emit('deleted')"
+  />
 </template>
 
 <script setup>
 import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import ActionsMenu from '~/components/ActionsMenu.vue';
+import DeleteFeedDialog from '~/components/DeleteFeedDialog.vue';
 import { useRequest } from '~/composables/api';
 import { COLORS_DICT } from '~/constants/colors';
 import { STATUSES_DICT } from '~/constants/statuses';
@@ -34,7 +40,6 @@ const toolkit = useToolkit();
 
 const enableAction = useRequest(toolkit);
 const disableAction = useRequest(toolkit);
-const deleteAction = useRequest(toolkit);
 const forceUploadAction = useRequest(toolkit);
 
 const feedId = computed(() => props.feed.id);
@@ -55,9 +60,10 @@ const forceUpload = async () => {
   );
   if (status < 400) emit('uploaded');
 };
-const deleteFeed = async () => {
-  const status = await deleteAction.request(`/api/feeds/${feedId.value}`, 'DELETE');
-  if (status < 400) emit('deleted');
+
+const isDeleteFeedDialogOpen = ref(false);
+const openDeleteFeedDialog = () => {
+  isDeleteFeedDialogOpen.value = true;
 };
 
 const actions = reactive([
@@ -94,8 +100,7 @@ const actions = reactive([
     color: COLORS_DICT.NICE_RED,
     text: 'Delete',
     icon: 'googleDeleteForeverBaseline',
-    loading: deleteAction.loading,
-    handler: deleteFeed,
+    handler: openDeleteFeedDialog,
   },
 ]);
 </script>
