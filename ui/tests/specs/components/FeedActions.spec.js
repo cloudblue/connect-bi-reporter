@@ -26,7 +26,7 @@ describe('FeedActions component', () => {
     test('renders the correct buttons if the feed status is "enabled"', () => {
       wrapper = factory();
 
-      const buttons = wrapper.findAll('.action-button__wrapper ui-button');
+      const buttons = wrapper.findAll('.actions-menu__action ui-button');
 
       expect(buttons[0].text()).toContain('Disable');
       expect(buttons[0].find('ui-icon').attributes()['icon-name']).toEqual(
@@ -52,7 +52,7 @@ describe('FeedActions component', () => {
         },
       });
 
-      const buttons = wrapper.findAll('.action-button__wrapper ui-button');
+      const buttons = wrapper.findAll('.actions-menu__action ui-button');
 
       expect(buttons[0].text()).toContain('Enable');
       expect(buttons[0].find('ui-icon').attributes()['icon-name']).toEqual(
@@ -85,7 +85,10 @@ describe('FeedActions component', () => {
           },
         });
 
-        await wrapper.find({ ref: 'disable' }).trigger('clicked');
+        await wrapper
+          .findComponent({ name: 'actions-menu' })
+          .find({ ref: 'disable' })
+          .trigger('clicked');
       });
 
       test('calls the disable endpoint', () => {
@@ -108,7 +111,10 @@ describe('FeedActions component', () => {
           },
         });
 
-        await wrapper.find({ ref: 'enable' }).trigger('clicked');
+        await wrapper
+          .findComponent({ name: 'actions-menu' })
+          .find({ ref: 'enable' })
+          .trigger('clicked');
       });
 
       test('calls the enable endpoint', () => {
@@ -131,7 +137,10 @@ describe('FeedActions component', () => {
           },
         });
 
-        await wrapper.find({ ref: 'forceUpload' }).trigger('clicked');
+        await wrapper
+          .findComponent({ name: 'actions-menu' })
+          .find({ ref: 'forceUpload' })
+          .trigger('clicked');
       });
 
       test('calls the forceUpload endpoint', () => {
@@ -157,7 +166,10 @@ describe('FeedActions component', () => {
           },
         });
 
-        await wrapper.find({ ref: 'delete' }).trigger('clicked');
+        await wrapper
+          .findComponent({ name: 'actions-menu' })
+          .find({ ref: 'delete' })
+          .trigger('clicked');
       });
 
       test('calls the delete endpoint', () => {

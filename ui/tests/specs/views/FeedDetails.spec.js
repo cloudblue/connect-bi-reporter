@@ -85,6 +85,13 @@ describe('FeedDetails component', () => {
     test('renders the general tab if currentTab=general', () => {
       expect(wrapper.get('.general-tab')).toBeDefined();
     });
+
+    test('renders the uploads tab if currentTab=uploads', async () => {
+      wrapper.vm.currentTab = 'uploads';
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.get('.uploads-tab')).toBeDefined();
+    });
   });
 
   describe('events', () => {
