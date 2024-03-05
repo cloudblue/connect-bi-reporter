@@ -71,6 +71,8 @@ import { inject, watch, onBeforeUnmount, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { COLORS_DICT } from '~/constants/colors';
+import { ACTIONS_DICT } from '~/constants/dialogs.js';
+import { buildAction } from '~/utils/dialogs';
 
 const value = defineModel({
   type: Boolean,
@@ -86,9 +88,7 @@ const props = defineProps({
     type: Array,
     required: true,
     validator(value) {
-      return value.every((action) =>
-        ['cancel', 'close', 'details', 'save', 'submit', 'spacer', 'next', 'back'].includes(action),
-      );
+      return value.every((action) => Object.values(ACTIONS_DICT).includes(action));
     },
   },
   height: {
@@ -139,56 +139,46 @@ const submit = async () => {
 const close = () => (value.value = false);
 
 const actionDict = computed(() => ({
-  cancel: {
-    key: 'cancel',
-    handler: close,
-    label: 'Cancel',
-  },
-  close: {
-    key: 'close',
-    handler: close,
-    label: 'Close',
-  },
-  submit: {
-    key: 'submit',
+  [ACTIONS_DICT.CANCEL]: buildAction(ACTIONS_DICT.CANCEL, { handler: close }),
+  [ACTIONS_DICT.CLOSE]: buildAction(ACTIONS_DICT.CLOSE, { handler: close }),
+  [ACTIONS_DICT.SUBMIT]: buildAction(ACTIONS_DICT.SUBMIT, {
     disabled: !props.isValid,
     handler: submit,
-    label: props.submitLabel || 'Submit',
+    label: props.submitLabel,
     loading: isSubmitting.value,
     color: COLORS_DICT.NICE_BLUE,
-  },
-  save: {
-    key: 'save',
+  }),
+  [ACTIONS_DICT.SAVE]: buildAction(ACTIONS_DICT.SAVE, {
     disabled: !props.isValid,
     handler: async () => {
       await submit();
       close();
     },
-    label: props.submitLabel || 'Save',
     loading: isSubmitting.value,
     color: COLORS_DICT.NICE_BLUE,
-  },
-  details: {
-    key: 'details',
+  }),
+  [ACTIONS_DICT.DELETE]: buildAction(ACTIONS_DICT.DELETE, {
+    disabled: !props.isValid,
+    handler: async () => {
+      await submit();
+      close();
+    },
+    loading: isSubmitting.value,
+    color: COLORS_DICT.NICE_RED,
+  }),
+  [ACTIONS_DICT.DETAILS]: buildAction(ACTIONS_DICT.DETAILS, {
     handler: () => router.push(props.detailsRoute),
-    label: 'Go to details',
-  },
-  spacer: {
-    key: 'spacer',
-  },
-  next: {
-    key: 'next',
+  }),
+  [ACTIONS_DICT.SPACER]: buildAction(ACTIONS_DICT.SPACER),
+  [ACTIONS_DICT.NEXT]: buildAction(ACTIONS_DICT.NEXT, {
     disabled: !props.isValid,
     handler: () => emit('next'),
-    label: 'Next',
     color: COLORS_DICT.NICE_BLUE,
-  },
-  back: {
-    key: 'back',
+  }),
+  [ACTIONS_DICT.BACK]: buildAction(ACTIONS_DICT.BACK, {
     disabled: props.backDisabled,
     handler: () => emit('back'),
-    label: 'Back',
-  },
+  }),
 }));
 
 const computedActions = computed(() => props.actions.map((act) => actionDict.value[act]));

@@ -1,4 +1,5 @@
 import FormDialog from '~/components/FormDialog.vue';
+import { FORM_DIALOG_TYPES_DICT } from '~/constants/dialogs.js';
 import { createFactory } from '~/tests/utils';
 import { validationRules } from '~/utils/validation';
 
@@ -7,7 +8,7 @@ describe('FormDialog component', () => {
     props: {
       modelValue: true,
       title: 'My dialog',
-      mode: 'wizard',
+      mode: FORM_DIALOG_TYPES_DICT.WIZARD,
       rules: { three: [validationRules.required()] },
       form: { three: null },
       tabs: [
@@ -55,8 +56,8 @@ describe('FormDialog component', () => {
     describe('mode prop validator', () => {
       it.each([
         // expected, value
-        [true, 'edit'],
-        [true, 'wizard'],
+        [true, FORM_DIALOG_TYPES_DICT.EDIT],
+        [true, FORM_DIALOG_TYPES_DICT.WIZARD],
         [false, 'foo'],
         [false, ''],
       ])('returns %s if the prop mode is %s', (expected, value) => {
@@ -98,7 +99,7 @@ describe('FormDialog component', () => {
 
     describe('if mode=edit', () => {
       beforeEach(() => {
-        wrapper = factory({ props: { mode: 'edit' } });
+        wrapper = factory({ props: { mode: FORM_DIALOG_TYPES_DICT.EDIT } });
       });
 
       test('adds the "form-dialog_edit" class', () => {
@@ -118,7 +119,7 @@ describe('FormDialog component', () => {
 
     describe('if mode=wizard', () => {
       beforeEach(() => {
-        wrapper = factory({ props: { mode: 'wizard' } });
+        wrapper = factory({ props: { mode: FORM_DIALOG_TYPES_DICT.WIZARD } });
       });
 
       test('adds the "form-dialog_wizard" class', () => {
