@@ -2,7 +2,7 @@
   <ui-view
     title="Feeds"
     style="height: inherit"
-    no-padded
+    noPadded
   >
     <div
       v-if="!noItems"
@@ -11,7 +11,7 @@
     >
       <ui-button
         class="header-button"
-        :background-color="COLORS_DICT.WHITE"
+        :backgroundColor="COLORS_DICT.WHITE"
         :color="COLORS_DICT.TEXT"
         height="36px"
         @clicked="openCreateFeedDialog"
@@ -30,8 +30,8 @@
     <ui-complex-table
       v-else
       :headers="headers"
-      :total-items="total"
-      :current-page="page"
+      :totalItems="total"
+      :currentPage="page"
       fixed
       @next-clicked="next"
       @previous-clicked="previous"
@@ -58,8 +58,8 @@
           </spa-link>
           <ui-status
             v-else-if="header.key === 'status'"
-            :icon-name="item.status.icon"
-            :icon-color="item.status.color"
+            :iconName="item.status.icon"
+            :iconColor="item.status.color"
             :text="item.status.text"
           />
           <date-item

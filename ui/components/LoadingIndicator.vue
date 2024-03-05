@@ -1,7 +1,7 @@
 <template>
   <div class="loading-indicator">
     <ui-icon
-      icon-name="connectLoaderAnimated"
+      iconName="connectLoaderAnimated"
       :size="size"
       :color="COLORS_DICT.DARKER_BLUE"
     />

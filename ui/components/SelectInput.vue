@@ -16,8 +16,8 @@
       </select>
     </div>
     <ui-menu
-      full-width
-      close-on-click-inside
+      fullWidth
+      closeOnClickInside
     >
       <div
         slot="trigger"
@@ -25,12 +25,12 @@
       >
         <slot
           name="selected"
-          :selected-item="selectedItem"
+          :selectedItem="selectedItem"
         >
           <span>{{ model }}</span>
         </slot>
         <ui-icon
-          icon-name="googleArrowDropDownBaseline"
+          iconName="googleArrowDropDownBaseline"
           :color="COLORS_DICT.DARK_GREY"
           size="24"
         />
@@ -49,7 +49,7 @@
           <slot
             name="option"
             :option="option"
-            :is-selected="option[propValue] === model"
+            :isSelected="option[propValue] === model"
           >
             <span>{{ option[propValue] }}</span>
           </slot>

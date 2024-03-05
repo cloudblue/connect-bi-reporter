@@ -16,14 +16,14 @@
       >
         <ui-icon
           v-if="tab.skipStep"
-          icon-name="googleArrowDownwardBaseline"
+          iconName="googleArrowDownwardBaseline"
           :color="COLORS_DICT.NICE_BLUE"
           size="18"
         />
         <span v-else-if="tab.inactive || tab.active">{{ tab.step }}</span>
         <ui-icon
           v-else
-          icon-name="googleCheckBaseline"
+          iconName="googleCheckBaseline"
           :color="COLORS_DICT.NICE_BLUE"
           size="18"
         />

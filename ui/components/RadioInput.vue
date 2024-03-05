@@ -5,7 +5,7 @@
   >
     <ui-icon
       class="radio-input__box"
-      :icon-name="icon"
+      :iconName="icon"
       :color="iconColor"
     />
     <label

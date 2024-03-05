@@ -63,7 +63,7 @@ describe('VerticalTabs component', () => {
 
         // First tab, already passed since the active tab is set to be the 2nd tab
         expect(
-          tabElements[0].get('.vertical-tabs__tab-index ui-icon').attributes('icon-name'),
+          tabElements[0].get('.vertical-tabs__tab-index ui-icon').attributes('iconname'),
         ).toEqual('googleCheckBaseline');
 
         // Second tab, active (set by the prop activeTabKey)
@@ -72,7 +72,7 @@ describe('VerticalTabs component', () => {
 
         // Third tab, skipStep=true
         expect(
-          tabElements[2].get('.vertical-tabs__tab-index ui-icon').attributes('icon-name'),
+          tabElements[2].get('.vertical-tabs__tab-index ui-icon').attributes('iconname'),
         ).toEqual('googleArrowDownwardBaseline');
 
         // Fourth tab, inactive

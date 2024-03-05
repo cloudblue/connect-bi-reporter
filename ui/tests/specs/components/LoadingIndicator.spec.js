@@ -13,7 +13,7 @@ describe('LoadingIndicator component', () => {
 
     expect(wrapper.find('.loading-indicator ui-icon').attributes()).toEqual(
       expect.objectContaining({
-        'icon-name': 'connectLoaderAnimated',
+        iconname: 'connectLoaderAnimated',
         size: '42',
         color: COLORS_DICT.DARKER_BLUE,
       }),

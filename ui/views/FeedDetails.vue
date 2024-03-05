@@ -1,9 +1,9 @@
 <template>
   <ui-view
     :title="feedId"
-    assistive-title="Feed Details"
+    assistiveTitle="Feed Details"
     style="height: inherit"
-    show-back-button
+    showBackButton
     @go-back="goToFeeds"
   >
     <loading-indicator v-if="loading" />
@@ -14,7 +14,7 @@
       >
         <ui-button
           class="header-button"
-          :background-color="COLORS_DICT.WHITE"
+          :backgroundColor="COLORS_DICT.WHITE"
           :color="COLORS_DICT.TEXT"
           height="36px"
           @clicked="openEditFeedDialog"
@@ -30,14 +30,14 @@
         >
           <ui-button
             class="header-button header-button_menu"
-            :background-color="COLORS_DICT.WHITE"
+            :backgroundColor="COLORS_DICT.WHITE"
             height="36px"
             width="36px"
           >
             <ui-icon
               class="header-button__trigger-icon"
               :color="COLORS_DICT.TEXT"
-              icon-name="googleArrowDropDownBaseline"
+              iconName="googleArrowDropDownBaseline"
             />
           </ui-button>
         </feed-actions>
@@ -59,8 +59,8 @@
             <template #content>
               <ui-status
                 v-if="feedStatus"
-                :icon-name="feedStatus.icon"
-                :icon-color="feedStatus.color"
+                :iconName="feedStatus.icon"
+                :iconColor="feedStatus.color"
                 :text="feedStatus.text"
               />
             </template>
@@ -69,7 +69,7 @@
       </div>
 
       <ui-tabs
-        :current-tab="currentTab"
+        :currentTab="currentTab"
         :tabs="tabs"
         @click-tab="setCurrentTab"
       >
@@ -80,7 +80,7 @@
         >
           <detail-item
             title="Credentials"
-            :body-text="feed.credential.id"
+            :bodyText="feed.credential.id"
           />
           <detail-item title="Description">
             <template #body-text>
@@ -92,7 +92,7 @@
           <detail-item-group separated>
             <detail-item
               title="Created"
-              :assistive-text="feed.events.created.by.id"
+              :assistiveText="feed.events.created.by.id"
             >
               <template #body-text>
                 <date-item :date="feed.events.created.at" />
@@ -100,7 +100,7 @@
             </detail-item>
             <detail-item
               title="Updated"
-              :assistive-text="feed.events.updated.by.id"
+              :assistiveText="feed.events.updated.by.id"
             >
               <template #body-text>
                 <date-item :date="feed.events.updated.at" />
@@ -114,7 +114,7 @@
           slot="uploads"
           class="uploads-tab"
         >
-          <uploads-table :feed-id="feedId" />
+          <uploads-table :feedId="feedId" />
         </div>
       </ui-tabs>
     </template>

@@ -28,8 +28,8 @@ describe('SelectInput component', () => {
       expect(wrapper.get('.select-input__label').text()).toEqual('My select input');
       expect(wrapper.get('.select-input__real-input select')).toBeDefined();
       expect(wrapper.findAll('.select-input__real-input select option').length).toEqual(2);
-      expect(wrapper.get('ui-menu').attributes()['full-width']).toBeDefined();
-      expect(wrapper.get('ui-menu').attributes()['close-on-click-inside']).toBeDefined();
+      expect(wrapper.get('ui-menu').attributes('fullwidth')).toBeDefined();
+      expect(wrapper.get('ui-menu').attributes('closeonclickinside')).toBeDefined();
       expect(wrapper.get('.select-input__selected').text()).toEqual('foo');
       expect(wrapper.findAll('.select-input__option').length).toEqual(2);
       expect(wrapper.findAll('.select-input__option')[0].classes()).toContain(
