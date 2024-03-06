@@ -1,69 +1,67 @@
 <template>
-  <teleport to=".dialogs-container">
+  <div
+    v-if="value"
+    v-bind="$attrs"
+    class="dialog"
+    :style="{ height: containerHeight }"
+  >
     <div
-      v-if="value"
-      v-bind="$attrs"
-      class="dialog"
-      :style="{ height: containerHeight }"
+      class="dialog__container"
+      :style="{ height, width }"
     >
-      <div
-        class="dialog__container"
-        :style="{ height, width }"
-      >
-        <div class="dialog__header">
-          <slot name="header">
-            <p class="dialog__title">{{ title }}</p>
-          </slot>
+      <div class="dialog__header">
+        <slot name="header">
+          <p class="dialog__title">{{ title }}</p>
+        </slot>
+      </div>
+      <div class="dialog__body">
+        <div
+          v-if="$slots.sidebar"
+          class="dialog__sidebar"
+        >
+          <slot name="sidebar" />
         </div>
-        <div class="dialog__body">
-          <div
-            v-if="$slots.sidebar"
-            class="dialog__sidebar"
-          >
-            <slot name="sidebar" />
+        <div class="dialog__content-wrapper">
+          <div class="dialog__content">
+            <slot name="default" />
           </div>
-          <div class="dialog__content-wrapper">
-            <div class="dialog__content">
-              <slot name="default" />
-            </div>
-            <div class="dialog__actions">
-              <template v-for="action in computedActions">
-                <div
-                  v-if="action.key === 'spacer'"
-                  :key="action.key"
-                  class="dialog__spacer"
-                />
-                <ui-button
-                  v-else
-                  :key="action.key"
-                  class="dialog__action"
-                  :disabled="action.disabled"
+          <div class="dialog__actions">
+            <template v-for="action in computedActions">
+              <div
+                v-if="action.key === 'spacer'"
+                :key="action.key"
+                class="dialog__spacer"
+              />
+              <ui-button
+                v-else
+                :key="action.key"
+                class="dialog__action"
+                :disabled="action.disabled"
+                :color="action.color || COLORS_DICT.TEXT"
+                height="36px"
+                backgroundColor="transparent"
+                @clicked="action.handler"
+              >
+                <ui-icon
+                  v-if="action.loading"
+                  class="dialog__action-icon"
                   :color="action.color || COLORS_DICT.TEXT"
-                  height="36px"
-                  backgroundColor="transparent"
-                  @clicked="action.handler"
+                  iconName="connectLoaderAnimated"
+                  size="24"
+                />
+                <span
+                  v-else
+                  class="dialog__action-label"
                 >
-                  <ui-icon
-                    v-if="action.loading"
-                    class="dialog__action-icon"
-                    :color="action.color || COLORS_DICT.TEXT"
-                    iconName="connectLoaderAnimated"
-                    size="24"
-                  />
-                  <span
-                    v-else
-                    class="dialog__action-label"
-                  >
-                    {{ action.label }}
-                  </span>
-                </ui-button>
-              </template>
-            </div>
+                  {{ action.label }}
+                </span>
+              </ui-button>
+            </template>
           </div>
         </div>
       </div>
     </div>
-  </teleport>
+  </div>
 </template>
 
 <script setup>
