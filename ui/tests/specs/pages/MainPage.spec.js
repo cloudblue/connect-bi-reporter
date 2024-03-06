@@ -35,8 +35,4 @@ describe('MainPage component', () => {
   test('the styles are applied to the component root element', () => {
     expect(wrapper.get('.app').attributes('style')).toEqual('height: 400px;');
   });
-
-  test('renders the ".dialogs-container" element', () => {
-    expect(wrapper.get('.dialogs-container')).toBeDefined();
-  });
 });

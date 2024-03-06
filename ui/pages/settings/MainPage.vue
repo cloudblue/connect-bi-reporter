@@ -3,7 +3,6 @@
     class="app"
     :style="styles"
   >
-    <div class="dialogs-container" />
     <upload-schedule-card />
     <credentials-card />
   </div>
