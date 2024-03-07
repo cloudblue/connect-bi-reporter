@@ -8,7 +8,7 @@
         backgroundColor="#2C98F0"
         width="61px"
         height="28px"
-        @click="addCredential"
+        @click="openAddEditCredentialDialog('create')"
       >
         <ui-icon
           iconName="googleAddBaseline"
@@ -43,14 +43,28 @@
       />
     </div>
   </ui-card>
+  <add-edit-credential-dialog
+    v-model="isAddEditDialogOpen"
+    :mode="addEditDialogMode"
+    :credentialId="editCredentialId"
+    @created="onUpdated"
+    @edited="onUpdated"
+  />
+  <delete-credential-dialog
+    v-model="isDeleteDialogOpen"
+    :credentialId="deleteCredentialId"
+    @deleted="onDeleted"
+  />
 </template>
 
 <script setup>
 import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 
 import ActionsMenu from '~/components/ActionsMenu.vue';
+import AddEditCredentialDialog from '~/components/AddEditCredentialDialog.vue';
 import AlertItem from '~/components/AlertItem.vue';
+import DeleteCredentialDialog from '~/components/DeleteCredentialDialog.vue';
 import { useRequest } from '~/composables/api';
 import { COLORS_DICT } from '~/constants/colors';
 
@@ -62,18 +76,32 @@ const headers = reactive([
   { value: 'actions', text: '', width: '48px' },
 ]);
 
-const openEditCredentialDialog = (id) => {
-  // TODO
-  console.log(id);
-};
+const isAddEditDialogOpen = ref(false);
+const addEditDialogMode = ref('create');
+const isDeleteDialogOpen = ref(false);
+const deleteCredentialId = ref('');
+const editCredentialId = ref('');
 
 const openDeleteCredentialDialog = (id) => {
-  // TODO
-  console.log(id);
+  deleteCredentialId.value = id;
+  isDeleteDialogOpen.value = true;
 };
 
-const addCredential = () => {
-  // TODO
+const openAddEditCredentialDialog = (mode, credentialId) => {
+  addEditDialogMode.value = mode;
+  isAddEditDialogOpen.value = true;
+  editCredentialId.value = credentialId;
+};
+
+const onUpdated = () => {
+  credentialRequest('/api/credentials');
+  isAddEditDialogOpen.value = false;
+};
+
+const onDeleted = () => {
+  deleteCredentialId.value = '';
+  isDeleteDialogOpen.value = false;
+  credentialRequest('/api/credentials');
 };
 
 const getCredentialsActions = (id) => [
@@ -82,7 +110,7 @@ const getCredentialsActions = (id) => [
     color: COLORS_DICT.TEXT,
     text: 'Edit',
     icon: 'googleEditBaseline',
-    handler: () => openEditCredentialDialog(id),
+    handler: () => openAddEditCredentialDialog('edit', id),
   },
   {
     separated: true,
