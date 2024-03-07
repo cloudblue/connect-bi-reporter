@@ -4,6 +4,7 @@ import createToolkitApp, {
   Button,
   Menu,
   Card,
+  Textfield,
 } from '@cloudblueconnect/connect-ui-toolkit';
 import { toolkitPlugin } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
 import { createApp } from 'vue';
@@ -18,6 +19,7 @@ createToolkitApp({
   'ui-button': Button,
   'ui-menu': Menu,
   'ui-card': Card,
+  'ui-textfield': Textfield,
 }).then((toolkitInstance) => {
   const app = createApp(MainPage);
   app.use(toolkitPlugin, toolkitInstance);
