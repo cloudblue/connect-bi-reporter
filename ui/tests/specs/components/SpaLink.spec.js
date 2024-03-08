@@ -40,7 +40,7 @@ describe('SpaLink component', () => {
         preventDefault: vi.fn(),
         stopPropagation: vi.fn(),
       };
-      await wrapper.trigger('click', clickEvent);
+      await wrapper.get('a').trigger('click', clickEvent);
     });
 
     test('prevents default', () => {
@@ -63,7 +63,7 @@ describe('SpaLink component', () => {
         },
       });
 
-      await wrapper.trigger('click', clickEvent);
+      await wrapper.get('a').trigger('click', clickEvent);
 
       expect(toolkitStub.navigateTo).toHaveBeenCalledWith(
         connectPortalRoutes.productDetails,
