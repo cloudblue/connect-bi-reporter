@@ -128,6 +128,6 @@ const getCredentialsActions = (id) => [
   overflow: visible;
 }
 .add-button-text {
-  color: #fff;
+  color: var(--color-white);
 }
 </style>

@@ -82,7 +82,7 @@ const select = () => {
 
 .radio-input__label-text {
   margin: 0;
-  font-size: 14px;
-  line-height: 24px;
+  font-size: var(--font-size-regular);
+  line-height: var(--line-height-big);
 }
 </style>

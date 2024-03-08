@@ -99,23 +99,23 @@ const onTabClick = (tab) => {
   flex-direction: row;
   align-items: center;
   padding: 0 24px;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
+  font-size: var(--font-size-regular);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-regular);
   text-align: left;
   cursor: pointer;
   position: relative;
 }
 
 .vertical-tabs__tab_active {
-  border-right: 3px solid #2c98f0;
-  color: #2c98f0;
-  font-weight: 500;
+  border-right: 3px solid var(--color-nice-blue);
+  color: var(--color-nice-blue);
+  font-weight: var(--font-weight-medium);
   background-color: #2c98f026;
 }
 
 .vertical-tabs__tab_inactive {
-  color: #707070;
+  color: var(--color-assistive-grey);
 }
 
 .vertical-tabs__tab-index {
@@ -126,7 +126,7 @@ const onTabClick = (tab) => {
   height: 24px;
   margin-right: 8px;
   border-radius: 50%;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   text-align: center;
   letter-spacing: -1px;
   background-color: #2c98f033;
@@ -134,7 +134,7 @@ const onTabClick = (tab) => {
 
 .vertical-tabs__tab_active .vertical-tabs__tab-index {
   opacity: 1;
-  background-color: #2c98ef;
+  background-color: var(--color-nice-blue);
   color: white;
 }
 
@@ -158,7 +158,7 @@ const onTabClick = (tab) => {
   width: 1px;
   height: 25%;
   margin-left: -0.5px;
-  background-color: #2c98ef;
+  background-color: var(--color-nice-blue);
   opacity: 15%;
 }
 

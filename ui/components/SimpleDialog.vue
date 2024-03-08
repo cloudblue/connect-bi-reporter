@@ -220,24 +220,21 @@ onBeforeUnmount(() => {
   overflow: hidden;
   background-color: white;
   border-radius: 4px;
-  box-shadow:
-    0 11px 15px -7px rgba(0, 0, 0, 0.2),
-    0 24px 38px 3px rgba(0, 0, 0, 0.14),
-    0 9px 46px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--box-shadow-complex);
 }
 
 .dialog__header {
   height: 64px;
   background-color: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-light-grey);
   padding: 20px 24px;
   box-sizing: border-box;
 }
 
 .dialog__title {
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 24px;
+  font-size: var(--font-size-big);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-small);
 }
 
 .dialog__body {
@@ -250,7 +247,7 @@ onBeforeUnmount(() => {
 .dialog__sidebar {
   width: 220px;
   background: #f5f5f5;
-  border-right: 1px solid #e0e0e0;
+  border-right: 1px solid var(--color-light-grey);
 }
 
 .dialog__content-wrapper {
@@ -268,7 +265,7 @@ onBeforeUnmount(() => {
 
 .dialog__actions {
   height: 52px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--color-light-grey);
   flex-shrink: 0;
   display: flex;
   flex-direction: row;
@@ -288,9 +285,9 @@ onBeforeUnmount(() => {
 }
 
 .dialog__action-label {
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 500;
+  font-size: var(--font-size-regular);
+  line-height: var(--line-height-regular);
+  font-weight: var(--font-weight-medium);
 }
 
 .dialog__spacer {

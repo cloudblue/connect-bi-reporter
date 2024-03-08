@@ -80,16 +80,16 @@ defineProps({
   display: flex;
   align-items: center;
   margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 16px;
+  font-size: var(--font-size-regular);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-small);
 }
 
 .detail-item__subhead {
-  line-height: 16px;
-  color: #707070;
-  font-size: 12px;
-  font-weight: 400;
+  line-height: var(--line-height-small);
+  color: var(--color-assistive-grey);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-regular);
   margin-left: 16px;
 }
 
@@ -105,16 +105,16 @@ defineProps({
 }
 
 .detail-item__text {
-  line-height: 20px;
-  font-size: 14px;
+  line-height: var(--line-height-regular);
+  font-size: var(--font-size-regular);
   word-wrap: break-word;
   word-break: break-word;
 }
 
 .detail-item__assistive-text {
-  line-height: 16px;
-  color: #707070;
-  font-size: 12px;
-  font-weight: 400;
+  line-height: var(--line-height-small);
+  color: var(--color-assistive-grey);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-regular);
 }
 </style>

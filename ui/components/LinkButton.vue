@@ -18,7 +18,7 @@ defineProps({
 <style scoped>
 .link-button {
   text-decoration: underline;
-  color: #2c98f0;
+  color: var(--color-nice-blue);
   cursor: pointer;
 }
 </style>
