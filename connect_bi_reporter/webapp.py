@@ -31,7 +31,10 @@ from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_
     label='Feeds',
     url='/static/main.html',
 )
-@account_settings_page('el nombre que tu quieras', '/static/settings.html')
+@account_settings_page(
+    label='Connect BI Reporter – Settings',
+    url='/static/settings.html',
+)
 @proxied_connect_api(
     {
         '/files': 'view',
