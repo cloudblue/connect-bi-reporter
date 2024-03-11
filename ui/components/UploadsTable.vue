@@ -11,7 +11,7 @@
       @previous-clicked="previous"
     >
       <tr
-        v-for="item in preparedItems"
+        v-for="item in preparedUploads"
         :key="item.id"
         class="uploads-table__row"
       >
@@ -23,35 +23,25 @@
             v-if="header.key === 'date'"
             :date="item.date"
           />
-          <detail-item v-else-if="header.key === 'report'">
+          <detail-item
+            v-else-if="header.key === 'report'"
+            :assistiveText="item.report.id"
+          >
             <template #body-text>
               <spa-link
                 :to="connectPortalRoutes.reportDetails"
                 :params="item.report.id"
               >
-                {{ item.report.id }}
+                {{ item.report.name }}
               </spa-link>
             </template>
           </detail-item>
           <template v-else-if="header.key === 'file'">
-            <span
-              v-if="item.isFailed"
-              class="assistive-color"
-            >
-              —
-            </span>
-            <!-- TODO: Show download link if status!=uploaded ? -->
-            <detail-item
-              v-else
-              :assistiveText="item.file.size"
-            >
-              <template #body-text>
-                <link-button
-                  :text="item.file.name"
-                  @click="downloadFile(item)"
-                />
-              </template>
-            </detail-item>
+            <link-button
+              :text="item.file.name"
+              icon="googleFileDownloadBaseline"
+              @click="downloadFile(item)"
+            />
           </template>
           <span v-else-if="header.key === 'status'">
             <ui-status
@@ -69,20 +59,6 @@
             v-else-if="header.key === 'actions'"
             class="uploads-table__actions"
           >
-            <!-- TODO: Show download button if status!=uploaded ? -->
-            <ui-button
-              class="actions-button"
-              :backgroundColor="COLORS_DICT.WHITE"
-              height="36px"
-              width="36px"
-              @clicked="downloadFile(item)"
-            >
-              <ui-icon
-                class="actions-button__trigger-icon"
-                :color="COLORS_DICT.TEXT"
-                iconName="googleFileDownloadBaseline"
-              />
-            </ui-button>
             <actions-menu
               v-if="item.isFailed"
               :actions="getUploadActions(item)"
@@ -98,7 +74,7 @@
 import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
 import { useFastApiTableAdapter } from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
 import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 
 import ActionsMenu from '~/components/ActionsMenu.vue';
 import DateItem from '~/components/DateItem.vue';
@@ -107,9 +83,9 @@ import LinkButton from '~/components/LinkButton.vue';
 import LoadingIndicator from '~/components/LoadingIndicator.vue';
 import SpaLink from '~/components/SpaLink.vue';
 import { useRequest } from '~/composables/api';
-import { COLORS_DICT } from '~/constants/colors.js';
 import { STATUSES, STATUSES_DICT } from '~/constants/statuses.js';
 import { downloader, getFileSize } from '~/utils';
+import { request } from '~/utils/api';
 
 const props = defineProps({
   feedId: {
@@ -118,36 +94,81 @@ const props = defineProps({
   },
 });
 
-const { items, page, total, load, loading, next, previous } = useFastApiTableAdapter(
-  `/api/feeds/${props.feedId}/uploads`,
-);
+const {
+  items: uploads,
+  page,
+  total,
+  load: loadUploads,
+  next: loadNextUploads,
+  previous: loadPreviousUploads,
+} = useFastApiTableAdapter(`/api/feeds/${props.feedId}/uploads`);
+const loading = ref(false);
+const reports = ref([]);
+const preparedUploads = ref([]);
+
+const isAnyUploadFailed = computed(() => preparedUploads.value.some((item) => item.isFailed));
+
+const prepareUploads = () => {
+  preparedUploads.value = uploads.value.map((upload) => ({
+    id: upload.id,
+    date: upload.events.updated.at,
+    report: reports.value.find((report) => report.id === upload.report.id),
+    status: STATUSES[upload.status],
+    file: {
+      name: getReportFileName(upload.report.id),
+      size: getFileSize(upload.size || 0),
+    },
+    isFailed: upload.status === STATUSES_DICT.FAILED,
+  }));
+};
+
+const loadReports = async () => {
+  if (!uploads.value.length) {
+    preparedUploads.value = [];
+    return;
+  }
+
+  const reportIds = uploads.value.map((upload) => upload.report.id);
+  reports.value = await request(`/public/v1/reporting/reports?(in(id,(${reportIds.join(',')})))`);
+};
+
+const load = async () => {
+  await loadData(loadUploads);
+};
+
+const next = async () => {
+  await loadData(loadNextUploads);
+};
+
+const previous = async () => {
+  await loadData(loadPreviousUploads);
+};
+
+const loadData = async (loadFn) => {
+  loading.value = true;
+
+  await loadFn();
+  await loadReports();
+  prepareUploads();
+
+  loading.value = false;
+};
 
 const getReportFileName = (id) => `${id}.zip`;
 const getReportDownloadUrl = (id) => `/public/v1/reporting/reports/${id}/download`;
 
-const preparedItems = computed(() =>
-  items.value.map((item) => ({
-    id: item.id,
-    date: item.events.updated.at,
-    report: item.report,
-    status: STATUSES[item.status],
-    file: {
-      name: getReportFileName(item.report.id),
-      size: getFileSize(item.size || 0),
-    },
-    isFailed: item.status === STATUSES_DICT.FAILED,
-  })),
-);
+const headers = computed(() => {
+  const items = [
+    { key: 'date', text: 'Date', width: '190px' },
+    { key: 'report', text: 'Report' },
+    { key: 'file', text: 'File', width: '165px' },
+    { key: 'status', text: 'Status', width: '145px' },
+  ];
 
-const isAnyUploadFailed = computed(() => preparedItems.value.some((item) => item.isFailed));
+  if (isAnyUploadFailed.value) items.push({ key: 'actions', width: '36px' });
 
-const headers = computed(() => [
-  { key: 'date', text: 'Date', width: '190px' },
-  { key: 'report', text: 'Report' },
-  { key: 'file', text: 'File', width: '165px' },
-  { key: 'status', text: 'Status', width: '145px' },
-  { key: 'actions', width: isAnyUploadFailed.value ? '80px' : '36px' },
-]);
+  return items;
+});
 
 const retryAction = useRequest(useToolkit());
 const retryUpload = async (upload) => {
