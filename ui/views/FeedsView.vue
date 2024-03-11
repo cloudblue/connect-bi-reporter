@@ -5,7 +5,7 @@
     noPadded
   >
     <div
-      v-if="!noItems"
+      v-if="!noFeeds"
       slot="actions"
       class="header-actions"
     >
@@ -21,7 +21,7 @@
     </div>
     <loading-indicator v-if="loading" />
     <empty-placeholder
-      v-else-if="noItems"
+      v-else-if="noFeeds"
       title="No Feeds"
       icon="googleAutoGraphBaseline"
       action="Create Feed"
@@ -37,7 +37,7 @@
       @previous-clicked="previous"
     >
       <tr
-        v-for="item in preparedItems"
+        v-for="item in preparedFeeds"
         :key="item.id"
       >
         <td
@@ -49,13 +49,19 @@
             :to="{ name: 'feeds.details', params: { id: item.id } }"
             >{{ item.id }}</router-link
           >
-          <spa-link
+          <detail-item
             v-else-if="header.key === 'schedule'"
-            :to="connectPortalRoutes.reportsScheduleDetails"
-            :params="item.scheduleId"
+            :assistiveText="item.schedule.id"
           >
-            {{ item.scheduleId }}
-          </spa-link>
+            <template #body-text>
+              <spa-link
+                :to="connectPortalRoutes.reportsScheduleDetails"
+                :params="item.schedule.id"
+              >
+                {{ item.schedule.name }}
+              </spa-link>
+            </template>
+          </detail-item>
           <ui-status
             v-else-if="header.key === 'status'"
             :iconName="item.status.icon"
@@ -99,17 +105,19 @@
 <script setup>
 import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
 import { useFastApiTableAdapter } from '@cloudblueconnect/connect-ui-toolkit/tools/fastApi/vue';
-import { onMounted, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
 import CreateFeedDialog from '~/components/CreateFeedDialog.vue';
 import DateItem from '~/components/DateItem.vue';
+import DetailItem from '~/components/DetailItem.vue';
 import EmptyPlaceholder from '~/components/EmptyPlaceholder.vue';
 import FeedActions from '~/components/FeedActions.vue';
 import LoadingIndicator from '~/components/LoadingIndicator.vue';
 import SpaLink from '~/components/SpaLink.vue';
 import { COLORS_DICT } from '~/constants/colors';
 import { STATUSES } from '~/constants/statuses';
+import { request } from '~/utils/api.js';
 
 const headers = [
   { key: 'id', text: 'ID', width: '130px' },
@@ -120,30 +128,73 @@ const headers = [
   { key: 'actions', width: '36px' },
 ];
 
-const { items, page, total, load, loading, next, previous } = useFastApiTableAdapter('/api/feeds');
+const {
+  items: feeds,
+  page,
+  total,
+  load: loadFeeds,
+  next: loadNextFeeds,
+  previous: loadPreviousFeeds,
+} = useFastApiTableAdapter('/api/feeds');
+const loading = ref(false);
+const schedules = ref([]);
+const preparedFeeds = ref([]);
 
-const noItems = computed(() => {
-  return !items.value.length;
+const noFeeds = computed(() => {
+  return !feeds.value.length;
 });
-const preparedItems = computed(() =>
-  items.value.map((item) => ({
-    id: item.id,
-    scheduleId: item.schedule.id,
-    createdAt: item.events.created.at,
-    description: item.description,
-    status: STATUSES[item.status],
-    rawFeed: item,
-  })),
-);
+
+const prepareFeeds = () => {
+  preparedFeeds.value = feeds.value.map((feed) => ({
+    id: feed.id,
+    schedule: schedules.value.find((schedule) => schedule.id === feed.schedule.id),
+    createdAt: feed.events.created.at,
+    description: feed.description,
+    status: STATUSES[feed.status],
+    rawFeed: feed,
+  }));
+};
+
+const loadSchedules = async () => {
+  if (!feeds.value.length) {
+    preparedFeeds.value = [];
+    return;
+  }
+
+  const scheduleIds = feeds.value.map((feed) => feed.schedule.id);
+  schedules.value = await request(
+    `/public/v1/reporting/schedules?(in(id,(${scheduleIds.join(',')})))`,
+  );
+};
+
+const load = async () => {
+  await loadData(loadFeeds);
+};
+
+const next = async () => {
+  await loadData(loadNextFeeds);
+};
+
+const previous = async () => {
+  await loadData(loadPreviousFeeds);
+};
+
+const loadData = async (loadFn) => {
+  loading.value = true;
+
+  await loadFn();
+  await loadSchedules();
+  prepareFeeds();
+
+  loading.value = false;
+};
 
 const isCreateFeedDialogOpen = ref(false);
 const openCreateFeedDialog = () => {
   isCreateFeedDialogOpen.value = true;
 };
 
-onMounted(async () => {
-  await load();
-});
+load();
 </script>
 
 <style scoped>
