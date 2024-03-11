@@ -1,31 +1,11 @@
 import { flushPromises, mount } from '@vue/test-utils';
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { useRequest } from '~/composables/api';
 import { STATUSES_DICT } from '~/constants/statuses';
+import { request } from '~/utils/api';
 import FeedDetails from '~/views/FeedDetails.vue';
 
-const feed = {
-  id: 'RF-123',
-  schedule: { id: 'RS-456' },
-  credential: { id: 'CR-123' },
-  description: 'Lorem ipsum',
-  status: STATUSES_DICT.ENABLED,
-  events: {
-    created: {
-      at: '2024-02-16T14:01:51.991856',
-      by: 'John Doe',
-    },
-    updated: {
-      at: '2024-02-16T14:01:51.991856',
-      by: 'John Doe',
-    },
-  },
-};
-vi.mock('~/composables/api', () => ({
-  useRequest: vi.fn(),
-}));
+vi.mock('~/utils/api');
 vi.mock('vue-router', () => ({
   useRoute: vi.fn().mockReturnValue({ params: { id: 'RF-123' } }),
   useRouter: vi.fn().mockReturnValue({ replace: vi.fn() }),
@@ -35,19 +15,39 @@ vi.mock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin', () => ({
 }));
 
 describe('FeedDetails component', () => {
+  const feed = {
+    id: 'RF-123',
+    schedule: { id: 'RS-456' },
+    credential: { id: 'CR-123' },
+    description: 'Lorem ipsum',
+    status: STATUSES_DICT.ENABLED,
+    events: {
+      created: {
+        at: '2024-02-16T14:01:51.991856',
+        by: 'John Doe',
+      },
+      updated: {
+        at: '2024-02-16T14:01:51.991856',
+        by: 'John Doe',
+      },
+    },
+  };
+  const schedule = {
+    id: 'RS-456',
+    name: 'Foo schedule',
+    template: {
+      id: 'RT-123',
+      name: 'Foo report template',
+      local_id: 'foo_report',
+    },
+  };
   let wrapper;
-  const mockRequest = vi.fn();
   const mockReplace = vi.fn();
 
   beforeAll(() => {
-    useRequest.mockImplementation(() => {
-      const loading = ref(false);
-
-      return {
-        loading,
-        request: mockRequest,
-        result: feed,
-      };
+    request.mockImplementation((url) => {
+      if (url.startsWith('/api/feeds')) return feed;
+      return schedule;
     });
 
     useRouter.mockImplementation(() => ({
@@ -61,9 +61,13 @@ describe('FeedDetails component', () => {
     await flushPromises();
   });
 
-  describe('lifecycle', () => {
-    test('immediately loads the feed', () => {
-      expect(mockRequest).toHaveBeenCalledWith('/api/feeds/RF-123');
+  describe('setup', () => {
+    test('loads the feed', () => {
+      expect(request).toHaveBeenCalledWith('/api/feeds/RF-123');
+    });
+
+    test('loads the schedule', () => {
+      expect(request).toHaveBeenCalledWith('/public/v1/reporting/schedules/RS-456');
     });
   });
 
@@ -113,14 +117,90 @@ describe('FeedDetails component', () => {
       expect(wrapper.getComponent({ name: 'edit-feed-dialog' }).props('modelValue')).toEqual(true);
     });
 
-    test('loads the feed if the edit feed dialog emits the updated event', async () => {
-      await flushPromises();
-      vi.clearAllMocks();
+    describe('if the edit feed dialog emits the updated event', () => {
+      beforeEach(async () => {
+        await flushPromises();
+        vi.clearAllMocks();
 
-      wrapper.getComponent({ name: 'edit-feed-dialog' }).vm.$emit('updated');
-      await wrapper.vm.$nextTick();
+        wrapper.getComponent({ name: 'edit-feed-dialog' }).vm.$emit('updated');
+        await wrapper.vm.$nextTick();
+      });
 
-      expect(mockRequest).toHaveBeenCalled();
+      test('loads the feed', () => {
+        expect(request).toHaveBeenCalledWith('/api/feeds/RF-123');
+      });
+
+      test('loads the schedule', () => {
+        expect(request).toHaveBeenCalledWith('/public/v1/reporting/schedules/RS-456');
+      });
+    });
+
+    describe('if the feed actions emits the enabled event', () => {
+      beforeEach(async () => {
+        await flushPromises();
+        vi.clearAllMocks();
+
+        wrapper.getComponent({ name: 'feed-actions' }).vm.$emit('enabled');
+        await wrapper.vm.$nextTick();
+      });
+
+      test('loads the feed', () => {
+        expect(request).toHaveBeenCalledWith('/api/feeds/RF-123');
+      });
+
+      test('loads the schedule', () => {
+        expect(request).toHaveBeenCalledWith('/public/v1/reporting/schedules/RS-456');
+      });
+    });
+
+    describe('if the feed actions emits the disabled event', () => {
+      beforeEach(async () => {
+        await flushPromises();
+        vi.clearAllMocks();
+
+        wrapper.getComponent({ name: 'feed-actions' }).vm.$emit('disabled');
+        await wrapper.vm.$nextTick();
+      });
+
+      test('loads the feed', () => {
+        expect(request).toHaveBeenCalledWith('/api/feeds/RF-123');
+      });
+
+      test('loads the schedule', () => {
+        expect(request).toHaveBeenCalledWith('/public/v1/reporting/schedules/RS-456');
+      });
+    });
+
+    describe('if the feed actions emits the uploaded event', () => {
+      beforeEach(async () => {
+        await flushPromises();
+        vi.clearAllMocks();
+
+        wrapper.getComponent({ name: 'feed-actions' }).vm.$emit('uploaded');
+        await wrapper.vm.$nextTick();
+      });
+
+      test('loads the feed', () => {
+        expect(request).toHaveBeenCalledWith('/api/feeds/RF-123');
+      });
+
+      test('loads the schedule', () => {
+        expect(request).toHaveBeenCalledWith('/public/v1/reporting/schedules/RS-456');
+      });
+    });
+
+    describe('if the feed actions emits the deleted event', () => {
+      beforeEach(async () => {
+        await flushPromises();
+        vi.clearAllMocks();
+
+        wrapper.getComponent({ name: 'feed-actions' }).vm.$emit('deleted');
+        await wrapper.vm.$nextTick();
+      });
+
+      test('calls router.replace to go to the feeds view', () => {
+        expect(mockReplace).toHaveBeenCalledWith({ name: 'feeds' });
+      });
     });
   });
 });
