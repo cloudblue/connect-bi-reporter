@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto:wght@400;500;700&display=swap');
+@import './variables.css';
 
 body {
   margin: 0;
-  line-height: 1.4;
+  line-height: var(--line-height-regular);
   font-family: 'Roboto', sans-serif;
-  font-size: 15px;
+  font-size: var(--font-size-regular);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #212121;
+  color: var(--color-text);
 }
 
 h1,
@@ -24,12 +25,12 @@ p {
 
 p,
 a {
-  font-size: 15px;
-  line-height: 1.4;
+  font-size: var(--font-size-regular);
+  line-height: var(--line-height-regular);
 }
 
 a {
-  color: #2c98f0;
+  color: var(--color-nice-blue);
   cursor: pointer;
   text-decoration: underline;
 }
@@ -37,7 +38,7 @@ a {
 a:visited,
 a:hover,
 a:active {
-  color: #2c98f0;
+  color: var(--color-nice-blue);
 }
 
 .truncator {
@@ -53,14 +54,14 @@ a:active {
 }
 
 .assistive-color {
-  color: #707070;
+  color: var(--color-assistive-grey);
 }
 
 .assistive-text {
-  color: #707070;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 16px;
+  color: var(--color-assistive-grey);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-small);
 }
 
 /* Table cell styling for Connect UI Toolkit tables */
@@ -73,7 +74,7 @@ td {
   height: 1px;
   width: 100%;
   margin: 8px 0;
-  background-color: #e0e0e0;
+  background-color: var(--color-light-grey);
 }
 
 .is-clipped {
@@ -82,8 +83,8 @@ td {
 
 .dot-separator:after {
   content: '•';
-  line-height: 20px;
-  font-size: 14px;
+  line-height: var(--line-height-regular);
+  font-size: var(--font-size-regular);
   margin: 0 8px;
 }
 
@@ -91,13 +92,13 @@ td {
 .header-button {
   display: block;
   height: 36px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--color-light-grey);
   border-radius: 2px;
 }
 
 .header-button span {
   padding: 0 8px;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   letter-spacing: 0.4px;
 }
 
@@ -111,11 +112,11 @@ td {
 
 .reset-button {
   border: none;
-  background-color: transparent;
+  background-color: var(--color-transparent);
   padding: 0;
   margin: 0;
   display: inline;
   text-align: left;
-  font-size: 15px;
-  line-height: 1.4;
+  font-size: var(--font-size-regular);
+  line-height: var(--line-height-regular);
 }

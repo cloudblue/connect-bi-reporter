@@ -76,7 +76,7 @@ defineEmits(['actionClicked']);
   align-items: center;
   justify-content: center;
   margin-bottom: 32px;
-  background-color: #f2f2f2;
+  background-color: var(--color-lightest-grey);
   border-radius: 50%;
 }
 
@@ -88,7 +88,7 @@ defineEmits(['actionClicked']);
   align-items: center;
   justify-content: center;
   border-radius: 2px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--color-light-grey);
 }
 
 .empty-placeholder_action ui-icon {
@@ -97,26 +97,26 @@ defineEmits(['actionClicked']);
 
 .empty-placeholder_action span {
   padding: 0 8px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
+  font-size: var(--font-size-regular);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-regular);
 }
 
 h2 {
   margin-bottom: 24px;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: 1;
+  font-size: var(--font-size-huge);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-smallest);
 }
 
 p {
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: var(--font-size-medium);
+  line-height: var(--line-height-big);
 }
 
 h2,
 p {
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--color-assistive-grey);
   text-align: center;
 }
 </style>

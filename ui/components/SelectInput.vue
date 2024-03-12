@@ -110,7 +110,7 @@ const selectedItem = computed(
   height: 44px;
   border-radius: 2px;
   border: 1px solid #d8d8d8;
-  background-color: #fbfbfb;
+  background-color: var(--color-darker-white);
   display: flex;
   padding: 4px 12px;
   align-items: center;
@@ -123,8 +123,8 @@ const selectedItem = computed(
   z-index: 1;
   border: 1px solid #d8d8d8;
   border-radius: 2px;
-  background-color: #fbfbfb;
-  box-shadow: 0 4px 20px 0 #00000040;
+  background-color: var(--color-darker-white);
+  box-shadow: var(--box-shadow-simple);
 }
 .select-input__option {
   height: 48px;
@@ -135,7 +135,7 @@ const selectedItem = computed(
   cursor: pointer;
 }
 .select-input__option_selected {
-  color: #2c98f0;
+  color: var(--color-nice-blue);
 }
 .select-input__real-input {
   display: none;
@@ -146,9 +146,9 @@ const selectedItem = computed(
 }
 
 .select-input__label {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
+  font-size: var(--font-size-regular);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-regular);
   margin-bottom: 8px;
 }
 </style>

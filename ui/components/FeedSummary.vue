@@ -76,9 +76,9 @@ const detailsRoute = computed(() => ({
 
 <style scoped>
 .feed-summary__title {
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 24px;
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-small);
   margin-bottom: 24px;
 }
 .feed-summary__row {
@@ -86,13 +86,13 @@ const detailsRoute = computed(() => ({
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-light-grey);
 }
 .feed-summary__row:last-child {
   border-bottom: none;
 }
 .feed-summary__label {
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   width: 170px;
   flex-shrink: 0;
 }

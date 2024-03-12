@@ -77,9 +77,9 @@ const setSearch = processEvent((searchStr) => {
 
 <style scoped>
 .radio-table__title {
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 24px;
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-small);
   margin-bottom: 24px;
 }
 
@@ -92,7 +92,7 @@ const setSearch = processEvent((searchStr) => {
   justify-content: space-between;
   align-items: center;
   height: 48px;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-light-grey);
   cursor: pointer;
 }
 

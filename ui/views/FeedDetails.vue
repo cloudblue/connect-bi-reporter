@@ -23,9 +23,9 @@
         </ui-button>
         <feed-actions
           :feed="feed"
-          @enabled="loadFeed"
-          @disabled="loadFeed"
-          @uploaded="loadFeed"
+          @enabled="loadData"
+          @disabled="loadData"
+          @uploaded="loadData"
           @deleted="goToFeeds"
         >
           <ui-button
@@ -45,13 +45,29 @@
 
       <div class="header">
         <detail-item-group>
-          <detail-item title="Report Schedule">
+          <detail-item
+            title="Report Schedule"
+            :assistiveText="schedule.id"
+          >
             <template #body-text>
               <spa-link
                 :to="connectPortalRoutes.reportsScheduleDetails"
-                :params="feed.schedule?.id"
+                :params="schedule.id"
               >
-                {{ feed.schedule?.id }}
+                {{ schedule.name }}
+              </spa-link>
+            </template>
+          </detail-item>
+          <detail-item
+            title="Report Template"
+            :assistiveText="`${schedule.template?.id} • ${schedule.template?.local_id}`"
+          >
+            <template #body-text>
+              <spa-link
+                :to="connectPortalRoutes.reportTemplateDetails"
+                :params="schedule.template?.id"
+              >
+                {{ schedule.template?.name }}
               </spa-link>
             </template>
           </detail-item>
@@ -121,14 +137,13 @@
     <edit-feed-dialog
       v-model="isDialogOpen"
       :feed="feed"
-      @updated="loadFeed"
+      @updated="loadData"
     />
   </ui-view>
 </template>
 
 <script setup>
 import { connectPortalRoutes } from '@cloudblueconnect/connect-ui-toolkit';
-import { useToolkit } from '@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin';
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -140,18 +155,19 @@ import FeedActions from '~/components/FeedActions.vue';
 import LoadingIndicator from '~/components/LoadingIndicator.vue';
 import SpaLink from '~/components/SpaLink.vue';
 import UploadsTable from '~/components/UploadsTable.vue';
-import { useRequest } from '~/composables/api';
 import { COLORS_DICT } from '~/constants/colors';
 import { STATUSES } from '~/constants/statuses';
+import { request } from '~/utils/api.js';
 
 const route = useRoute();
 const router = useRouter();
-const toolkit = useToolkit();
 
-const { loading, request, result: feed } = useRequest(toolkit);
+const feed = ref({});
+const schedule = ref({});
+const loading = ref(false);
 
 const feedId = computed(() => route.params.id);
-const feedStatus = computed(() => STATUSES[feed.status]);
+const feedStatus = computed(() => STATUSES[feed.value.status]);
 
 const tabs = [
   {
@@ -168,7 +184,23 @@ const currentTab = ref('general');
 const goToFeeds = () => {
   router.replace({ name: 'feeds' });
 };
-const loadFeed = () => request(`/api/feeds/${feedId.value}`);
+
+const loadFeed = async () => {
+  feed.value = await request(`/api/feeds/${feedId.value}`);
+};
+const loadSchedule = async () => {
+  schedule.value = await request(`/public/v1/reporting/schedules/${feed.value.schedule.id}`);
+};
+
+const loadData = async () => {
+  loading.value = true;
+
+  await loadFeed();
+  await loadSchedule();
+
+  loading.value = false;
+};
+
 const setCurrentTab = ({ detail: tab }) => {
   currentTab.value = tab;
 };
@@ -178,7 +210,7 @@ const openEditFeedDialog = () => {
   isDialogOpen.value = true;
 };
 
-watch(feedId, loadFeed, { immediate: true });
+watch(feedId, loadData, { immediate: true });
 </script>
 
 <style scoped>

@@ -19,6 +19,8 @@
 </template>
 
 <script setup>
+import { COLORS_DICT } from '~/constants/colors.js';
+
 defineProps({
   message: {
     type: String,
@@ -37,19 +39,18 @@ defineProps({
 });
 
 const typeAlert = {
-  info: '#0055ff',
-  error: '#FF6A6A',
-  success: '#0bb071',
-  warning: '#FFC700',
-  default: '#bdbdbd',
+  info: COLORS_DICT.DEEP_BLUE,
+  error: COLORS_DICT.NICE_RED,
+  success: COLORS_DICT.NICE_GREEN,
+  warning: COLORS_DICT.NICE_YELLOW,
+  default: COLORS_DICT.MIDDLE_GREY,
 };
 </script>
 
 <style scoped>
 .alert-holder {
   width: 100%;
-  /* #bdbdbd */
-  background-color: rgba(189, 189, 189, 0.15);
+  background-color: #bdbdbd26;
 }
 .alert {
   align-items: center;
@@ -60,25 +61,21 @@ const typeAlert = {
   max-width: 600px;
   padding: 16px;
   border-radius: 2px;
-  color: #bdbdbd;
+  color: var(--color-middle-grey);
 }
 
 .alert_error {
-  /* #FF6A6A */
-  background-color: rgba(255, 106, 106, 0.2);
+  background-color: #ff6a6a33;
 }
 
 .alert_info {
-  /* 0, 85, 255 */
-  background-color: rgba(0, 85, 255, 0.15);
+  background-color: #0055ff26;
 }
 .alert_success {
-  /* #0bb071 */
-  background-color: rgba(11, 176, 113, 0.15);
+  background-color: #0bb07126;
 }
 .alert_warning {
-  /* #FFC700 */
-  background-color: rgba(255, 199, 0, 0.15);
+  background-color: #ffc70026;
 }
 
 .alert__icon {
@@ -89,9 +86,9 @@ const typeAlert = {
 
 .alert__text {
   flex: 1 1 auto;
-  font-size: 14 px;
-  line-height: 20px;
+  font-size: var(--font-size-regular);
+  line-height: var(--line-height-regular);
   text-align: left;
-  color: #212121;
+  color: var(--color-text);
 }
 </style>

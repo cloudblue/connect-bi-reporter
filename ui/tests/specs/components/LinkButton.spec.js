@@ -11,7 +11,7 @@ describe('LinkButton component', () => {
         },
       });
 
-      expect(wrapper.classes()).toEqual(['link-button', 'reset-button']);
+      expect(wrapper.classes()).toEqual(['reset-button', 'link-button']);
       expect(wrapper.text()).toEqual('My button content');
     });
   });

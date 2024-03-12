@@ -19,7 +19,7 @@
     "precommit": "npm run test && npm run lint-format && npm run build"
   },
   "dependencies": {
-    "@cloudblueconnect/connect-ui-toolkit": "^31.0.0",
+    "@cloudblueconnect/connect-ui-toolkit": "^31.1.0",
     "filesize": "^10.1.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
@@ -38,7 +38,7 @@
     "eslint-plugin-vue": "^9.22.0",
     "jsdom": "^24.0.0",
     "prettier": "^3.2.5",
-    "vite": "^5.1.5",
+    "vite": "^5.1.6",
     "vitest": "^1.3.1"
   }
 }

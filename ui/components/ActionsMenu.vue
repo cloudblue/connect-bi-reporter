@@ -99,10 +99,10 @@ defineProps({
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #ffffff;
+  background-color: var(--color-white);
   border-radius: 2px;
   padding: 8px 0;
-  box-shadow: 0 4px 20px 0 #00000040;
+  box-shadow: var(--box-shadow-simple);
   z-index: 1;
 }
 

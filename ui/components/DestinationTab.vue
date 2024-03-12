@@ -76,8 +76,8 @@ request('/api/credentials');
   margin-bottom: 24px;
 }
 .destination-tab__hint {
-  font-size: 12px;
-  line-height: 16px;
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
   margin: 0 4px;
 }
 </style>
