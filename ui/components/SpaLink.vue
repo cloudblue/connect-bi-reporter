@@ -5,7 +5,7 @@
     </a>
     <ui-icon
       iconName="googleOpenInNewBaseline"
-      size="16px"
+      size="12px"
       :color="COLORS_DICT.NICE_BLUE"
     />
   </span>
@@ -55,5 +55,6 @@ const onLinkClick = (e) => {
 
 .spa-link ui-icon {
   margin-left: 4px;
+  margin-top: -2px;
 }
 </style>
