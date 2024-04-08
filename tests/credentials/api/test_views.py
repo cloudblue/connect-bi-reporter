@@ -3,7 +3,7 @@ from connect_extension_utils.api.views import get_user_data_from_auth_token
 
 
 def test_create_credential(installation, api_client, connect_auth_header):
-    body = {'name': 'My credentials', 'connection_string': 'core.windows.net'}
+    body = {'name': 'My credentials', 'sas_token': 'core.windows.net'}
     response = api_client.post(
         '/api/credentials',
         installation=installation,
@@ -16,7 +16,7 @@ def test_create_credential(installation, api_client, connect_auth_header):
     response_data = response.json()
     assert response_data['id'] is not None
     assert response_data['name'] == body['name']
-    assert response_data['connection_string'] == body['connection_string']
+    assert response_data['sas_token'] == body['sas_token']
     assert response_data['owner']['id'] == installation['owner']['id']
     events = response_data['events']
     assert events['created']['at'] is not None
@@ -25,11 +25,11 @@ def test_create_credential(installation, api_client, connect_auth_header):
     assert events['updated']['by'] is not None
 
 
-@pytest.mark.parametrize('remove_field', ('name', 'connection_string'))
+@pytest.mark.parametrize('remove_field', ('name', 'sas_token'))
 def test_create_credential_mandatory_fields(
     remove_field, installation, api_client, connect_auth_header,
 ):
-    body = {'name': 'My credentials', 'connection_string': 'core.windows.net'}
+    body = {'name': 'My credentials', 'sas_token': 'core.windows.net'}
     del body[remove_field]
 
     response = api_client.post(
@@ -112,7 +112,7 @@ def test_get_credential(installation, api_client, connect_auth_header, credentia
     response_data = response.json()
     assert response_data['id'] == credential.id
     assert response_data['name'] == credential.name
-    assert response_data['connection_string'] == credential.connection_string
+    assert response_data['sas_token'] == credential.sas_token
     assert response_data['owner']['id'] == installation['owner']['id']
     events = response_data['events']
     assert events['created']['at'] is not None
@@ -146,7 +146,7 @@ def test_update_credential(
 ):
     cred = credential_factory(account_id=installation['owner']['id'])
     updated_at = cred.updated_at
-    body = {'name': 'My credentials', 'connection_string': 'core.windows.net'}
+    body = {'name': 'My credentials', 'sas_token': 'core.windows.net'}
     response = api_client.put(
         f'/api/credentials/{cred.id}',
         installation=installation,
@@ -159,7 +159,7 @@ def test_update_credential(
     response_data = response.json()
     assert response_data['id'] is not None
     assert response_data['name'] == body['name']
-    assert response_data['connection_string'] == body['connection_string']
+    assert response_data['sas_token'] == body['sas_token']
     assert response_data['owner']['id'] == installation['owner']['id']
     events = response_data['events']
     assert events['created']['at'] == cred.created_at.isoformat()
@@ -171,7 +171,7 @@ def test_update_credential(
 
 
 def test_update_credential_404(installation, api_client, connect_auth_header):
-    body = {'name': 'My credentials', 'connection_string': 'core.windows.net'}
+    body = {'name': 'My credentials', 'sas_token': 'core.windows.net'}
     response = api_client.put(
         '/api/credentials/NOT-FOUND',
         installation=installation,
@@ -206,7 +206,7 @@ def test_update_credential_nothing_to_update(
     response_data = response.json()
     assert response_data['id'] is not None
     assert response_data['name'] == cred.name
-    assert response_data['connection_string'] == cred.connection_string
+    assert response_data['sas_token'] == cred.sas_token
     assert response_data['owner']['id'] == installation['owner']['id']
     events = response_data['events']
     assert events['created']['at'] is not None

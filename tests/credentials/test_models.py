@@ -7,14 +7,14 @@ def test_create_credential(dbsession, credential_factory):
     credential = credential_model(
         name='My cred',
         account_id='PA-000-000',
-        connection_string='core.windows.net',
+        sas_token='core.windows.net',
     )
     dbsession.add_with_verbose(credential)
     dbsession.commit()
     dbsession.refresh(credential)
     assert credential.id.startswith(credential_model.PREFIX)
     assert credential.name == 'My cred'
-    assert credential.connection_string == 'core.windows.net'
+    assert credential.sas_token == 'core.windows.net'
     assert isinstance(credential.created_at, datetime)
 
 

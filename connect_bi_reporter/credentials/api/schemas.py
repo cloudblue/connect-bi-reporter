@@ -5,7 +5,7 @@ from connect_extension_utils.api.schemas import Events, NonNullSchema, Reference
 
 class CredentialCreateSchema(NonNullSchema):
     name: str
-    connection_string: str
+    sas_token: str
 
 
 class CredentialListSchema(ReferenceSchema):
@@ -15,18 +15,18 @@ class CredentialListSchema(ReferenceSchema):
 
 class CredentialUpdateSchema(NonNullSchema):
     name: Optional[str]
-    connection_string: Optional[str]
+    sas_token: Optional[str]
 
 
 class CredentialGetSchema(CredentialListSchema):
-    connection_string: str
+    sas_token: str
 
 
 def map_to_credential_get_schema(credential):
     return CredentialGetSchema(
         id=credential.id,
         name=credential.name,
-        connection_string=credential.connection_string,
+        sas_token=credential.sas_token,
         owner={'id': credential.account_id},
         events={
             'created': {'at': credential.created_at, 'by': {'id': credential.created_by}},

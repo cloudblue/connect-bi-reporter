@@ -12,7 +12,7 @@ class Credential(Model):
 
     id = db.Column(db.String(20), primary_key=True)
     name = db.Column(db.String(64), nullable=False)
-    connection_string = db.Column(db.String(256), nullable=False)
+    sas_token = db.Column(db.String(256), nullable=False)
     account_id = db.Column(db.String(20), nullable=False)
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
     created_by = db.Column(db.String(20))
