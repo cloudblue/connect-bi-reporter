@@ -6,11 +6,11 @@ from connect_bi_reporter.credentials.api.schemas import (
 def test_credentials_create_schema():
     serializer = CredentialCreateSchema(
         name='Creating credentials',
-        connection_string="D=https;AccountName=AN;AccountKey=AK;EndpointSuffix=core.windows.net",
+        sas_token="D=https;AccountName=AN;AccountKey=AK;EndpointSuffix=core.windows.net",
     )
     assert serializer.dict() == {
         'name': 'Creating credentials',
-        'connection_string': "D=https;AccountName=AN;AccountKey=AK;EndpointSuffix=core.windows.net",
+        'sas_token': "D=https;AccountName=AN;AccountKey=AK;EndpointSuffix=core.windows.net",
     }
 
 
@@ -41,7 +41,7 @@ def test_credentials_get_schema(credential_factory):
     serializer = CredentialGetSchema(
         id=credential.id,
         name=credential.name,
-        connection_string=credential.connection_string,
+        sas_token=credential.sas_token,
         owner={'id': credential.account_id},
         events={
             'created': {'at': credential.created_at, 'by': {'id': credential.created_by}},
@@ -52,7 +52,7 @@ def test_credentials_get_schema(credential_factory):
     assert serializer.dict() == {
         'id': credential.id,
         'name': credential.name,
-        'connection_string': credential.connection_string,
+        'sas_token': credential.sas_token,
         'owner': {'id': credential.account_id},
         'events': {
             'created': {'at': credential.created_at, 'by': {'id': credential.created_by}},

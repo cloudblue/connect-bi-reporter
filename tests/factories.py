@@ -13,10 +13,10 @@ class CredentialFactory(BaseFactory):
 
     id = factory.Sequence(lambda _: _generate_verbose_id(Credential.PREFIX))
     name = factory.Sequence(lambda n: f'Credential {n}')
-    connection_string = factory.Sequence(
-        lambda n: (
-            f'DefaultEndpointsProtocol=https;AccountName={n};'
-            f'AccountKey={n};EndpointSuffix=core.windows.net'
+    sas_token = factory.Sequence(
+        lambda _: (
+            'sv=2022-11-02&ss=bfqt&srt=co&sp=rwdlacupiytfx&se=2024-04-09T19:38:51Z'
+            '&st=2024-04-08T11:38:51Z&spr=https&sig=MeZjy2Df96DjJax7Oeor8ZzUePjhTzaVZRvE1wixThM%3D'
         ),
     )
     account_id = factory.Sequence(lambda n: f'PA-{n}')
