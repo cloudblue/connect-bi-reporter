@@ -15,9 +15,9 @@
       label="Name"
     />
     <text-field
-      v-model="connectionString"
+      v-model="sasToken"
       class="dialog-input"
-      label="Connection String"
+      label="SAS Token"
     />
   </simple-dialog>
 </template>
@@ -49,9 +49,9 @@ const value = defineModel({
 });
 
 const name = ref('');
-const connectionString = ref('');
+const sasToken = ref('');
 
-const isValid = computed(() => name.value?.length > 0 && connectionString.value?.length > 0);
+const isValid = computed(() => name.value?.length > 0 && sasToken.value?.length > 0);
 const isEditMode = computed(() => props.mode === 'edit');
 const title = computed(() => (isEditMode.value ? 'Edit Credentials' : 'Add Credentials'));
 const submitLabel = computed(() => (isEditMode.value ? 'Save' : 'Add'));
@@ -63,19 +63,19 @@ const getCredential = async () => {
   const { result: credentialToEdit, request: credentialRequest } = useRequest(useToolkit());
   await credentialRequest(`/api/credentials/${props.credentialId}`);
   name.value = credentialToEdit.name;
-  connectionString.value = credentialToEdit.connection_string;
+  sasToken.value = credentialToEdit.sas_token;
 };
 
 const resetForm = () => {
   name.value = '';
-  connectionString.value = '';
+  sasToken.value = '';
 };
 
 const submit = async () => {
   if (props.mode === 'create') {
     const status = await createCredentialAction.request('/api/credentials', 'POST', {
       name: name.value,
-      connection_string: connectionString.value,
+      sas_token: sasToken.value,
     });
     if (status < 400) emit('created');
   } else {
@@ -84,7 +84,7 @@ const submit = async () => {
       'PUT',
       {
         name: name.value,
-        connection_string: connectionString.value,
+        sas_token: sasToken.value,
       },
     );
     if (status < 400) emit('edited');

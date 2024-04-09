@@ -31,6 +31,6 @@ provide('fullscreen-height', fullscreenHeight);
 <style scoped>
 .app {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 20px auto;
 }
 </style>

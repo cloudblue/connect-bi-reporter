@@ -12,7 +12,7 @@ vi.mock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin');
 
 const requestResult = {
   name: 'credName',
-  connection_string: 'someconnnection',
+  sas_token: 'someconnnection',
 };
 
 describe('AddEditCredentialDialog component', () => {
@@ -66,10 +66,10 @@ describe('AddEditCredentialDialog component', () => {
           }),
         );
 
-        const connectionStringTexfield = textfields[1];
-        expect(connectionStringTexfield.attributes()).toEqual(
+        const sasTokenTextfield = textfields[1];
+        expect(sasTokenTextfield.attributes()).toEqual(
           expect.objectContaining({
-            label: 'Connection String',
+            label: 'SAS Token',
           }),
         );
       });
@@ -104,7 +104,7 @@ describe('AddEditCredentialDialog component', () => {
         wrapper.vm.submit();
         expect(useRequestStub.request).toHaveBeenCalledWith('/api/credentials', 'POST', {
           name: '',
-          connection_string: '',
+          sas_token: '',
         });
       });
     });
@@ -147,10 +147,10 @@ describe('AddEditCredentialDialog component', () => {
           }),
         );
 
-        const connectionStringTexfield = textfields[1];
-        expect(connectionStringTexfield.attributes()).toEqual(
+        const sasTokenTextfield = textfields[1];
+        expect(sasTokenTextfield.attributes()).toEqual(
           expect.objectContaining({
-            label: 'Connection String',
+            label: 'SAS Token',
             modelvalue: 'someconnnection',
           }),
         );
@@ -195,7 +195,7 @@ describe('AddEditCredentialDialog component', () => {
           'PUT',
           {
             name: 'credName',
-            connection_string: 'someconnnection',
+            sas_token: 'someconnnection',
           },
         );
       });
