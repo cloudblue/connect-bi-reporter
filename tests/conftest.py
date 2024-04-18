@@ -9,6 +9,7 @@ import pytest
 from pytest_factoryboy import register
 from connect.client import AsyncConnectClient, ConnectClient
 from connect.eaas.core.inject.models import Context
+from connect.eaas.core.inject.common import get_call_context
 from connect_extension_utils.db.models import get_db
 
 from .factories import CredentialFactory, FeedFactory, UploadFactory
@@ -46,8 +47,13 @@ def logger(mocker):
 
 
 @pytest.fixture
-def common_context():
-    return Context(call_type='user', user_id='UR-000-000-000', account_id='PA-000-000')
+def common_context(installation):
+    return Context(
+        call_type='user',
+        user_id='UR-000-000-000',
+        account_id='PA-000-000',
+        installation_id=installation['id'],
+    )
 
 
 @pytest.fixture(autouse=True)
@@ -64,10 +70,11 @@ def mocked_get_db_ctx(dbsession, mocker):
 
 
 @pytest.fixture
-def api_client(test_client_factory, dbsession):
+def api_client(test_client_factory, dbsession, common_context):
     client = test_client_factory(ConnectBiReporterWebApplication)
     client.app.dependency_overrides = {
         get_db: lambda: dbsession,
+        get_call_context: lambda: common_context,
     }
     yield client
 
@@ -217,7 +224,9 @@ def eaas_schedule_task():
         "name": "Create Uploads - PA-065-102",
         "description": "Create Uploads for recurrent processing.",
         "method": "create_uploads",
-        "parameter": {},
+        "parameter": {
+            "installation_id": "EIN-8436-7221-8308",
+        },
         "trigger": {
             "type": "recurring",
             "start": "2024-01-10T09:35:03+00:00",

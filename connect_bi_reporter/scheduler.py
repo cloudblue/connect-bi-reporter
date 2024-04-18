@@ -8,7 +8,10 @@ from connect.eaas.core.responses import BackgroundResponse
 from connect.eaas.core.inject.models import Context
 
 from connect_bi_reporter.connect_services.devops import create_schedule_task, get_schedule_tasks
-from connect_bi_reporter.constants import DEFAULT_RECURRING_EAAS_SCHEDULE_TASK_DATA
+from connect_bi_reporter.constants import (
+    CREATE_UPLOADS_METHOD_NAME,
+    DEFAULT_RECURRING_EAAS_SCHEDULE_TASK_DATA,
+)
 
 
 class TriggerTypeEnum(str, enum.Enum):
@@ -121,7 +124,11 @@ def genererate_default_recurring_schedule_task(
 ):
     try:
         scheduler = Scheduler(client, context, logger)
-        schedule_tasks = scheduler.get_schedule_tasks()
+        schedule_tasks = [
+            task for task in scheduler.get_schedule_tasks()
+            if task['method'] == CREATE_UPLOADS_METHOD_NAME
+            and task['parameter']['installation_id'] == context.installation_id
+        ]
         if schedule_tasks:
             task_ids = ', '.join(task['id'] for task in schedule_tasks)
             logger.info(
@@ -136,11 +143,12 @@ def genererate_default_recurring_schedule_task(
             datetime.utcnow() + timedelta(days=1)
         ).replace(hour=0, minute=0, second=0, microsecond=0)
         method_payload = {
-            'method': 'create_uploads',
+            'method': CREATE_UPLOADS_METHOD_NAME,
             'name': f'Create Uploads - {context.account_id}',
             'description': 'Create Uploads for recurrent processing.',
             'parameter': {
                 'installation_id': context.installation_id,
+                'account_id': context.account_id,
             },
         }
         trigger_data = {

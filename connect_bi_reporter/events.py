@@ -6,6 +6,8 @@
 from connect.eaas.core.decorators import event, variables
 from connect.eaas.core.extension import EventsApplicationBase
 from connect.eaas.core.responses import BackgroundResponse
+from connect.eaas.core.inject.models import Context
+from connect_extension_utils.connect_services.base import get_extension_owner_client
 
 from connect_bi_reporter.uploads.tasks import UploadTaskApplicationMixin
 from connect_bi_reporter.scheduler import genererate_default_recurring_schedule_task
@@ -45,9 +47,15 @@ class ConnectBiReporterEventsApplication(
                 f"This extension has been installed by {account}: "
                 f"id={request['id']}, environment={request['environment']['id']}",
             )
+            client = get_extension_owner_client(self.logger)
             return genererate_default_recurring_schedule_task(
-                self.installation_client,
-                self.context,
+                client,
+                Context(
+                    extension_id=self.context.extension_id,
+                    environment_id=self.context.environment_id,
+                    installation_id=request['id'],
+                    account_id=request['owner']['id'],
+                ),
                 self.logger,
                 BackgroundResponse,
             )
