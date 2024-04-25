@@ -3,6 +3,8 @@
 # Copyright (c) 2024, Ingram Micro
 # All rights reserved.
 #
+from datetime import datetime, timedelta
+
 from connect.client import ClientError
 from connect.eaas.core.inject.models import Context
 
@@ -11,33 +13,53 @@ from connect_bi_reporter.events import ConnectBiReporterEventsApplication
 
 def test_handle_installation_status_installed_create_task(
     connect_client,
-    client_mocker_factory,
     logger,
     installation,
     eaas_schedule_task,
+    mocker,
 ):
     config = {}
-    client_mocker = client_mocker_factory(base_url=connect_client.endpoint)
+    mocker.patch(
+        'connect_bi_reporter.events.get_extension_owner_client',
+        return_value=connect_client,
+    )
+    start = datetime.utcnow()
+    string_start_date = (
+        start + timedelta(days=1)
+    ).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+    p_datetime = mocker.patch(
+        'connect_bi_reporter.scheduler.datetime',
+    )
+    p_datetime.utcnow.return_value = start
+    p_get_connect_task = mocker.patch(
+        'connect_bi_reporter.scheduler.get_schedule_tasks',
+        return_value=[],
+    )
+    p_create_connect_task = mocker.patch(
+        'connect_bi_reporter.scheduler.create_schedule_task',
+        return_value=eaas_schedule_task,
+    )
     ctx = Context(
         installation_id=installation['id'],
         environment_id=installation['environment']['id'],
         extension_id=installation['environment']['extension']['id'],
         account_id=installation['environment']['extension']['owner']['id'],
     )
-    (
-        client_mocker.ns('devops')
-        .services[ctx.extension_id]
-        .environments[ctx.environment_id]
-        .schedules.all().mock(
-            return_value=[],
-        )
-    )
-    (
-        client_mocker.ns('devops')
-        .services[ctx.extension_id]
-        .environments[ctx.environment_id]
-        .schedules.create(return_value=eaas_schedule_task)
-    )
+    task_payload = {
+        'description': 'Create Uploads for recurrent processing.',
+        'method': 'create_uploads',
+        'name': f'Create Uploads - {ctx.account_id}',
+        'parameter': {
+            'installation_id': ctx.installation_id,
+            'account_id': ctx.account_id,
+        },
+        'trigger': {
+            'amount': 1,
+            'start': string_start_date,
+            'type': 'recurring',
+            'unit': 'days',
+        },
+    }
     ext = ConnectBiReporterEventsApplication(
         connect_client,
         logger,
@@ -46,6 +68,9 @@ def test_handle_installation_status_installed_create_task(
         installation_client=connect_client,
     )
     result = ext.handle_installation_status_change(installation)
+    p_get_connect_task.assert_called_once_with(connect_client, ctx)
+    p_create_connect_task.assert_called_once_with(connect_client, ctx, task_payload)
+
     assert result.status == 'success'
     assert logger.method_calls[0].args[0] == (
         f'This extension has been installed by Provider '
@@ -59,27 +84,30 @@ def test_handle_installation_status_installed_create_task(
 
 def test_handle_installation_status_installed_task_already_exists(
     connect_client,
-    client_mocker_factory,
     logger,
     installation,
     eaas_schedule_task,
+    mocker,
 ):
     config = {}
-    client_mocker = client_mocker_factory(base_url=connect_client.endpoint)
+    mocker.patch(
+        'connect_bi_reporter.events.get_extension_owner_client',
+        return_value=connect_client,
+    )
+    p_get_connect_task = mocker.patch(
+        'connect_bi_reporter.scheduler.get_schedule_tasks',
+        return_value=[eaas_schedule_task],
+    )
+    p_create_connect_task = mocker.patch(
+        'connect_bi_reporter.scheduler.create_schedule_task',
+    )
     ctx = Context(
         installation_id=installation['id'],
         environment_id=installation['environment']['id'],
         extension_id=installation['environment']['extension']['id'],
         account_id=installation['environment']['extension']['owner']['id'],
     )
-    (
-        client_mocker.ns('devops')
-        .services[ctx.extension_id]
-        .environments[ctx.environment_id]
-        .schedules.all().mock(
-            return_value=[eaas_schedule_task],
-        )
-    )
+
     ext = ConnectBiReporterEventsApplication(
         connect_client,
         logger,
@@ -88,6 +116,8 @@ def test_handle_installation_status_installed_task_already_exists(
         installation_client=connect_client,
     )
     result = ext.handle_installation_status_change(installation)
+    p_get_connect_task.assert_called_once_with(connect_client, ctx)
+    p_create_connect_task.assert_not_called()
     assert result.status == 'success'
     assert logger.method_calls[0].args[0] == (
         f'This extension has been installed by Provider '

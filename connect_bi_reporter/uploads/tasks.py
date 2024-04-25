@@ -8,6 +8,7 @@ from connect.eaas.core.responses import (
     ScheduledExecutionResponse,
 )
 from connect_extension_utils.db.models import get_db_ctx_manager
+from connect_extension_utils.connect_services.base import get_extension_owner_client
 from sqlalchemy.exc import DBAPIError
 
 from connect_bi_reporter.connect_services.reports import download_report
@@ -26,28 +27,38 @@ class UploadTaskApplicationMixin:
         'Create Upload objects base on Connect Report files',
     )
     def create_uploads(self, schedule):
-        if 'installation_id' not in schedule['parameter']:
-            return ScheduledExecutionResponse.fail(output='Parameter installation_id is missing.')
+        missing_params = [
+            param for param in ['installation_id', 'account_id']
+            if param not in schedule['parameter']
+        ]
+        if missing_params:
+            params = ', '.join(missing_params)
+            return ScheduledExecutionResponse.fail(
+                output=f'The following required schedule parameters are missing: `{params}`.',
+            )
 
         installation_id = schedule['parameter']['installation_id']
+        account_id = schedule['parameter']['account_id']
+
+        extension_owner_client = get_extension_owner_client(self.logger)
+        installation_client = self.get_installation_admin_client(installation_id)
         try:
-            client = self.get_installation_admin_client(installation_id)
-            installation = client('devops').installations[installation_id].get()
+
             with get_db_ctx_manager(self.config) as db:
                 feeds = db.query(Feed).filter(
-                    Feed.account_id == installation['owner']['id'],
+                    Feed.account_id == account_id,
                     Feed.status == FeedStatusChoices.enabled,
                 ).all()
                 if not feeds:
                     self.logger.info(Info.no_feeds_to_process)
                     return ScheduledExecutionResponse.done()
-                uploads = create_uploads(db, client, self.logger, feeds)
-                scheduler = Scheduler(client, self.context, self.logger)
+                uploads = create_uploads(db, installation_client, self.logger, feeds)
+                scheduler = Scheduler(extension_owner_client, self.context, self.logger)
                 create_process_upload_tasks(
                     uploads,
                     scheduler,
-                    installation_id=installation['id'],
-                    account_id=installation['owner']['id'],
+                    installation_id=installation_id,
+                    account_id=account_id,
                 )
         except (ClientError, DBAPIError) as exc:
             output = Errors.connect_client_error

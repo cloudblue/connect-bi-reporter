@@ -198,7 +198,6 @@ def test_process_upload_invalid_upload_id(
 
 def test_create_upload_schedule_task(
     connect_client,
-    client_mocker_factory,
     logger,
     installation,
     report_schedule,
@@ -208,7 +207,12 @@ def test_create_upload_schedule_task(
     upload_factory,
     eaas_schedule_task,
 ):
-    schedule = {'parameter': {'installation_id': installation['id']}}
+    schedule = {
+        'parameter': {
+            'installation_id': installation['id'],
+            'account_id': installation['owner']['id'],
+        },
+    }
     report_file = {'id': 'RP-262-019-481', 'renderer': 'csv'}
     ext = ConnectBiReporterEventsApplication(
         connect_client,
@@ -220,9 +224,9 @@ def test_create_upload_schedule_task(
         ),
     )
     ext.get_installation_admin_client = lambda self: connect_client
-    client_mocker = client_mocker_factory(base_url=connect_client.endpoint)
-    client_mocker('devops').installations[installation['id']].get(
-        return_value=installation,
+    mocker.patch(
+        'connect_bi_reporter.uploads.tasks.get_extension_owner_client',
+        return_value=connect_client,
     )
     mocker.patch(
         'connect_bi_reporter.uploads.services.get_report_schedule',
@@ -232,11 +236,9 @@ def test_create_upload_schedule_task(
         'connect_bi_reporter.uploads.services.get_reporting_report',
         return_value=report_file,
     )
-    (
-        client_mocker.ns('devops')
-        .services['EXT-01']
-        .environments['test']
-        .schedules.create(return_value=eaas_schedule_task)
+    mocker.patch(
+        'connect_bi_reporter.scheduler.create_schedule_task',
+        return_value=eaas_schedule_task,
     )
     feed = feed_factory(
         schedule_id=report_schedule['id'],
@@ -266,11 +268,15 @@ def test_create_upload_schedule_task(
 
 def test_create_upload_schedule_task_no_feeds(
     connect_client,
-    client_mocker_factory,
     logger,
     installation,
 ):
-    schedule = {'parameter': {'installation_id': installation['id']}}
+    schedule = {
+        'parameter': {
+            'installation_id': installation['id'],
+            'account_id': installation['owner']['id'],
+        },
+    }
     ext = ConnectBiReporterEventsApplication(
         connect_client,
         logger,
@@ -281,10 +287,6 @@ def test_create_upload_schedule_task_no_feeds(
         ),
     )
     ext.get_installation_admin_client = lambda self: connect_client
-    client_mocker = client_mocker_factory(base_url=connect_client.endpoint)
-    client_mocker('devops').installations[installation['id']].get(
-        return_value=installation,
-    )
 
     result = ext.create_uploads(schedule)
     assert result.status == 'success'
@@ -334,7 +336,6 @@ def test_create_upload_schedule_task_no_feeds(
 )
 def test_create_upload_schedule_task_service_validation(
     connect_client,
-    client_mocker_factory,
     logger,
     installation,
     report_schedule,
@@ -346,7 +347,12 @@ def test_create_upload_schedule_task_service_validation(
     message,
     report_id,
 ):
-    schedule = {'parameter': {'installation_id': installation['id']}}
+    schedule = {
+        'parameter': {
+            'installation_id': installation['id'],
+            'account_id': installation['owner']['id'],
+        },
+    }
     ext = ConnectBiReporterEventsApplication(
         connect_client,
         logger,
@@ -357,10 +363,6 @@ def test_create_upload_schedule_task_service_validation(
         ),
     )
     ext.get_installation_admin_client = lambda self: connect_client
-    client_mocker = client_mocker_factory(base_url=connect_client.endpoint)
-    client_mocker('devops').installations[installation['id']].get(
-        return_value=installation,
-    )
     mocker.patch(
         'connect_bi_reporter.uploads.services.get_report_schedule',
         **rs,
@@ -384,11 +386,21 @@ def test_create_upload_schedule_task_service_validation(
     assert logger.method_calls[0].args[0] == message
 
 
-def test_create_upload_schedule_task_fail_no_installation_in_parameter(
+@pytest.mark.parametrize(
+    'params,missing_param',
+    (
+        ({'account_id': 'test'}, 'installation_id'),
+        ({'installation_id': 'test'}, 'account_id'),
+        ({}, 'installation_id, account_id'),
+    ),
+)
+def test_create_upload_schedule_task_fail_bad_required_parameters(
     connect_client,
     logger,
+    params,
+    missing_param,
 ):
-    schedule = {'parameter': {}}
+    schedule = {'parameter': params}
     ext = ConnectBiReporterEventsApplication(
         connect_client,
         logger,
@@ -401,17 +413,24 @@ def test_create_upload_schedule_task_fail_no_installation_in_parameter(
 
     result = ext.create_uploads(schedule)
     assert result.status == 'fail'
-    assert result.output == 'Parameter installation_id is missing.'
+    assert result.output == (
+        f'The following required schedule parameters are missing: `{missing_param}`.'
+    )
 
 
 def test_create_upload_schedule_task_fail_connect_client_error(
     connect_client,
     logger,
-    client_mocker_factory,
+    mocker,
     installation,
     feed_factory,
 ):
-    schedule = {'parameter': {'installation_id': installation['id']}}
+    schedule = {
+        'parameter': {
+            'installation_id': installation['id'],
+            'account_id': installation['owner']['id'],
+        },
+    }
     ext = ConnectBiReporterEventsApplication(
         connect_client,
         logger,
@@ -422,12 +441,10 @@ def test_create_upload_schedule_task_fail_connect_client_error(
         ),
     )
     ext.get_installation_admin_client = lambda self: connect_client
-
-    client_mocker = client_mocker_factory(base_url=connect_client.endpoint)
-    client_mocker('devops').installations[installation['id']].get(
-        return_value=ClientError(status_code=500),
+    mocker.patch(
+        'connect_bi_reporter.uploads.services._get_report_schedule_reason',
+        return_value=(None, False),
     )
-
     feed_factory(
         account_id=installation['owner']['id'],
         status=feed_factory._meta.model.STATUSES.enabled,
@@ -442,12 +459,16 @@ def test_create_upload_schedule_task_fail_connect_client_error(
 def test_create_upload_schedule_task_fail_db_error(
     connect_client,
     logger,
-    client_mocker_factory,
     installation,
     feed_factory,
     mocker,
 ):
-    schedule = {'parameter': {'installation_id': installation['id']}}
+    schedule = {
+        'parameter': {
+            'installation_id': installation['id'],
+            'account_id': installation['owner']['id'],
+        },
+    }
     ext = ConnectBiReporterEventsApplication(
         connect_client,
         logger,
@@ -459,10 +480,6 @@ def test_create_upload_schedule_task_fail_db_error(
     )
     ext.get_installation_admin_client = lambda self: connect_client
 
-    client_mocker = client_mocker_factory(base_url=connect_client.endpoint)
-    client_mocker('devops').installations[installation['id']].get(
-        return_value=installation,
-    )
     mocker.patch(
         'connect_bi_reporter.uploads.tasks.create_uploads',
         side_effect=DBAPIError(params='some', orig='test', statement='sds'),

@@ -92,9 +92,29 @@ def test_scheduler(connect_client, logger, mocker, eaas_schedule_task, installat
 @pytest.mark.parametrize(
     'response_type, mocker_return_value, expected_response',
     (
-        (None, {'return_value': [{'id': 'test'}]}, None),
+        (None, {
+            'return_value': [
+                {
+                    'id': 'some',
+                    'method': 'create_uploads',
+                    'parameter': {
+                        'installation_id': 'EIN-8436-7221-8308',
+                    },
+                },
+            ],
+        }, None),
         (None, {'side_effect': ClientError(message='Bad!', status_code=500)}, None),
-        (BackgroundResponse, {'return_value': [{'id': 'test'}]}, 'success'),
+        (BackgroundResponse, {
+            'return_value': [
+                {
+                    'id': 'some',
+                    'method': 'create_uploads',
+                    'parameter': {
+                        'installation_id': 'EIN-8436-7221-8308',
+                    },
+                },
+            ],
+        }, 'success'),
         (
             BackgroundResponse,
             {'side_effect': ClientError(message='Bad!', status_code=500)},
@@ -110,6 +130,7 @@ def test_genererate_default_recurring_schedule_task(
     response_type,
     mocker_return_value,
     expected_response,
+
 ):
     ctx = Context(
         installation_id=installation['id'],
