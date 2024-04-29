@@ -118,13 +118,13 @@ def disable_feeds(db, feeds, logger):
 def create_uploads(db, client, logger, feeds):
     feeds_to_disable = []
     uploads = []
-    rql = R().status.eq('succeeded')
     feed_ids = [f.id for f in feeds]
     existing_reports_ids = util.flatten_iterator(db.query(Upload.report_id).filter(
         Upload.feed_id.in_(feed_ids),
     ))
     for feed in feeds:
         report_file = None
+        rql = R().status.eq('succeeded')
         rql &= R().account.id.eq(feed.account_id) & R().schedule.id.eq(feed.schedule_id)
         reason, mark_as_disabled = _get_report_schedule_reason(client, feed.schedule_id)
         if mark_as_disabled:

@@ -362,13 +362,13 @@ urllib3 = "<2"
 
 [[package]]
 name = "connect-extension-utils"
-version = "1.1.0"
+version = "1.2.0"
 description = "This repository extend EaaS's out-of-box functionality providing a set of common utilities that can be reused between different extensions."
 optional = false
-python-versions = ">=3.8,<4"
+python-versions = "<4,>=3.8"
 files = [
-    {file = "connect_extension_utils-1.1.0-py3-none-any.whl", hash = "sha256:ce9a5ac0975fa2cedf407aeeb65c92b69af45cd60d58e64e8f9fd9feeba4d62e"},
-    {file = "connect_extension_utils-1.1.0.tar.gz", hash = "sha256:b64d97d40bb91bcb84ecd7ec515d78660883eb6dd9caecdee4c1c9ed590a8cdd"},
+    {file = "connect_extension_utils-1.2.0-py3-none-any.whl", hash = "sha256:c43bde436cd5ceec928109778fcc7137aae5e220884930bcbfc0d4d598ae8421"},
+    {file = "connect_extension_utils-1.2.0.tar.gz", hash = "sha256:c7d26cc641762fc1b8fbaad346509f094d47aae9dd7298828a1c638f9dbdde07"},
 ]
 
 [package.dependencies]
@@ -1762,4 +1762,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<4"
-content-hash = "c37dd4ddf285159cc69fcd45cb344d6fbe5a0252c232998a9ea7dc9e0e4a5092"
+content-hash = "7cca1535bf22df5adf76eb2110bccb9da8cf00b4e7319bfbbbe1d912a84a9afd"

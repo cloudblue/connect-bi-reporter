@@ -36,8 +36,6 @@ services:
       DATABASE_URL: postgresql+psycopg2://postgres:1q2w3e@db/bi_reporter
     depends_on:
       - db
-    links:
-      - "db_ram:db"
 
   connect_bi_reporter_test:
     container_name: connect_bi_reporter_test

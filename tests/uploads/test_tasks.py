@@ -1,7 +1,9 @@
 import re
+from unittest.mock import call
 
 import pytest
 from connect.client import ClientError
+from connect.client.rql import R
 from connect.eaas.core.inject.models import Context
 from sqlalchemy.exc import DBAPIError
 
@@ -213,7 +215,10 @@ def test_create_upload_schedule_task(
             'account_id': installation['owner']['id'],
         },
     }
-    report_file = {'id': 'RP-262-019-481', 'renderer': 'csv'}
+    report_file = [
+        {'id': 'RP-262-019-481', 'renderer': 'csv'},
+        {'id': 'RP-262-019-482', 'renderer': 'csv'},
+    ]
     ext = ConnectBiReporterEventsApplication(
         connect_client,
         logger,
@@ -232,37 +237,66 @@ def test_create_upload_schedule_task(
         'connect_bi_reporter.uploads.services.get_report_schedule',
         return_value=report_schedule,
     )
-    mocker.patch(
+    p_get_reporting_report = mocker.patch(
         'connect_bi_reporter.uploads.services.get_reporting_report',
-        return_value=report_file,
+        side_effect=report_file,
     )
     mocker.patch(
         'connect_bi_reporter.scheduler.create_schedule_task',
         return_value=eaas_schedule_task,
     )
-    feed = feed_factory(
+    feed1 = feed_factory(
+        schedule_id=report_schedule['id'],
+        account_id=installation['owner']['id'],
+        status=feed_factory._meta.model.STATUSES.enabled,
+    )
+    feed2 = feed_factory(
         schedule_id=report_schedule['id'],
         account_id=installation['owner']['id'],
         status=feed_factory._meta.model.STATUSES.enabled,
     )
 
     result = ext.create_uploads(schedule)
-    upload = dbsession.query(upload_factory._meta.model).first()
-    assert result.status == 'success'
-    assert upload.report_id == report_file['id']
-    assert upload.status == upload_factory._meta.model.STATUSES.pending
-    assert upload.feed_id == feed.id
+    uploads = dbsession.query(upload_factory._meta.model).all()
+    p_get_reporting_report.assert_has_calls(
+        [
+            call(
+                connect_client, (
+                    R().status.eq('succeeded') & R().account.id.eq(feed1.account_id)
+                    & R().schedule.id.eq(feed1.schedule_id)
+                ),
+            ),
+            call(
+                connect_client, (
+                    R().status.eq('succeeded') & R().account.id.eq(feed2.account_id)
+                    & R().schedule.id.eq(feed2.schedule_id)
+                ),
+            ),
+        ],
+    )
+    for idx, zipped in enumerate(zip(uploads, [feed1, feed2])):
+        upload, feed = zipped
+        assert result.status == 'success'
+        assert upload.report_id == report_file[idx]['id']
+        assert upload.status == upload_factory._meta.model.STATUSES.pending
+        assert upload.feed_id == feed.id
+
     assert logger.method_calls[0].args[0] == (
-        f'New Uploads were created: `Upload={upload.id}'
-        f' for Feed={feed.id}`.'
+        f'New Uploads were created: `Upload={uploads[0].id} for Feed={feed1.id}, '
+        f'Upload={uploads[1].id} for Feed={feed2.id}`.'
     )
     assert logger.method_calls[1].args[0] == (
         f'Periodic Schedule Task created: `{eaas_schedule_task["id"]}`.'
     )
     assert logger.method_calls[2].args[0] == (
         f'New Scheduled Task `{eaas_schedule_task["id"]}`'
-        f' created for Upload `{upload.id}`: '
-        f'Will process Report File `{report_file["id"]}`'
+        f' created for Upload `{uploads[0].id}`: '
+        f'Will process Report File `{report_file[0]["id"]}`'
+    )
+    assert logger.method_calls[4].args[0] == (
+        f'New Scheduled Task `{eaas_schedule_task["id"]}`'
+        f' created for Upload `{uploads[1].id}`: '
+        f'Will process Report File `{report_file[1]["id"]}`'
     )
 
 
