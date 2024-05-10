@@ -6,7 +6,11 @@ from connect.client import ConnectClient
 from connect.eaas.core.decorators import router
 from connect.eaas.core.inject.common import get_call_context, get_logger
 from connect.eaas.core.inject.models import Context
-from connect.eaas.core.inject.synchronous import get_installation, get_installation_client
+from connect.eaas.core.inject.synchronous import (
+    get_extension_client,
+    get_installation,
+    get_installation_client,
+)
 from connect_extension_utils.api.pagination import apply_pagination, PaginationParams
 from connect_extension_utils.db.models import get_db, VerboseBaseSession
 
@@ -71,18 +75,27 @@ class UploadsWebAppMixin:
         feed_id: str,
         upload_id: str,
         db: VerboseBaseSession = Depends(get_db),
-        client: ConnectClient = Depends(get_installation_client),
+        extension_client: ConnectClient = Depends(get_extension_client),
         context: Context = Depends(get_call_context),
         logger: Logger = Depends(get_logger),
         installation: dict = Depends(get_installation),
     ):
-        scheduler = Scheduler(client, context, logger)
+        scheduler = Scheduler(extension_client, context, logger)
         upload = retry_failed_upload(db, installation, feed_id, upload_id, scheduler)
         return map_to_upload_schema(upload)
 
-    def _force_upload(self, db, client, context, logger, installation, feed):
-        scheduler = Scheduler(client, context, logger)
-        upload = force_upload(db, client, scheduler, installation, feed)
+    def _force_upload(
+        self,
+        db,
+        extension_client,
+        installation_client,
+        context,
+        logger,
+        installation,
+        feed,
+    ):
+        scheduler = Scheduler(extension_client, context, logger)
+        upload = force_upload(db, installation_client, scheduler, installation, feed)
         return map_to_upload_schema(upload)
 
     @router.post(
@@ -95,10 +108,19 @@ class UploadsWebAppMixin:
         self,
         feed_id: str,
         db: VerboseBaseSession = Depends(get_db),
-        client: ConnectClient = Depends(get_installation_client),
+        extension_client: ConnectClient = Depends(get_extension_client),
+        installation_client: ConnectClient = Depends(get_installation_client),
         context: Context = Depends(get_call_context),
         logger: Logger = Depends(get_logger),
         installation: dict = Depends(get_installation),
     ):
         feed = get_feed_for_uploads(db, installation, feed_id)
-        return self._force_upload(db, client, context, logger, installation, feed)
+        return self._force_upload(
+            db,
+            extension_client,
+            installation_client,
+            context,
+            logger,
+            installation,
+            feed,
+        )
