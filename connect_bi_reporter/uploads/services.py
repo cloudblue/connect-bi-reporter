@@ -145,13 +145,19 @@ def create_uploads(db, client, logger, feeds):
             feed_id=feed.id,
             report_id=report_file['id'],
         ))
+    created_uploads = []
     if uploads:
-        db.add_all_with_next_verbose(uploads, related_id_field=Upload.feed_id.name)
-        db.flush()
-        uploads_info = ', '.join('Upload={0} for Feed={1}'.format(u.id, u.feed_id) for u in uploads)
+        for up in uploads:
+            db.add_next_with_verbose(up, related_id_field=Upload.feed_id.name)
+            db.commit()
+            db.refresh(up)
+            created_uploads.append(up)
+        uploads_info = ', '.join(
+            'Upload={0} for Feed={1}'.format(u.id, u.feed_id) for u in created_uploads
+        )
         logger.info(Info.new_upload_created.format(uploads_info=uploads_info))
     disable_feeds(db, feeds_to_disable, logger)
-    return uploads
+    return created_uploads
 
 
 def get_process_upload_task_payload(installation_id, upload_id, account_id):
