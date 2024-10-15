@@ -1,5 +1,6 @@
 import io
 from datetime import datetime
+import time
 from zipfile import ZipFile
 
 from connect.client import ClientError
@@ -18,7 +19,7 @@ from connect_bi_reporter.uploads.enums import Errors, Info
 from connect_bi_reporter.uploads.models import Upload
 from connect_bi_reporter.uploads.services import create_process_upload_tasks, create_uploads
 from connect_bi_reporter.uploads.storage_utils import upload_file
-from connect_bi_reporter.scheduler import Scheduler
+from connect_bi_reporter.scheduler import ResponseTypeEnum, Scheduler
 
 
 class UploadTaskApplicationMixin:
@@ -78,6 +79,7 @@ class UploadTaskApplicationMixin:
         if 'installation_id' not in schedule['parameter']:
             return ScheduledExecutionResponse.fail(output='Parameter installation_id is missing.')
 
+        begin_time = time.monotonic()
         instalation_client = self.get_installation_admin_client(
             schedule['parameter']['installation_id'],
         )
@@ -90,15 +92,16 @@ class UploadTaskApplicationMixin:
             if not upload:
                 return ScheduledExecutionResponse.fail(output=f'Invalid upload `{upload_id}`.')
 
-            if upload.status != 'pending':
+            if upload.status != Upload.STATUSES.pending:
                 return ScheduledExecutionResponse.fail(
                     output=f'Cannot process upload in status `{upload.status}`.',
                 )
 
-            upload.status = 'processing'
+            upload.status = Upload.STATUSES.processing
             db.add(upload)
             db.commit()
 
+            execution_method_result = ResponseTypeEnum.SUCCESS
             try:
                 report_data = download_report(instalation_client, upload.report_id)
 
@@ -112,14 +115,25 @@ class UploadTaskApplicationMixin:
                         )
                         upload.size = uploaded_file_props.get('size', 0)
 
-                upload.status = 'uploaded'
+                upload.status = Upload.STATUSES.uploaded
                 upload.name = file_name
                 db.add(upload)
                 db.commit()
-                return ScheduledExecutionResponse.done()
             except Exception:
                 self.logger.exception(msg='Error processing upload')
-                upload.status = 'failed'
+                upload.status = Upload.STATUSES.failed
                 db.add(upload)
                 db.commit()
-                return ScheduledExecutionResponse.fail()
+                execution_method_result = ResponseTypeEnum.FAIL
+
+            took = time.monotonic() - begin_time
+            self.logger.info(
+                'Execution of `process_upload` task for Upload {0} finished (took "{1}"): '
+                'Upload status: `{2}`, Taks result: `{3}`.'.format(
+                    upload.id,
+                    took,
+                    upload.status,
+                    execution_method_result,
+                ),
+            )
+            return getattr(ScheduledExecutionResponse, execution_method_result)()

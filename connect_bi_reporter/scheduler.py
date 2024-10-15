@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-from logging import Logger
 import enum
+from logging import Logger
 from typing import Any, Dict, Optional
 
 from connect.client import ClientError, ConnectClient
@@ -23,6 +23,7 @@ class TriggerTypeEnum(str, enum.Enum):
 class ResponseTypeEnum(str, enum.Enum):
     SUCCESS = 'done'
     ERROR = 'reschedule'
+    FAIL = 'fail'
 
 
 class TriggerType:

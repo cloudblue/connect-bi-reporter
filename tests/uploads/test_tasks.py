@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 import re
 from unittest.mock import call
 
@@ -7,6 +8,7 @@ from connect.client.rql import R
 from connect.eaas.core.inject.models import Context
 from sqlalchemy.exc import DBAPIError
 
+from connect_bi_reporter.constants import SECONDS_BACKOFF_FACTOR, SECONDS_DELAY
 from connect_bi_reporter.events import ConnectBiReporterEventsApplication
 
 
@@ -16,6 +18,8 @@ def test_process_upload(dbsession, connect_client, installation, logger, mocker,
         logger,
         config={},
     )
+    p_time = mocker.patch('connect_bi_reporter.uploads.tasks.time')
+    p_time.monotonic.side_effect = [10, 12]
     ext.get_installation_admin_client = lambda self: connect_client
 
     with open('./tests/uploads/test-zip.zip', 'rb') as zf:
@@ -41,6 +45,10 @@ def test_process_upload(dbsession, connect_client, installation, logger, mocker,
     assert re.match(feed.file_name + '_\\d{8} \\d{2}:\\d{2}:\\d{2}.csv', upload.name)
     assert upload.size == 1024
     assert upload.status == upload.STATUSES.uploaded
+    assert logger.method_calls[0].args[0] == (
+        f'Execution of `process_upload` task for Upload {upload.id} '
+        f'finished (took "2"): Upload status: `uploaded`, Taks result: `done`.'
+    )
 
 
 def test_process_upload_report_download_failed(
@@ -229,6 +237,11 @@ def test_create_upload_schedule_task(
         ),
     )
     ext.get_installation_admin_client = lambda self: connect_client
+
+    _now = datetime(2024, 10, 15, 10, 0, 0, tzinfo=timezone.utc)
+    p_datetime = mocker.patch('connect_bi_reporter.uploads.services.datetime')
+    p_datetime.utcnow = lambda: _now
+
     mocker.patch(
         'connect_bi_reporter.uploads.tasks.get_extension_owner_client',
         return_value=connect_client,
@@ -244,6 +257,9 @@ def test_create_upload_schedule_task(
     mocker.patch(
         'connect_bi_reporter.scheduler.create_schedule_task',
         return_value=eaas_schedule_task,
+    )
+    p_get_task_payload = mocker.patch(
+        'connect_bi_reporter.scheduler.EaasScheduleTask.get_task_payload',
     )
     feed1 = feed_factory(
         schedule_id=report_schedule['id'],
@@ -274,6 +290,44 @@ def test_create_upload_schedule_task(
             ),
         ],
     )
+    delay = SECONDS_DELAY
+    new_delay = SECONDS_DELAY + SECONDS_BACKOFF_FACTOR
+    p_get_task_payload.assert_has_calls(
+        [
+            call(
+                trigger_type='onetime',
+                trigger_data={
+                    'date': (_now + timedelta(seconds=delay)).isoformat(),
+                },
+                method_payload={
+                    'method': 'process_upload',
+                    'description': 'This task will download the report from'
+                    ' connect and published it in the respective storage.',
+                    'parameter': {
+                        'installation_id': 'EIN-8436-7221-8308',
+                        'upload_id': f'ULF-{feed1.id.split("-", 1)[-1]}-000',
+                    },
+                    'name': 'Process Uploads - PA-000-000',
+                },
+            ),
+            call(
+                trigger_type='onetime',
+                trigger_data={
+                    'date': (_now + timedelta(seconds=new_delay)).isoformat(),
+                },
+                method_payload={
+                    'method': 'process_upload',
+                    'description': 'This task will download the report from'
+                    ' connect and published it in the respective storage.',
+                    'parameter': {
+                        'installation_id': 'EIN-8436-7221-8308',
+                        'upload_id': f'ULF-{feed2.id.split("-", 1)[-1]}-000',
+                    },
+                    'name': 'Process Uploads - PA-000-000',
+                },
+            ),
+        ],
+    )
     for idx, zipped in enumerate(zip(uploads, [feed1, feed2])):
         upload, feed = zipped
         assert result.status == 'success'
@@ -298,6 +352,8 @@ def test_create_upload_schedule_task(
         f' created for Upload `{uploads[1].id}`: '
         f'Will process Report File `{report_file[1]["id"]}`'
     )
+    assert delay == 120
+    assert new_delay == 240
 
 
 def test_create_upload_schedule_task_no_feeds(

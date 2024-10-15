@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import copy
 
 from sqlalchemy import util
 from connect.client import ClientError
@@ -161,7 +162,7 @@ def create_uploads(db, client, logger, feeds):
 
 
 def get_process_upload_task_payload(installation_id, upload_id, account_id):
-    payload = PROCESS_UPLOAD_TAKS_BASE_METHOD_PAYLOAD
+    payload = copy.deepcopy(PROCESS_UPLOAD_TAKS_BASE_METHOD_PAYLOAD)
     payload.update({'name': f'Process Uploads - {account_id}'})
     parameters = {
         'installation_id': installation_id,
