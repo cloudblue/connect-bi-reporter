@@ -9,7 +9,7 @@ UPLOAD_BASE_ERROR_LOG_MESSAGE = (
 # Delay in seconds for schedule to process Upload task
 SECONDS_DELAY = 120
 # Backoff factor in seconds between Upload tasks creation
-SECONDS_BACKOFF_FACTOR = 10
+SECONDS_BACKOFF_FACTOR = 120
 CREATE_UPLOADS_METHOD_NAME = 'create_uploads'
 PROCESS_UPLOADS_METHOD_NAME = 'process_upload'
 PROCESS_UPLOAD_TAKS_BASE_METHOD_PAYLOAD = {
