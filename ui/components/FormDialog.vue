@@ -16,7 +16,7 @@
   >
     <template #sidebar>
       <vertical-tabs
-        v-model:active-tab-key="activeTabKey"
+        v-model:activeTabKey="activeTabKey"
         :tabs="tabs"
         :linear="isWizardMode"
       />
