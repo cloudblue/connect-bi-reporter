@@ -10,8 +10,8 @@
   >
     <template #destination>
       <destination-tab
-        v-model:credential-id="form.credentialId"
-        v-model:file-name="form.fileName"
+        v-model:credentialId="form.credentialId"
+        v-model:fileName="form.fileName"
         v-model:description="form.description"
       />
     </template>

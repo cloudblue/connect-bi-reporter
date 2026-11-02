@@ -352,11 +352,17 @@ describe('SimpleDialog component', () => {
       });
 
       describe('when the button is clicked', () => {
-        const onSubmitFn = vi.fn().mockImplementation(async () => {
-          // wait for multiple next ticks to check loading state
-          await wrapper.vm.$nextTick();
-          await wrapper.vm.$nextTick();
-          await wrapper.vm.$nextTick();
+        let resolveSubmit;
+        const onSubmitFn = vi.fn().mockImplementation(
+          () =>
+            new Promise((resolve) => {
+              // stays pending until a test resolves it, to check the loading state
+              resolveSubmit = resolve;
+            }),
+        );
+
+        afterEach(() => {
+          resolveSubmit();
         });
 
         beforeEach(async () => {
@@ -380,10 +386,10 @@ describe('SimpleDialog component', () => {
               size: '24',
             }),
           );
-          await flushPromises();
         });
 
         test('renders the button text after handler resolves', async () => {
+          resolveSubmit();
           await flushPromises();
 
           expect(wrapper.find('.dialog__action ui-icon').exists()).toBeFalsy();
@@ -432,11 +438,17 @@ describe('SimpleDialog component', () => {
       });
 
       describe('when the button is clicked', () => {
-        const onSubmitFn = vi.fn().mockImplementation(async () => {
-          // wait for multiple next ticks to check loading state
-          await wrapper.vm.$nextTick();
-          await wrapper.vm.$nextTick();
-          await wrapper.vm.$nextTick();
+        let resolveSubmit;
+        const onSubmitFn = vi.fn().mockImplementation(
+          () =>
+            new Promise((resolve) => {
+              // stays pending until a test resolves it, to check the loading state
+              resolveSubmit = resolve;
+            }),
+        );
+
+        afterEach(() => {
+          resolveSubmit();
         });
 
         beforeEach(async () => {
@@ -460,10 +472,10 @@ describe('SimpleDialog component', () => {
               size: '24',
             }),
           );
-          await flushPromises();
         });
 
         test('renders the button text after handler resolves', async () => {
+          resolveSubmit();
           await flushPromises();
 
           expect(wrapper.find('.dialog__action ui-icon').exists()).toBeFalsy();
@@ -512,11 +524,17 @@ describe('SimpleDialog component', () => {
       });
 
       describe('when the button is clicked', () => {
-        const onSubmitFn = vi.fn().mockImplementation(async () => {
-          // wait for multiple next ticks to check loading state
-          await wrapper.vm.$nextTick();
-          await wrapper.vm.$nextTick();
-          await wrapper.vm.$nextTick();
+        let resolveSubmit;
+        const onSubmitFn = vi.fn().mockImplementation(
+          () =>
+            new Promise((resolve) => {
+              // stays pending until a test resolves it, to check the loading state
+              resolveSubmit = resolve;
+            }),
+        );
+
+        afterEach(() => {
+          resolveSubmit();
         });
 
         beforeEach(async () => {
@@ -540,10 +558,10 @@ describe('SimpleDialog component', () => {
               size: '24',
             }),
           );
-          await flushPromises();
         });
 
         test('renders the button text after handler resolves', async () => {
+          resolveSubmit();
           await flushPromises();
 
           expect(wrapper.find('.dialog__action ui-icon').exists()).toBeFalsy();
