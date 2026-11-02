@@ -10,7 +10,12 @@ vi.mock('@cloudblueconnect/connect-ui-toolkit/tools/vue/toolkitPlugin', () => ({
 describe('DateItem component', () => {
   let wrapper;
   let toolkitStub;
-  const intlDateTimeFormatCtorSpy = vi.spyOn(Intl, 'DateTimeFormat');
+  const OriginalDateTimeFormat = Intl.DateTimeFormat;
+  const intlDateTimeFormatCtorSpy = vi
+    .spyOn(Intl, 'DateTimeFormat')
+    .mockImplementation(function DateTimeFormat(...args) {
+      return new OriginalDateTimeFormat(...args);
+    });
   const DATE_STR = '2024-02-16T14:01:51.991856';
 
   beforeEach(async () => {
